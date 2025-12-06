@@ -1,0 +1,159 @@
+{
+  "name": "Ортоцентр | Каталог стоматологических товаров",
+  "short_name": "Ортоцентр",
+  "description": "Профессиональные зубные щетки, пасты, ирригаторы и прочее в Волгограде. График работы: будни 08:00-20:00, выходные 09:00-15:00",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#b9c8c3",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "ru",
+  "dir": "ltr",
+  
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23b9c8c3'/><text x='50' y='70' font-size='70' text-anchor='middle' fill='white'>🦷</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23b9c8c3'/><text y='.9em' font-size='90' fill='white'>🦷</text></svg>",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "monochrome"
+    }
+  ],
+  
+  "screenshots": [
+    {
+      "src": "/screenshot-desktop.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Каталог товаров на компьютере"
+    },
+    {
+      "src": "/screenshot-mobile.png",
+      "sizes": "375x812",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Каталог товаров на телефоне"
+    }
+  ],
+  
+  "categories": ["shopping", "health", "medical"],
+  
+  "shortcuts": [
+    {
+      "name": "Все товары",
+      "short_name": "Каталог",
+      "description": "Открыть полный каталог товаров",
+      "url": "/#all-products",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23b9c8c3'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>📦</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Щетки",
+      "short_name": "Щетки",
+      "description": "Зубные щетки всех типов",
+      "url": "/?category=щетки",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23b9c8c3'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>🪥</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Пасты",
+      "short_name": "Пасты",
+      "description": "Зубные пасты и гели",
+      "url": "/?category=пасты",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23b9c8c3'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>🧴</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    },
+    {
+      "name": "Прочее",
+      "short_name": "Прочее",
+      "description": "Аксессуары и средства гигиены",
+      "url": "/?category=прочее",
+      "icons": [
+        {
+          "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23969696'/><text x='50' y='70' font-size='60' text-anchor='middle' fill='white'>📎</text></svg>",
+          "sizes": "96x96",
+          "type": "image/svg+xml"
+        }
+      ]
+    }
+  ],
+  
+  "related_applications": [],
+  "prefer_related_applications": false,
+  
+  "protocol_handlers": [
+    {
+      "protocol": "web+ortocentr",
+      "url": "/?product=%s"
+    }
+  ],
+  
+  "share_target": {
+    "action": "/?share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  },
+  
+  "display_override": ["window-controls-overlay", "minimal-ui"],
+  
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  
+  "handle_links": "preferred",
+  
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  
+  "permissions": ["clipboard-write"],
+  
+  "prefer_related_applications": false,
+  
+  "id": "/",
+  
+  "iarc_rating_id": "e84b072d-71b3-4d3e-86ae-31a8ce4e53b7",
+  
+  "splash_pages": {
+    "720": "/splash-720.png",
+    "1080": "/splash-1080.png"
+  }
+}

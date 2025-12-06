@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Страница не найдена (404) | Ортоцентр</title>
+    
+    <!-- SEO -->
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://ортцентр.рф">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Специфичные стили для 404 страницы -->
+    <style>
+        /* Основной контейнер */
+        .error-404-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-xl);
+            text-align: center;
+            background: linear-gradient(135deg, var(--color-primary-ultralight) 0%, var(--color-background) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Декоративные элементы */
+        .error-decoration {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0.1;
+        }
+        
+        .error-decoration-1 {
+            top: 10%;
+            right: 10%;
+            width: 150px;
+            height: 150px;
+            background: var(--color-primary);
+            border-radius: var(--radius-round);
+            animation: floatError 20s infinite linear;
+        }
+        
+        .error-decoration-2 {
+            bottom: 15%;
+            left: 10%;
+            width: 100px;
+            height: 100px;
+            background: var(--color-accent);
+            border-radius: var(--radius-round);
+            animation: floatError 25s infinite linear reverse;
+        }
+        
+        @keyframes floatError {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -20px) rotate(90deg); }
+            50% { transform: translate(0, 0) rotate(180deg); }
+            75% { transform: translate(-20px, 20px) rotate(270deg); }
+        }
+        
+        /* Контент */
+        .error-404-content {
+            max-width: 800px;
+            width: 100%;
+            background: var(--color-background);
+            border-radius: var(--radius-xl);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-xl);
+            border: 2px solid var(--color-primary);
+            position: relative;
+            z-index: 2;
+            animation: slideUp 0.6s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Иконка ошибки */
+        .error-404-icon {
+            font-size: 6rem;
+            color: var(--color-accent);
+            margin-bottom: var(--space-lg);
+            animation: bounceError 2s infinite;
+        }
+        
+        @keyframes bounceError {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        /* Код ошибки */
+        .error-404-code {
+            display: inline-block;
+            background: var(--color-primary);
+            color: var(--color-text-light);
+            padding: var(--space-sm) var(--space-xl);
+            border-radius: var(--radius-lg);
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: var(--space-lg);
+            letter-spacing: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .error-404-code::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Заголовок и описание */
+        .error-404-title {
+            font-size: 2.5rem;
+            font-weight: var(--font-weight-bold);
+            color: var(--color-text);
+            margin-bottom: var(--space-md);
+            line-height: 1.2;
+        }
+        
+        .error-404-description {
+            font-size: 1.2rem;
+            color: var(--color-text-secondary);
+            margin-bottom: var(--space-xl);
+            line-height: 1.6;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Действия */
+        .error-404-actions {
+            display: flex;
+            gap: var(--space-md);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: var(--space-xl) 0;
+        }
+        
+        .error-404-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-md) var(--space-xl);
+            border: none;
+            border-radius: var(--radius-lg);
+            font-weight: var(--font-weight-semibold);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            text-decoration: none;
+            min-height: 44px;
+        }
+        
+        .error-404-btn-primary {
+            background: var(--color-primary);
+            color: var(--color-text-light);
+        }
+        
+        .error-404-btn-primary:hover {
+            background: var(--color-primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .error-404-btn-secondary {
+            background: var(--color-surface);
+            color: var(--color-text);
+            border: 2px solid var(--color-border);
+        }
+        
+        .error-404-btn-secondary:hover {
+            background: var(--color-primary-ultralight);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        
+        /* Советы */
+        .error-404-tips {
+            background: var(--color-surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin: var(--space-xl) 0;
+            text-align: left;
+            border-left: 4px solid var(--color-accent);
+        }
+        
+        .error-404-tips h3 {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--color-text);
+            margin-bottom: var(--space-lg);
+            font-size: 1.2rem;
+        }
+        
+        .error-404-tips h3 i {
+            color: var(--color-accent);
+        }
+        
+        .error-404-tips ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .error-404-tips li {
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-md);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-lg);
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .error-404-tips li:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+        
+        .error-404-tips i {
+            color: var(--color-primary);
+            font-size: 1.2rem;
+            margin-top: 2px;
+            flex-shrink: 0;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .error-404-tips span {
+            color: var(--color-text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Контактная информация */
+        .error-404-contact {
+            background: var(--color-primary-pale);
+            border-radius: var(--radius-lg);
+            padding: var(--space-xl);
+            margin: var(--space-xl) 0;
+            border: 2px solid var(--color-primary-light);
+        }
+        
+        .error-404-contact h3 {
+            color: var(--color-text);
+            margin-bottom: var(--space-lg);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .error-404-contact h3 i {
+            color: var(--color-primary);
+        }
+        
+        .error-404-contact p {
+            margin: var(--space-md) 0;
+            color: var(--color-text-secondary);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        
+        .error-404-contact i {
+            color: var(--color-primary);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .error-404-contact a {
+            color: var(--color-text);
+            text-decoration: none;
+            transition: color var(--transition-fast);
+        }
+        
+        .error-404-contact a:hover {
+            color: var(--color-primary);
+        }
+        
+        /* Юридический текст */
+        .error-404-legal {
+            margin-top: var(--space-xl);
+            padding: var(--space-lg);
+            background: var(--color-surface);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--color-accent);
+            text-align: left;
+        }
+        
+        .error-404-legal p {
+            margin: 0;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            display: flex;
+            align-items: flex-start;
+            gap: var(--space-sm);
+        }
+        
+        .error-404-legal i {
+            color: var(--color-accent);
+            margin-top: 2px;
+            flex-shrink: 0;
+        }
+        
+        /* Популярные категории */
+        .error-404-categories {
+            margin: var(--space-xl) 0;
+        }
+        
+        .error-404-categories h3 {
+            color: var(--color-text);
+            margin-bottom: var(--space-lg);
+            font-size: 1.2rem;
+        }
+        
+        .error-categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: var(--space-md);
+        }
+        
+        .error-category-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-lg);
+            background: var(--color-surface);
+            border: 2px solid var(--color-border);
+            border-radius: var(--radius-lg);
+            text-decoration: none;
+            color: var(--color-text);
+            transition: all var(--transition-base);
+        }
+        
+        .error-category-btn:hover {
+            background: var(--color-primary-ultralight);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+        }
+        
+        .error-category-btn i {
+            font-size: 2rem;
+            color: var(--color-primary);
+        }
+        
+        .error-category-btn span {
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-medium);
+        }
+        
+        /* Футер */
+        .error-404-footer {
+            margin-top: var(--space-2xl);
+            padding-top: var(--space-xl);
+            border-top: 1px solid var(--color-border);
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            width: 100%;
+            max-width: 800px;
+        }
+        
+        .error-404-footer p {
+            margin: var(--space-xs) 0;
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 768px) {
+            .error-404-content {
+                padding: var(--space-xl);
+                margin: var(--space-lg);
+            }
+            
+            .error-404-icon {
+                font-size: 4rem;
+            }
+            
+            .error-404-code {
+                font-size: 2rem;
+                padding: var(--space-xs) var(--space-lg);
+            }
+            
+            .error-404-title {
+                font-size: 2rem;
+            }
+            
+            .error-404-description {
+                font-size: 1.1rem;
+            }
+            
+            .error-404-actions {
+                flex-direction: column;
+            }
+            
+            .error-404-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .error-categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .error-decoration-1,
+            .error-decoration-2 {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .error-404-content {
+                padding: var(--space-lg);
+            }
+            
+            .error-404-icon {
+                font-size: 3.5rem;
+            }
+            
+            .error-404-code {
+                font-size: 1.8rem;
+                letter-spacing: 2px;
+            }
+            
+            .error-404-title {
+                font-size: 1.8rem;
+            }
+            
+            .error-404-tips,
+            .error-404-contact {
+                padding: var(--space-lg);
+            }
+            
+            .error-categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Анимации для уведомлений */
+        .error-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-accent);
+            color: var(--color-text);
+            padding: var(--space-md) var(--space-lg);
+            border-radius: var(--radius-lg);
+            z-index: 10000;
+            box-shadow: var(--shadow-xl);
+            font-weight: var(--font-weight-medium);
+            animation: slideUpNotification 0.3s ease;
+            max-width: 90%;
+            text-align: center;
+        }
+        
+        @keyframes slideUpNotification {
+            from { transform: translateX(-50%) translateY(100%); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        /* Состояние загрузки */
+        .loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+        
+        .loading i {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Fallback для FontAwesome */
+        .fa-map-signs:before { content: "🚧"; }
+        .fa-home:before { content: "🏠"; }
+        .fa-th-large:before { content: "📦"; }
+        .fa-arrow-left:before { content: "⬅️"; }
+        .fa-lightbulb:before { content: "💡"; }
+        .fa-search:before { content: "🔍"; }
+        .fa-sitemap:before { content: "🗺️"; }
+        .fa-redo:before { content: "🔄"; }
+        .fa-envelope:before { content: "✉️"; }
+        .fa-map-marker-alt:before { content: "📍"; }
+        .fa-phone:before { content: "📞"; }
+        .fa-clock:before { content: "🕒"; }
+        .fa-times:before { content: "✖️"; }
+        .fa-bug:before { content: "🐛"; }
+        .fa-info-circle:before { content: "ℹ️"; }
+        .fa-boxes:before { content: "📦"; }
+        .fa-toothbrush:before { content: "🪥"; }
+        .fa-paste:before { content: "🧴"; }
+        .fa-shower:before { content: "🚿"; }
+        .fa-exclamation-triangle:before { content: "⚠️"; }
+        .fa-spinner:before { content: "🔄"; }
+        .fab.fa-whatsapp:before { content: "💚"; }
+    </style>
+</head>
+<body>
+    <div class="error-404-container">
+        <!-- Декоративные элементы -->
+        <div class="error-decoration error-decoration-1"></div>
+        <div class="error-decoration error-decoration-2"></div>
+        
+        <div class="error-404-content">
+            <!-- Иконка и код ошибки -->
+            <div class="error-404-icon">
+                <i class="fas fa-map-signs"></i>
+            </div>
+            
+            <div class="error-404-code">404</div>
+            
+            <!-- Заголовок и описание -->
+            <h1 class="error-404-title">Страница не найдена</h1>
+            
+            <p class="error-404-description">
+                К сожалению, запрашиваемая страница не существует или была перемещена.
+                Возможно, вы перешли по устаревшей ссылке или допустили опечатку в адресе.
+            </p>
+            
+            <!-- Основные действия -->
+            <div class="error-404-actions">
+                <a href="/" class="error-404-btn error-404-btn-primary">
+                    <i class="fas fa-home"></i>
+                    На главную
+                </a>
+                
+                <a href="/#all-products" class="error-404-btn error-404-btn-secondary">
+                    <i class="fas fa-th-large"></i>
+                    Каталог товаров
+                </a>
+                
+                <button onclick="history.back()" class="error-404-btn error-404-btn-secondary">
+                    <i class="fas fa-arrow-left"></i>
+                    Назад
+                </button>
+            </div>
+            
+            <!-- Советы -->
+            <div class="error-404-tips">
+                <h3><i class="fas fa-lightbulb"></i> Что можно сделать:</h3>
+                <ul>
+                    <li>
+                        <i class="fas fa-search"></i>
+                        <span>Проверьте правильность введенного адреса в адресной строке браузера</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-sitemap"></i>
+                        <span>Используйте меню навигации для перехода в каталог товаров</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-redo"></i>
+                        <span>Обновите страницу (F5 или Ctrl+R), возможно, это временная ошибка</span>
+                    </li>
+                    <li>
+                        <i class="fas fa-boxes"></i>
+                        <span>Перейдите в категорию "Прочее" для аксессуаров и дополнительных средств гигиены</span>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Популярные категории -->
+            <div class="error-404-categories">
+                <h3>Популярные категории:</h3>
+                <div class="error-categories-grid">
+                    <a href="/#щетки" class="error-category-btn">
+                        <i class="fas fa-toothbrush"></i>
+                        <span>Щетки</span>
+                    </a>
+                    <a href="/#пасты" class="error-category-btn">
+                        <i class="fas fa-paste"></i>
+                        <span>Пасты</span>
+                    </a>
+                    <a href="/#ирригаторы" class="error-category-btn">
+                        <i class="fas fa-shower"></i>
+                        <span>Ирригаторы</span>
+                    </a>
+                    <a href="/#прочее" class="error-category-btn">
+                        <i class="fas fa-boxes"></i>
+                        <span>Прочее</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Контактная информация -->
+            <div class="error-404-contact">
+                <h3><i class="fas fa-info-circle"></i> Контактная информация</h3>
+                <p>
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>г. Волгоград, ул. Землячки, д. 58, к. 1</span>
+                </p>
+                <p>
+                    <i class="fab fa-whatsapp"></i>
+                    <a href="tel:+79963560303">8 (996) 356-03-03 (WhatsApp)</a>
+                </p>
+                <p>
+                    <i class="fas fa-phone"></i>
+                    <a href="tel:+78442490003">8 (8442) 49-00-03 (Стационарный)</a>
+                </p>
+                <p>
+                    <i class="far fa-clock"></i>
+                    <span><strong>График работы:</strong> будни 08:00-20:00, выходные 09:00-15:00</span>
+                </p>
+            </div>
+            
+            <!-- Юридический текст -->
+            <div class="error-404-legal">
+                <p>
+                    <i class="fas fa-info-circle"></i>
+                    Не является публичной офертой. Точную стоимость и наличие товара 
+                    необходимо уточнять у администратора.
+                </p>
+            </div>
+            
+            <!-- Кнопка сообщить об ошибке -->
+            <button class="error-404-btn error-404-btn-secondary" id="reportError" style="margin-top: var(--space-lg);">
+                <i class="fas fa-bug"></i>
+                Сообщить об ошибке
+            </button>
+        </div>
+        
+        <!-- Футер -->
+        <footer class="error-404-footer">
+            <p>© <span id="currentYear"></span> Ортоцентр. Профессиональная стоматология. Все права защищены.</p>
+            <p>Ошибка 404 | Страница не найдена</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Элементы
+            const reportErrorBtn = document.getElementById('reportError');
+            const currentYearSpan = document.getElementById('currentYear');
+            
+            // Установка текущего года
+            if (currentYearSpan) {
+                currentYearSpan.textContent = new Date().getFullYear();
+            }
+            
+            /**
+             * Показать уведомление
+             */
+            function showNotification(message, duration = 3000) {
+                // Удаляем старые уведомления
+                const oldNotifications = document.querySelectorAll('.error-notification');
+                oldNotifications.forEach(n => n.remove());
+                
+                // Создаем уведомление
+                const notification = document.createElement('div');
+                notification.className = 'error-notification';
+                notification.textContent = message;
+                notification.setAttribute('role', 'alert');
+                notification.setAttribute('aria-live', 'polite');
+                
+                document.body.appendChild(notification);
+                
+                // Автоматическое скрытие
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    notification.style.transform = 'translateX(-50%) translateY(20px)';
+                    notification.style.transition = 'all 0.3s ease';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.remove();
+                        }
+                    }, 300);
+                }, duration);
+                
+                return notification;
+            }
+            
+            /**
+             * Сообщить об ошибке
+             */
+            function reportError() {
+                const subject = 'Ошибка 404 на сайте Ортоцентр';
+                const body = `Сообщаю об ошибке 404 по адресу: ${window.location.href}\n\n` +
+                           `Ошибка произошла: ${new Date().toLocaleString()}\n\n` +
+                           `Дополнительная информация:\n`;
+                
+                const mailtoLink = `mailto:info@ortocentr.ru?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+                
+                // Показываем уведомление
+                const notification = showNotification('Открываю почтовый клиент...');
+                
+                // Открываем почтовый клиент
+                setTimeout(() => {
+                    window.location.href = mailtoLink;
+                    
+                    // Обновляем уведомление
+                    notification.textContent = 'Почтовый клиент открыт. Заполните детали ошибки.';
+                    
+                    // Добавляем кнопку закрытия
+                    const closeBtn = document.createElement('button');
+                    closeBtn.innerHTML = '✖';
+                    closeBtn.style.cssText = `
+                        background: transparent;
+                        border: none;
+                        color: inherit;
+                        cursor: pointer;
+                        margin-left: var(--space-md);
+                        padding: 0 var(--space-xs);
+                        font-size: 1.2rem;
+                    `;
+                    closeBtn.onclick = function() {
+                        notification.remove();
+                    };
+                    notification.appendChild(closeBtn);
+                }, 1000);
+                
+                // Блокируем кнопку на время
+                reportErrorBtn.classList.add('loading');
+                reportErrorBtn.innerHTML = '<i class="fas fa-spinner"></i> Открываю почту...';
+                reportErrorBtn.disabled = true;
+                
+                setTimeout(() => {
+                    reportErrorBtn.classList.remove('loading');
+                    reportErrorBtn.innerHTML = '<i class="fas fa-bug"></i> Сообщить об ошибке';
+                    reportErrorBtn.disabled = false;
+                }, 3000);
+            }
+            
+            /**
+             * Автоматический редирект
+             */
+            function setupAutoRedirect() {
+                // Редирект через 30 секунд
+                setTimeout(() => {
+                    const redirectNotice = showNotification('Через 5 секунд вы будете перенаправлены на главную...', 5000);
+                    
+                    let countdown = 5;
+                    const countdownInterval = setInterval(() => {
+                        countdown--;
+                        redirectNotice.textContent = 
+                            `Через ${countdown} секунд${countdown === 1 ? 'у' : countdown < 5 ? 'ы' : ''} вы будете перенаправлены на главную...`;
+                        
+                        if (countdown <= 0) {
+                            clearInterval(countdownInterval);
+                            window.location.href = '/';
+                        }
+                    }, 1000);
+                    
+                    // Кнопка отмены
+                    const cancelBtn = document.createElement('button');
+                    cancelBtn.innerHTML = '✖';
+                    cancelBtn.style.cssText = `
+                        background: transparent;
+                        border: none;
+                        color: inherit;
+                        cursor: pointer;
+                        margin-left: var(--space-md);
+                        padding: 0 var(--space-xs);
+                        font-size: 1.2rem;
+                    `;
+                    cancelBtn.onclick = function() {
+                        clearInterval(countdownInterval);
+                        redirectNotice.remove();
+                        showNotification('Редирект отменен');
+                    };
+                    redirectNotice.appendChild(cancelBtn);
+                    
+                }, 25000); // 25 секунд
+            }
+            
+            /**
+             * Обработка поисковых запросов
+             */
+            function handleSearchQuery() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const query = urlParams.get('q') || urlParams.get('search') || urlParams.get('query');
+                
+                if (query) {
+                    // Показываем поисковое предложение
+                    const searchSuggestion = document.createElement('div');
+                    searchSuggestion.className = 'error-404-tips';
+                    searchSuggestion.style.marginTop = 'var(--space-xl)';
+                    searchSuggestion.innerHTML = `
+                        <h3><i class="fas fa-search"></i> Вы искали:</h3>
+                        <ul>
+                            <li>
+                                <i class="fas fa-quote-left"></i>
+                                <span style="font-style: italic; color: var(--color-text);">
+                                    "${query}"
+                                </span>
+                            </li>
+                            <li>
+                                <i class="fas fa-lightbulb"></i>
+                                <span>Попробуйте использовать поиск на главной странице каталога.</span>
+                            </li>
+                        </ul>
+                    `;
+                    
+                    const content = document.querySelector('.error-404-content');
+                    const tips = content.querySelector('.error-404-tips');
+                    content.insertBefore(searchSuggestion, tips);
+                    
+                    // Добавляем кнопку поиска
+                    const searchBtn = document.createElement('a');
+                    searchBtn.href = `/?search=${encodeURIComponent(query)}`;
+                    searchBtn.className = 'error-404-btn error-404-btn-primary';
+                    searchBtn.style.marginTop = 'var(--space-md)';
+                    searchBtn.innerHTML = '<i class="fas fa-search"></i> Искать в каталоге';
+                    
+                    searchSuggestion.querySelector('ul').appendChild(searchBtn);
+                }
+            }
+            
+            /**
+             * Логирование ошибки
+             */
+            function logError() {
+                const errorData = {
+                    url: window.location.href,
+                    referrer: document.referrer,
+                    timestamp: new Date().toISOString(),
+                    userAgent: navigator.userAgent,
+                    path: window.location.pathname,
+                    search: window.location.search,
+                    hash: window.location.hash
+                };
+                
+                console.log('🔍 Информация об ошибке 404:', errorData);
+                
+                // Можно отправить в аналитику
+                if (typeof gtag !== 'undefined') {
+                    gtag('event', '404_error', {
+                        'event_category': 'error',
+                        'event_label': errorData.url,
+                        'value': 1
+                    });
+                }
+            }
+            
+            /**
+             * Проверка Service Worker
+             */
+            function checkServiceWorker() {
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistration()
+                        .then(registration => {
+                            if (registration) {
+                                console.log('✅ Service Worker зарегистрирован для 404 страницы');
+                            }
+                        })
+                        .catch(error => {
+                            console.warn('Ошибка проверки Service Worker:', error);
+                        });
+                }
+            }
+            
+            /**
+             * Инициализация
+             */
+            function init() {
+                // Установка обработчиков
+                reportErrorBtn.addEventListener('click', reportError);
+                
+                // Логирование
+                logError();
+                
+                // Проверка поискового запроса
+                handleSearchQuery();
+                
+                // Настройка авторедиректа
+                setupAutoRedirect();
+                
+                // Проверка Service Worker
+                checkServiceWorker();
+                
+                // Проверка FontAwesome
+                setTimeout(() => {
+                    const testIcon = document.createElement('i');
+                    testIcon.className = 'fas fa-test';
+                    document.body.appendChild(testIcon);
+                    const computedStyle = window.getComputedStyle(testIcon, ':before');
+                    const content = computedStyle.content;
+                    
+                    if (content === 'none' || content === '') {
+                        console.log('⚠️ FontAwesome не загружен на 404 странице');
+                    }
+                    
+                    testIcon.remove();
+                }, 1000);
+                
+                console.log('🚧 Страница 404 загружена и готова к работе');
+            }
+            
+            // Запуск инициализации
+            init();
+        });
+    </script>
+</body>
+</html>
