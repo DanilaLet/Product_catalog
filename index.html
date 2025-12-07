@@ -7,12 +7,10 @@
     <title>Ортоцентр | Каталог стоматологических товаров</title>
     <meta name="description" content="Профессиональные зубные щетки, пасты, ирригаторы и прочее. Бесплатная консультация в Волгограде. График работы: будни 08:00-20:00, выходные 09:00-15:00">
     
-    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap" rel="stylesheet">
     
-    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
           crossorigin="anonymous" 
@@ -21,10 +19,8 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     
-    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23b9c8c3'>🦷</text></svg>">
     
-    <!-- Мета-теги -->
     <meta name="theme-color" content="#b9c8c3">
     <meta property="og:title" content="Ортоцентр | Профессиональная стоматология в Волгограде">
     <meta property="og:description" content="Каталог профессиональных стоматологических товаров. График работы: будни 08:00-20:00, выходные 09:00-15:00">
@@ -33,15 +29,12 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
-    <!-- Прогресс-бар прокрутки -->
     <div class="progress-bar" id="progressBar"></div>
     
-    <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <!-- Шапка сайта -->
     <header class="header" id="mainHeader">
         <div class="container">
             <div class="header-top">
@@ -67,7 +60,6 @@
                 </div>
             </div>
 
-            <!-- Навигация по категориям -->
             <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
@@ -102,10 +94,8 @@
         </div>
     </header>
 
-    <!-- Основное содержимое -->
     <main class="main-content" id="mainContent">
         <div class="container">
-            <!-- Герой-секция -->
             <section class="hero-section" aria-labelledby="heroTitle">
                 <div class="hero-content">
                     <h1 id="heroTitle" class="hero-title">
@@ -135,7 +125,6 @@
                             <span class="hint">Попробуйте: "электрическая щетка" или "отбеливающая паста"</span>
                         </div>
 
-                        <!-- Быстрый выбор категорий -->
                         <div class="category-quick-select">
                             <div class="quick-select-title">Выберите категорию:</div>
                             <div class="quick-select-buttons">
@@ -166,7 +155,6 @@
                 </div>
             </section>
 
-            <!-- Каталог товаров -->
             <section class="catalog-section" aria-labelledby="catalogTitle" id="all-products">
                 <div class="catalog-header">
                     <h2 id="catalogTitle" class="catalog-title">
@@ -204,11 +192,11 @@
                         <button class="reset-filters-btn" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
                             <span class="btn-text">Сбросить</span>
+                            <span class="btn-text-mobile">Сбросить</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Контейнер для оптимизированного рендеринга -->
                 <div class="catalog-container">
                     <div class="catalog-grid" id="catalogGrid">
                         <div class="loading-state" id="loadingState">
@@ -216,6 +204,12 @@
                                 <div class="spinner-circle"></div>
                             </div>
                             <p class="loading-text">Загружаем каталог...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="skeleton-container" id="skeletonContainer">
+                        <div class="skeleton-grid">
+                            <!-- Скелетоны будут генерироваться JS -->
                         </div>
                     </div>
                     
@@ -232,75 +226,13 @@
                             Сбросить фильтры
                         </button>
                     </div>
-                    
-                    <!-- Скелетоны для загрузки -->
-                    <div class="skeleton-container" id="skeletonContainer" hidden>
-                        <div class="skeleton-grid">
-                            <div class="skeleton-card" style="animation-delay: 0ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                            <div class="skeleton-card" style="animation-delay: 50ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                            <div class="skeleton-card" style="animation-delay: 100ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                            <div class="skeleton-card" style="animation-delay: 150ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                            <div class="skeleton-card" style="animation-delay: 200ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                            <div class="skeleton-card" style="animation-delay: 250ms">
-                                <div class="skeleton-image"></div>
-                                <div class="skeleton-content">
-                                    <div class="skeleton-text skeleton-title"></div>
-                                    <div class="skeleton-text skeleton-category"></div>
-                                    <div class="skeleton-text skeleton-description"></div>
-                                    <div class="skeleton-text skeleton-price"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
                 </div>
 
-                <!-- Лоадер для idle-рендеринга -->
                 <div class="idle-loader" id="idleLoader" hidden>
                     <div class="loader-text">Загрузка следующих товаров...</div>
                 </div>
             </section>
 
-            <!-- Информация о категориях -->
             <section class="categories-info" aria-labelledby="categoriesTitle">
                 <h2 id="categoriesTitle" class="categories-title">Категории товаров</h2>
                 <p class="categories-subtitle">Полный ассортимент для комплексного ухода</p>
@@ -410,7 +342,6 @@
         </div>
     </main>
 
-    <!-- Подвал сайта -->
     <footer class="footer">
         <div class="container">
             <div class="footer-content">
