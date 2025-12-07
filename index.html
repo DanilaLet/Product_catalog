@@ -244,6 +244,22 @@
                                 <button class="sort-option" data-sort="name">По названию</button>
                             </div>
                         </div>
+
+                        <div class="category-dropdown">
+                            <button class="category-toggle" id="categoryToggle" aria-label="Категории" aria-expanded="false">
+                                <i class="fas fa-filter"></i>
+                                <span id="categoryText">Все категории</span>
+                                <i class="fas fa-chevron-down"></i>
+                            </button>
+                            <div class="category-menu" id="categoryMenu" hidden>
+                                <button class="category-option active" data-category="all">Все товары</button>
+                                <button class="category-option" data-category="щетки">Зубные щетки</button>
+                                <button class="category-option" data-category="пасты">Зубные пасты</button>
+                                <button class="category-option" data-category="ирригаторы">Ирригаторы</button>
+                                <button class="category-option" data-category="прочее">Прочее</button>
+                            </div>
+                        </div>
+
                         
                         <button class="reset-filters-btn" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
@@ -570,4 +586,5 @@
     </script>
 </body>
 </html>
+
 
