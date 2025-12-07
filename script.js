@@ -638,7 +638,6 @@ function createProductCard(product) {
                 <div class="product-header">
                     <h3 class="product-title">${product.name}</h3>
                     <span class="product-category">
-                        <i class="fas ${getCategoryIcon(product.category)}"></i>
                         ${getCategoryName(product.category)}
                     </span>
                 </div>
@@ -1524,4 +1523,5 @@ window.CatalogApp = {
 
 
 console.log('📦 CatalogApp v3.2 загружен');
+
 
