@@ -214,7 +214,12 @@ function initTheme() {
 
 function setTheme(theme) {
     try {
+        // Устанавливаем атрибут data-theme
         document.documentElement.setAttribute('data-theme', theme);
+        
+        // Устанавливаем meta color-scheme
+        document.documentElement.style.colorScheme = theme;
+        
         STATE.currentTheme = theme;
         localStorage.setItem(CONFIG.THEME_KEY, theme);
         
@@ -229,8 +234,11 @@ function setTheme(theme) {
             }
         }
         
+        // Анимация перехода темы
         document.body.classList.add('theme-transition');
-        setTimeout(() => document.body.classList.remove('theme-transition'), 500);
+        setTimeout(() => {
+            document.body.classList.remove('theme-transition');
+        }, 500);
         
         console.log('🎨 Тема установлена:', theme);
     } catch (error) {
@@ -1264,5 +1272,6 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.2 загружен');
+
 
 
