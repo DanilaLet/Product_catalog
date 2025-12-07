@@ -539,77 +539,116 @@ body.pwa-installed {
     }
 }
 
-/* ===== 4. КНОПКА "НАВЕРХ" (исправленная) ===== */
+/* ===== КНОПКА "НАВЕРХ" (острая галочка) ===== */
 .back-to-top {
-  position: fixed;
-  bottom: 20px;
-  left: 20px;
-  width: 50px;
-  height: 50px;
-  background: var(--color-primary);
-  color: var(--color-text-light);
-  border: 2px solid var(--color-primary-dark);
-  border-radius: var(--radius-round);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  font-size: 1.4rem;
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(20px);
-  transition: all var(--transition-base);
-  z-index: var(--z-fixed);
-  box-shadow: var(--shadow-lg);
-  touch-action: manipulation;
-  padding: 0;
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    background: var(--color-primary);
+    color: var(--color-text-light);
+    border: 2px solid var(--color-primary-dark);
+    border-radius: var(--radius-round);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(20px) scale(0.95);
+    transition: all var(--transition-bounce);
+    z-index: var(--z-fixed);
+    box-shadow: var(--shadow-lg);
+    touch-action: manipulation;
+    padding: 0;
+    font-family: var(--font-main);
 }
 
 .back-to-top.scrolled {
-  opacity: 0.9;
-  visibility: visible;
-  transform: translateY(0);
+    opacity: 0.9;
+    visibility: visible;
+    transform: translateY(0) scale(1);
 }
 
-/* Скрываем текст, оставляем только иконку */
-.back-to-top .back-to-top-text {
-  display: none;
-}
-
-.back-to-top i {
-  font-size: 1.4rem;
-  transition: transform var(--transition-base);
+.back-to-top-icon {
+    font-size: 1.8rem;
+    font-weight: var(--font-weight-bold);
+    line-height: 1;
+    display: block;
+    transition: all var(--transition-base);
+    transform: translateY(1px); /* Небольшая корректировка по вертикали */
 }
 
 /* Темная тема для кнопки */
 [data-theme="dark"] .back-to-top {
-  background: var(--color-gray-darker);
-  border-color: var(--color-gray-dark);
-  color: var(--color-text-light);
+    background: var(--color-primary-dark);
+    border-color: var(--color-gray-dark);
+    color: var(--color-text-light);
 }
 
 [data-theme="dark"] .back-to-top:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent-dark);
-  color: var(--color-text);
+    background: var(--color-accent);
+    border-color: var(--color-accent-dark);
+    color: var(--color-text);
 }
 
 /* Общие стили для hover */
 .back-to-top:hover {
-  opacity: 1;
-  transform: translateY(-5px) scale(1.1);
-  box-shadow: var(--shadow-xl);
-  background: var(--color-accent);
-  color: var(--color-text);
-  border-color: var(--color-accent-dark);
+    opacity: 1;
+    transform: translateY(-5px) scale(1.1);
+    box-shadow: var(--shadow-xl);
+    background: var(--color-accent);
+    color: var(--color-text);
+    border-color: var(--color-accent-dark);
 }
 
-.back-to-top:hover i {
-  transform: translateY(-2px);
+.back-to-top:hover .back-to-top-icon {
+    transform: translateY(-2px);
 }
 
 .back-to-top:active {
-  transform: translateY(-2px) scale(1);
+    transform: translateY(-2px) scale(1.05);
+    transition: all var(--transition-fast);
+}
+
+/* Анимация пульсации для привлечения внимания */
+@keyframes pulse-glow {
+    0%, 100% {
+        box-shadow: var(--shadow-lg);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(249, 189, 4, 0.2);
+    }
+}
+
+.back-to-top:hover {
+    animation: pulse-glow 2s infinite;
+}
+
+/* Адаптивность для мобильных */
+@media (max-width: 768px) {
+    .back-to-top {
+        left: 10px;
+        bottom: 10px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .back-to-top-icon {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .back-to-top {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .back-to-top-icon {
+        font-size: 1.4rem;
+    }
 }
 
 /* ===== 5. ГЛАВНАЯ СЕКЦИЯ ===== */
@@ -2437,5 +2476,6 @@ img {
 
 
 /* ===== 20. КОНЕЦ СТИЛЕЙ ===== */
+
 
 
