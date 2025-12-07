@@ -2364,111 +2364,64 @@ img {
   display: block;
 }
 
-.product-image-container img {
+.product-image-container {
+  position: relative;
+  height: var(--image-height);
   width: 100%;
-  height: 100%;
+  overflow: hidden;
+  background: var(--color-surface);
+  border-radius: var(--image-border-radius);
+  margin-bottom: var(--space-md);
+  cursor: pointer;
 }
 
-/* Защита от сломанных изображений */
-.product-image:before {
+.product-image-container::before {
   content: " ";
-  display: block;
   position: absolute;
   top: 0;
   left: 0;
-  height: 100%;
   width: 100%;
+  height: 100%;
   background-color: var(--color-surface);
   background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="60" font-size="40" text-anchor="middle" fill="%23b9c8c3">🦷</text></svg>');
   background-repeat: no-repeat;
   background-position: center;
   background-size: 50%;
-  z-index: -1;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity var(--transition-base);
 }
 
-.product-image:not([src]):before,
-.product-image[src=""]:before {
+/* Показываем placeholder когда изображение не загружено или при ошибке */
+.product-image-container.image-error::before,
+.product-image-container.image-loading::before {
+  opacity: 1;
+  z-index: 1;
+}
+
+.product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform var(--transition-slow);
   display: block;
+  position: relative;
+  z-index: 2;
 }
 
-/* ===== БЫСТРЫЙ ВЫБОР КАТЕГОРИЙ ===== */
-.category-quick-select {
-  margin-top: var(--space-xl);
-  max-width: 600px;
+/* Когда изображение загружено, скрываем placeholder */
+.product-image-container.image-loaded .product-image {
+  background-color: transparent;
 }
 
-.quick-select-title {
-  font-size: 1rem;
-  color: var(--color-text-secondary);
-  margin-bottom: var(--space-sm);
-  font-weight: var(--font-weight-medium);
+.product-image-container.image-error .product-image,
+.product-image-container.image-loading .product-image {
+  opacity: 0;
 }
 
-.quick-select-buttons {
-  display: flex;
-  gap: var(--space-sm);
-  flex-wrap: wrap;
-}
-
-.quick-select-btn {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
-  background: var(--color-surface);
-  border: 2px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: var(--font-weight-medium);
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  flex: 1;
-  min-width: 120px;
-  justify-content: center;
-}
-
-.quick-select-btn:hover {
-  background: var(--color-primary-ultralight);
-  border-color: var(--color-primary);
-  transform: translateY(-2px);
-}
-
-.quick-select-btn i {
-  color: var(--color-primary);
-  font-size: 1rem;
-}
-
-.quick-select-btn.active {
-  background: var(--color-primary);
-  color: var(--color-text-light);
-  border-color: var(--color-primary-dark);
-}
-
-.quick-select-btn.active i {
-  color: var(--color-text-light);
-}
-
-/* Адаптивность для быстрого выбора */
-@media (max-width: 768px) {
-  .quick-select-buttons {
-    gap: var(--space-xs);
-  }
-  
-  .quick-select-btn {
-    min-width: calc(50% - var(--space-xs));
-    padding: var(--space-xs) var(--space-sm);
-  }
-}
-
-@media (max-width: 480px) {
-  .quick-select-btn {
-    min-width: 100%;
-  }
-  
-  .quick-select-btn span {
-    font-size: 0.85rem;
-  }
+.product-card:hover .product-image {
+  transform: scale(1.05);
 }
 
 /* ===== 18. ИСПРАВЛЕНИЯ ДЛЯ ХЭДЕРА НА ДЕСКТОПЕ ===== */
@@ -2498,5 +2451,6 @@ img {
     font-size: 0.8rem;
   }
 }
+
 
 /* ===== 20. КОНЕЦ СТИЛЕЙ ===== */
