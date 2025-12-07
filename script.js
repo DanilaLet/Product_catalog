@@ -336,6 +336,7 @@ function initMobileMenu() {
         console.log('📱 Меню:', STATE.isMenuOpen ? 'открыто' : 'закрыто');
     }
     
+    // Основной обработчик клика
     DOM.menuToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -343,12 +344,12 @@ function initMobileMenu() {
     });
     
     // Закрытие меню при клике на ссылку
-    document.querySelectorAll('.nav-link').forEach(link => {
-        link.addEventListener('click', () => {
+    DOM.mainNav.addEventListener('click', (e) => {
+        if (e.target.closest('.nav-link')) {
             if (window.innerWidth <= 768 && STATE.isMenuOpen) {
                 toggleMenu();
             }
-        });
+        }
     });
     
     // Закрытие меню при клике вне его
@@ -361,8 +362,19 @@ function initMobileMenu() {
     });
     
     // Автоматическое закрытие при ресайзе
+    let resizeTimeout;
     window.addEventListener('resize', () => {
-        if (window.innerWidth > 768 && STATE.isMenuOpen) {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(() => {
+            if (window.innerWidth > 768 && STATE.isMenuOpen) {
+                toggleMenu();
+            }
+        }, 250);
+    });
+    
+    // Закрытие меню при нажатии ESC
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && STATE.isMenuOpen) {
             toggleMenu();
         }
     });
@@ -1312,3 +1324,4 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.5 загружен');
+
