@@ -99,10 +99,15 @@
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.16);
   --shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.2);
+
+
+   
+   color-scheme: light dark;
 }
 
 /* ===== ТЕМНАЯ ТЕМА ===== */
 [data-theme="dark"] {
+    color-scheme: dark;
   --color-text: #f0f0f0;
   --color-text-secondary: #b0b0b0;
   --color-text-light: #ffffff;
@@ -2195,3 +2200,4 @@ img {
   height: auto;
   display: block;
 }
+
