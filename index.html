@@ -2,48 +2,31 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="version" content="3.2">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Ортоцентр | Каталог стоматологических товаров</title>
     <meta name="description" content="Профессиональные зубные щетки, пасты, ирригаторы и прочее. Бесплатная консультация в Волгограде. График работы: будни 08:00-20:00, выходные 09:00-15:00">
     
-    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Стили -->
     <link rel="stylesheet" href="style.css">
-    
-    <!-- PWA -->
     <link rel="manifest" href="manifest.json">
     
-    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23b9c8c3%22>🦷</text></svg>">
     
-    <!-- SEO -->
     <meta name="theme-color" content="#b9c8c3">
     <meta property="og:title" content="Ортоцентр | Профессиональная стоматология в Волгограде">
     <meta property="og:description" content="Каталог профессиональных стоматологических товаров. График работы: будни 08:00-20:00, выходные 09:00-15:00">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ортцентр.рф">
     <link rel="canonical" href="https://ортцентр.рф">
-    
-    <!-- Preload critical resources -->
-    <link rel="preload" href="style.css" as="style">
-    <link rel="preload" href="script.js" as="script">
 </head>
 <body>
-    <!-- Кнопка "Наверх" (левый нижний угол) -->
-    <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх">
         <span class="back-to-top-icon">^</span>
     </button>
 
-    <!-- Модальное окно для изображений -->
     <div class="image-modal" id="imageModal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
@@ -92,11 +75,9 @@
         </div>
     </div>
 
-    <!-- Шапка сайта (уменьшается при скролле) -->
     <header class="header" id="mainHeader">
         <div class="container">
             <div class="header-top">
-                <!-- Логотип и название -->
                 <div class="logo" id="mainLogo">
                     <h1 class="logo-title">
                         <span class="logo-text">Ортоцентр</span>
@@ -104,12 +85,6 @@
                     </h1>
                 </div>
                 
-                <!-- Контакты (правая часть) - УБИРАЕМ ТЕЛЕФОНЫ И ГРАФИК -->
-                <div class="header-contacts">
-                    <!-- Убираем всю секцию с телефонами и графиком -->
-                </div>
-                
-                <!-- Управление (компактное) -->
                 <div class="header-controls">
                     <div class="theme-switcher compact">
                         <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
@@ -127,8 +102,6 @@
                 </div>
             </div>
 
-            <!-- Навигация по категориям (остается при скролле) -->
-            <!-- Навигация по категориям -->
             <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
@@ -163,7 +136,6 @@
         </div>
     </header>
 
-    <!-- Основной контент -->
     <main class="main-content" id="mainContent">
         <div class="container">
             <section class="hero-section" aria-labelledby="heroTitle">
@@ -206,7 +178,6 @@
                                 <button class="quick-select-btn" data-category="ирригаторы" aria-label="Ирригаторы">
                                     <span>Ирригаторы</span>
                                 </button>
-                                <!-- УБИРАЕМ "ПРОЧЕЕ" -->
                             </div>
                         </div>
                     </div>
@@ -245,15 +216,14 @@
                                 <i class="fas fa-chevron-down"></i>
                             </button>
                             <div class="sort-menu" id="sortMenu">
-                                <button class="sort-option active" data-sort="default" aria-label="Сортировать по популярности">По популярности</button>
-                                <button class="sort-option" data-sort="price-asc" aria-label="Сортировать по цене (сначала дешевые)">Сначала дешевые</button>
-                                <button class="sort-option" data-sort="price-desc" aria-label="Сортировать по цене (сначала дорогие)">Сначала дорогие</button>
-                                <button class="sort-option" data-sort="new" aria-label="Сортировать по новинкам">Новинки</button>
-                                <button class="sort-option" data-sort="name" aria-label="Сортировать по названию">По названию</button>
+                                <button class="sort-option active" data-sort="default">По популярности</button>
+                                <button class="sort-option" data-sort="price-asc">Сначала дешевые</button>
+                                <button class="sort-option" data-sort="price-desc">Сначала дорогие</button>
+                                <button class="sort-option" data-sort="new">Новинки</button>
+                                <button class="sort-option" data-sort="name">По названию</button>
                             </div>
                         </div>
                         
-                        <!-- Кнопка сброса фильтров -->
                         <button class="reset-filters-btn" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
                             <span class="btn-text">Сбросить</span>
@@ -396,11 +366,9 @@
         </div>
     </main>
 
-    <!-- Подвал (полностью переработан) -->
     <footer class="footer" id="mainFooter">
         <div class="container">
             <div class="footer-content">
-                <!-- Колонка 1: О компании -->
                 <div class="footer-column">
                     <div class="footer-logo">
                         <h3 class="footer-title">Ортоцентр</h3>
@@ -448,7 +416,6 @@
                     </div>
                 </div>
                 
-                <!-- Колонка 2: Категории -->
                 <div class="footer-column">
                     <h4 class="footer-heading">
                         <i class="fas fa-th-large"></i>
@@ -473,7 +440,6 @@
                     </div>
                 </div>
                 
-                <!-- Колонка 3: Ссылки и соцсети -->
                 <div class="footer-column">
                     <h4 class="footer-heading">
                         <i class="fas fa-external-link-alt"></i>
@@ -521,7 +487,6 @@
                 </div>
             </div>
             
-            <!-- Нижняя часть футера -->
             <div class="footer-bottom">
                 <div class="footer-legal">
                     <p class="footer-copyright">
@@ -549,19 +514,15 @@
         </div>
     </footer>
 
-    <!-- Скрипты -->
     <script src="script.js" defer></script>
     
     <script>
-        // Базовая инициализация (не блокирующая рендеринг)
         document.addEventListener('DOMContentLoaded', function() {
-            // Установка текущего года
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
             }
             
-            // Кнопка скролла в футере
             const footerScrollTop = document.getElementById('footerScrollTop');
             if (footerScrollTop) {
                 footerScrollTop.addEventListener('click', () => {
@@ -572,7 +533,6 @@
                 });
             }
             
-            // Регистрация Service Worker для PWA
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/service-worker.js')
@@ -585,7 +545,6 @@
                 });
             }
             
-            // Проверка PWA установки
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 document.body.classList.add('pwa-installed');
             }
@@ -593,14 +552,9 @@
             console.log('🚀 Каталог «Ортоцентр» загружен и готов к работе');
         });
         
-        // Fallback для FontAwesome при офлайн-работе
         document.addEventListener('DOMContentLoaded', function() {
             const style = document.createElement('style');
             style.textContent = `
-                @font-face {
-                    font-family: 'FontAwesomeFallback';
-                    src: local('Arial');
-                }
                 .fa-wifi-slash:before { content: "📶"; }
                 .fa-info-circle:before { content: "ℹ️"; }
                 .fa-sync-alt:before { content: "🔄"; }
@@ -644,7 +598,6 @@
                 .fab.fa-viber:before { content: "💜"; }
             `;
             
-            // Проверка загрузился ли FontAwesome
             setTimeout(() => {
                 const testIcon = document.createElement('i');
                 testIcon.className = 'fas fa-test';
@@ -662,8 +615,4 @@
         });
     </script>
 </body>
-
 </html>
-
-
-
