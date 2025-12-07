@@ -1,6 +1,6 @@
 /**
  * КАТАЛОГ «ОРТОЦЕНТР» - ОСНОВНОЙ СКРИПТ
- * Версия: 3.2 с исправлениями хэдера и кнопок
+ * Версия: 3.3 (Оптимизированная)
  */
 
 // ============================================
@@ -14,7 +14,10 @@ const CONFIG = {
     ANIMATION_DELAY: 50,
     THEME_KEY: 'ortocentr-theme',
     EASTER_EGG_CODE: 'СТОМАТОЛОГИЯ',
-    CACHE_NAME: 'ortocentr-cache-v2.0'
+    CACHE_NAME: 'ortocentr-cache-v2.0',
+    VIEW_KEY: 'ortocentr-view',
+    PRODUCTS_KEY: 'ortocentr-products',
+    UPDATE_KEY: 'ortocentr-last-update'
 };
 
 const STATE = {
@@ -33,45 +36,15 @@ const STATE = {
     isMenuOpen: false
 };
 
-const DOM = {
-    catalogGrid: null,
-    loadingState: null,
-    emptyState: null,
-    searchInput: null,
-    searchClear: null,
-    resetFiltersBtn: null,
-    resetFiltersCatalogBtn: null,
-    categoryLinks: [],
-    sortOptions: [],
-    viewToggles: [],
-    productsCount: null,
-    currentCategoryText: null,
-    backToTop: null,
-    menuToggle: null,
-    mainNav: null,
-    themeToggle: null,
-    sortToggle: null,
-    sortMenu: null,
-    sortText: null,
-    viewGrid: null,
-    viewList: null,
-    imageModal: null,
-    modalClose: null,
-    modalPrev: null,
-    modalNext: null,
-    modalImage: null,
-    modalProductName: null,
-    modalProductPrice: null,
-    modalProductDescription: null,
-    modalProductCategory: null,
-    modalProductFeatures: null,
-    modalCategoryFilter: null,
-    mainHeader: null,
-    mainLogo: null,
-    categoryFilterBtns: [],
-    footerCategoryBtns: [],
-    searchHints: null,
-    quickSelectBtns: []
+const DOM = {};
+
+// Сопоставления категорий и иконок (вынесены из функций)
+const CATEGORY_MAP = {
+    'щетки': { name: 'Зубные щетки', icon: 'fa-toothbrush' },
+    'пасты': { name: 'Зубные пасты', icon: 'fa-paste' },
+    'ирригаторы': { name: 'Ирригаторы', icon: 'fa-shower' },
+    'прочее': { name: 'Прочее', icon: 'fa-boxes' },
+    'all': { name: 'Все товары', icon: 'fa-th-large' }
 };
 
 // ============================================
@@ -80,27 +53,36 @@ const DOM = {
 
 function initDOMReferences() {
     try {
+        // Основные элементы
         DOM.catalogGrid = document.getElementById('catalogGrid');
         DOM.loadingState = document.getElementById('loadingState');
         DOM.emptyState = document.getElementById('emptyState');
-        DOM.searchInput = document.getElementById('globalSearch');
-        DOM.searchClear = document.getElementById('searchClear');
-        DOM.resetFiltersBtn = document.getElementById('resetFilters');
-        DOM.resetFiltersCatalogBtn = document.getElementById('resetFiltersBtn');
-        DOM.categoryLinks = document.querySelectorAll('.nav-link');
-        DOM.sortOptions = document.querySelectorAll('.sort-option');
-        DOM.viewToggles = document.querySelectorAll('.view-toggle');
         DOM.productsCount = document.getElementById('productsCount');
         DOM.currentCategoryText = document.getElementById('currentCategoryText');
-        DOM.backToTop = document.getElementById('backToTop');
-        DOM.menuToggle = document.getElementById('menuToggle');
-        DOM.mainNav = document.getElementById('mainNav');
-        DOM.themeToggle = document.getElementById('themeToggle');
+        
+        // Элементы поиска
+        DOM.searchInput = document.getElementById('globalSearch');
+        DOM.searchClear = document.getElementById('searchClear');
+        
+        // Элементы управления
+        DOM.resetFiltersBtn = document.getElementById('resetFilters');
+        DOM.resetFiltersCatalogBtn = document.getElementById('resetFiltersBtn');
         DOM.sortToggle = document.getElementById('sortToggle');
         DOM.sortMenu = document.getElementById('sortMenu');
         DOM.sortText = document.getElementById('sortText');
         DOM.viewGrid = document.getElementById('viewGrid');
         DOM.viewList = document.getElementById('viewList');
+        DOM.themeToggle = document.getElementById('themeToggle');
+        DOM.themeReset = document.getElementById('themeReset');
+        DOM.backToTop = document.getElementById('backToTop');
+        
+        // Навигация
+        DOM.menuToggle = document.getElementById('menuToggle');
+        DOM.mainNav = document.getElementById('mainNav');
+        DOM.mainHeader = document.getElementById('mainHeader');
+        DOM.mainLogo = document.getElementById('mainLogo');
+        
+        // Модальное окно
         DOM.imageModal = document.getElementById('imageModal');
         DOM.modalClose = document.getElementById('modalClose');
         DOM.modalPrev = document.getElementById('modalPrev');
@@ -112,12 +94,15 @@ function initDOMReferences() {
         DOM.modalProductCategory = document.getElementById('modalProductCategory');
         DOM.modalProductFeatures = document.getElementById('modalProductFeatures');
         DOM.modalCategoryFilter = document.getElementById('modalCategoryFilter');
-        DOM.mainHeader = document.getElementById('mainHeader');
-        DOM.mainLogo = document.getElementById('mainLogo');
+        
+        // Коллекции элементов
+        DOM.categoryLinks = document.querySelectorAll('.nav-link');
+        DOM.sortOptions = document.querySelectorAll('.sort-option');
+        DOM.viewToggles = document.querySelectorAll('.view-toggle');
         DOM.categoryFilterBtns = document.querySelectorAll('.category-filter-btn');
         DOM.footerCategoryBtns = document.querySelectorAll('.footer-category-btn');
-        DOM.searchHints = document.querySelector('.search-hints');
         DOM.quickSelectBtns = document.querySelectorAll('.quick-select-btn');
+        DOM.searchHints = document.querySelector('.search-hints');
         
         console.log('✅ DOM элементы инициализированы');
     } catch (error) {
@@ -132,13 +117,9 @@ function initDOMReferences() {
 
 function debounce(func, wait) {
     let timeout;
-    return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
+    return (...args) => {
         clearTimeout(timeout);
-        timeout = setTimeout(later, wait);
+        timeout = setTimeout(() => func(...args), wait);
     };
 }
 
@@ -152,28 +133,15 @@ function formatPrice(price) {
 }
 
 function getCategoryName(category) {
-    const categories = {
-        'щетки': 'Зубные щетки',
-        'пасты': 'Зубные пасты',
-        'ирригаторы': 'Ирригаторы',
-        'прочее': 'Прочее',
-        'all': 'Все товары'
-    };
-    return categories[category] || category;
+    return CATEGORY_MAP[category]?.name || category;
 }
 
 function getCategoryIcon(category) {
-    const icons = {
-        'щетки': 'fa-toothbrush',
-        'пасты': 'fa-paste',
-        'ирригаторы': 'fa-shower',
-        'прочее': 'fa-boxes',
-        'all': 'fa-th-large'
-    };
-    return icons[category] || 'fa-box';
+    return CATEGORY_MAP[category]?.icon || 'fa-box';
 }
 
-function getRussianPlural(number, forms) {
+function getRussianPlural(number) {
+    const forms = ['товар', 'товара', 'товаров'];
     const cases = [2, 0, 1, 1, 1, 2];
     return forms[
         (number % 100 > 4 && number % 100 < 20) 
@@ -183,9 +151,9 @@ function getRussianPlural(number, forms) {
 }
 
 function formatFeatures(features) {
-    return features?.length ? features.map(feature => 
-        `<li><i class="fas fa-check"></i> ${feature}</li>`
-    ).join('') : '';
+    return features?.length 
+        ? features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')
+        : '';
 }
 
 // ============================================
@@ -197,25 +165,17 @@ function initTheme() {
         const savedTheme = localStorage.getItem(CONFIG.THEME_KEY);
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
-        let initialTheme;
-        
-        // Если пользователь уже выбирал тему, используем её
-        if (savedTheme) {
-            initialTheme = savedTheme;
-            // Показываем кнопку сброса
-            if (document.getElementById('themeReset')) {
-                document.getElementById('themeReset').style.display = 'flex';
-            }
-        } else {
-            // Иначе используем системную
-            initialTheme = systemPrefersDark ? 'dark' : 'light';
-        }
+        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
         
         setTheme(initialTheme);
         
+        // Показываем кнопку сброса если тема сохранена
+        if (DOM.themeReset) {
+            DOM.themeReset.style.display = savedTheme ? 'flex' : 'none';
+        }
+        
         // Слушатель изменения системной темы
-        window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
-            // Меняем тему только если пользователь не выбрал вручную
+        window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
             if (!localStorage.getItem(CONFIG.THEME_KEY)) {
                 setTheme(e.matches ? 'dark' : 'light');
             }
@@ -229,10 +189,7 @@ function initTheme() {
 
 function setTheme(theme) {
     try {
-        // Устанавливаем атрибут data-theme
         document.documentElement.setAttribute('data-theme', theme);
-        
-        // Устанавливаем meta color-scheme
         document.documentElement.style.colorScheme = theme;
         
         STATE.currentTheme = theme;
@@ -251,9 +208,7 @@ function setTheme(theme) {
         
         // Анимация перехода темы
         document.body.classList.add('theme-transition');
-        setTimeout(() => {
-            document.body.classList.remove('theme-transition');
-        }, 500);
+        setTimeout(() => document.body.classList.remove('theme-transition'), 500);
         
         console.log('🎨 Тема установлена:', theme);
     } catch (error) {
@@ -265,28 +220,22 @@ function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
     const newTheme = currentTheme === 'light' ? 'dark' : 'light';
     
-    // Сохраняем выбор пользователя
     localStorage.setItem(CONFIG.THEME_KEY, newTheme);
     
-    // Показываем кнопку сброса
-    if (document.getElementById('themeReset')) {
-        document.getElementById('themeReset').style.display = 'flex';
+    if (DOM.themeReset) {
+        DOM.themeReset.style.display = 'flex';
     }
     
     setTheme(newTheme);
 }
 
-// Новая функция сброса к системной теме
 function resetToSystemTheme() {
-    // Удаляем сохраненную тему
     localStorage.removeItem(CONFIG.THEME_KEY);
     
-    // Скрываем кнопку сброса
-    if (document.getElementById('themeReset')) {
-        document.getElementById('themeReset').style.display = 'none';
+    if (DOM.themeReset) {
+        DOM.themeReset.style.display = 'none';
     }
     
-    // Устанавливаем системную тему
     const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setTheme(systemPrefersDark ? 'dark' : 'light');
     
@@ -301,33 +250,35 @@ function initScrollHeader() {
     if (!DOM.mainHeader) return;
     
     let lastScrollTop = 0;
-    let isScrolling = false;
+    let ticking = false;
     
-    function handleScroll() {
-        if (isScrolling) return;
+    function updateHeader(scrollTop) {
+        const isScrolled = scrollTop > CONFIG.SCROLL_THRESHOLD;
         
-        isScrolling = true;
-        requestAnimationFrame(() => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            
-            if (DOM.backToTop) {
-                DOM.backToTop.classList.toggle('scrolled', scrollTop > CONFIG.SCROLL_THRESHOLD);
-            }
-            
-            DOM.mainHeader.classList.toggle('scrolled', scrollTop > CONFIG.SCROLL_THRESHOLD);
-            
-            if (scrollTop > lastScrollTop && scrollTop > 200 && !STATE.isMenuOpen) {
-                DOM.mainHeader.style.transform = 'translateY(-100%)';
-            } else {
-                DOM.mainHeader.style.transform = 'translateY(0)';
-            }
-            
-            lastScrollTop = scrollTop;
-            isScrolling = false;
-        });
+        if (DOM.backToTop) {
+            DOM.backToTop.classList.toggle('scrolled', isScrolled);
+        }
+        
+        DOM.mainHeader.classList.toggle('scrolled', isScrolled);
+        
+        if (scrollTop > lastScrollTop && scrollTop > 200 && !STATE.isMenuOpen) {
+            DOM.mainHeader.style.transform = 'translateY(-100%)';
+        } else {
+            DOM.mainHeader.style.transform = 'translateY(0)';
+        }
+        
+        lastScrollTop = scrollTop;
     }
     
-    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            requestAnimationFrame(() => {
+                updateHeader(window.pageYOffset || document.documentElement.scrollTop);
+                ticking = false;
+            });
+            ticking = true;
+        }
+    }, { passive: true });
     
     setTimeout(() => {
         if (window.pageYOffset > CONFIG.SCROLL_THRESHOLD) {
@@ -343,7 +294,9 @@ function initMobileMenu() {
     
     function toggleMenu() {
         STATE.isMenuOpen = !STATE.isMenuOpen;
-        DOM.menuToggle.setAttribute('aria-expanded', STATE.isMenuOpen);
+        const expanded = STATE.isMenuOpen.toString();
+        
+        DOM.menuToggle.setAttribute('aria-expanded', expanded);
         DOM.mainNav.classList.toggle('active');
         document.body.classList.toggle('menu-open');
         
@@ -363,6 +316,7 @@ function initMobileMenu() {
     
     DOM.menuToggle.addEventListener('click', toggleMenu);
     
+    // Закрытие меню при клике на ссылку
     document.querySelectorAll('.nav-link').forEach(link => {
         link.addEventListener('click', () => {
             if (window.innerWidth <= 768 && STATE.isMenuOpen) {
@@ -371,6 +325,7 @@ function initMobileMenu() {
         });
     });
     
+    // Закрытие меню при клике вне его
     document.addEventListener('click', (e) => {
         if (STATE.isMenuOpen && 
             !DOM.menuToggle.contains(e.target) && 
@@ -379,6 +334,7 @@ function initMobileMenu() {
         }
     });
     
+    // Автоматическое закрытие при ресайзе
     window.addEventListener('resize', () => {
         if (window.innerWidth > 768 && STATE.isMenuOpen) {
             toggleMenu();
@@ -418,7 +374,9 @@ async function loadProducts() {
             headers: { 'X-Requested-With': 'XMLHttpRequest' }
         });
         
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
         const data = await response.json();
         STATE.products = data.products || [];
@@ -429,9 +387,10 @@ async function loadProducts() {
         applyFilters();
         setupEventListeners();
         
+        // Кэширование данных
         try {
-            localStorage.setItem('ortocentr-products', JSON.stringify(STATE.products));
-            localStorage.setItem('ortocentr-last-update', new Date().toISOString());
+            localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
+            localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
         } catch (e) {
             console.warn('⚠️ Не удалось сохранить в localStorage:', e.message);
         }
@@ -439,9 +398,10 @@ async function loadProducts() {
     } catch (error) {
         console.error('❌ Ошибка загрузки товаров:', error);
         
+        // Попытка загрузить из кэша
         try {
-            const cachedProducts = localStorage.getItem('ortocentr-products');
-            const lastUpdate = localStorage.getItem('ortocentr-last-update');
+            const cachedProducts = localStorage.getItem(CONFIG.PRODUCTS_KEY);
+            const lastUpdate = localStorage.getItem(CONFIG.UPDATE_KEY);
             
             if (cachedProducts) {
                 console.log('📦 Используем кэшированные товары из localStorage');
@@ -450,7 +410,8 @@ async function loadProducts() {
                 applyFilters();
                 setupEventListeners();
                 
-                showNotification(`Используем кэшированные данные (обновлено: ${new Date(lastUpdate).toLocaleDateString()})`, 'info');
+                const updateDate = lastUpdate ? new Date(lastUpdate).toLocaleDateString() : 'неизвестно';
+                showNotification(`Используем кэшированные данные (обновлено: ${updateDate})`, 'info');
             } else {
                 showError('Не удалось загрузить каталог. Пожалуйста, проверьте соединение и обновите страницу.');
             }
@@ -466,10 +427,12 @@ async function loadProducts() {
 function filterProducts() {
     let result = [...STATE.products];
     
+    // Фильтрация по категории
     if (STATE.currentCategory !== 'all') {
         result = result.filter(product => product.category === STATE.currentCategory);
     }
     
+    // Фильтрация по поиску
     if (STATE.searchQuery.trim()) {
         const query = STATE.searchQuery.toLowerCase().trim();
         result = result.filter(product => 
@@ -488,20 +451,15 @@ function sortProducts(products) {
     const sorted = [...products];
     
     switch (STATE.currentSort) {
-        case 'price-asc':
-            return sorted.sort((a, b) => a.price - b.price);
-        case 'price-desc':
-            return sorted.sort((a, b) => b.price - a.price);
-        case 'new':
-            return sorted.sort((a, b) => {
-                if (a.isNew && !b.isNew) return -1;
-                if (!a.isNew && b.isNew) return 1;
-                return 0;
-            });
-        case 'name':
-            return sorted.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-        default:
-            return sorted.sort((a, b) => b.id - a.id);
+        case 'price-asc': return sorted.sort((a, b) => a.price - b.price);
+        case 'price-desc': return sorted.sort((a, b) => b.price - a.price);
+        case 'new': return sorted.sort((a, b) => {
+            if (a.isNew && !b.isNew) return -1;
+            if (!a.isNew && b.isNew) return 1;
+            return 0;
+        });
+        case 'name': return sorted.sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+        default: return sorted.sort((a, b) => b.id - a.id);
     }
 }
 
@@ -512,6 +470,7 @@ function sortProducts(products) {
 function renderProducts() {
     if (!DOM.catalogGrid) return;
     
+    // Очистка контейнера
     while (DOM.catalogGrid.firstChild) {
         DOM.catalogGrid.removeChild(DOM.catalogGrid.firstChild);
     }
@@ -523,10 +482,12 @@ function renderProducts() {
     
     hideEmptyState();
     
+    // Создание карточек с анимацией
     STATE.filteredProducts.forEach((product, index) => {
         const card = createProductCard(product);
         DOM.catalogGrid.appendChild(card);
         
+        // Анимация появления
         requestAnimationFrame(() => {
             card.style.opacity = '0';
             card.style.transform = 'translateY(20px)';
@@ -548,7 +509,7 @@ function createProductCard(product) {
     card.dataset.id = product.id;
     card.dataset.category = product.category;
     
-    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
+    const newBadge = product.isNew ? '<span class="product-badge badge-new">Новинка</span>' : '';
     const features = formatFeatures(product.features?.slice(0, 3));
     const featuresList = features ? `<ul class="product-features">${features}</ul>` : '';
     
@@ -572,28 +533,31 @@ function createProductCard(product) {
         </div>
     `;
     
+    // Обработка изображения
     const imageContainer = card.querySelector('.product-image-container');
     const img = card.querySelector('.product-image');
     
     imageContainer.classList.add('image-loading');
     
-    img.addEventListener('load', function() {
+    img.addEventListener('load', () => {
         imageContainer.classList.remove('image-loading');
         imageContainer.classList.add('image-loaded');
     });
     
-    img.addEventListener('error', function() {
+    img.addEventListener('error', () => {
         imageContainer.classList.remove('image-loading');
         imageContainer.classList.add('image-error');
-        if (this.src !== 'assets/images/placeholder.jpg' && this.src !== '/assets/images/placeholder.jpg') {
-            this.src = 'assets/images/placeholder.jpg';
+        if (img.src !== 'assets/images/placeholder.jpg') {
+            img.src = 'assets/images/placeholder.jpg';
         }
     });
     
+    // Обработчики кликов
     imageContainer.addEventListener('click', () => showImageModal(product.id));
     card.addEventListener('click', (e) => {
-        if (e.target.closest('.product-image-container') || e.target.closest('.product-badges')) return;
-        showImageModal(product.id);
+        if (!e.target.closest('.product-image-container') && !e.target.closest('.product-badges')) {
+            showImageModal(product.id);
+        }
     });
     
     return card;
@@ -603,7 +567,7 @@ function updateProductsCount() {
     if (!DOM.productsCount) return;
     
     const count = STATE.filteredProducts.length;
-    const text = `(${count} ${getRussianPlural(count, ['товар', 'товара', 'товаров'])})`;
+    const text = `(${count} ${getRussianPlural(count)})`;
     DOM.productsCount.textContent = text;
 }
 
@@ -624,29 +588,7 @@ function applyFilters() {
     updateActiveSort();
     updateFooterFilters();
     updateQuickSelectButtons();
-    
-    // УБИРАЕМ автоматическую прокрутку при фильтрации
-    // Только если НЕ поисковый запрос (поиск обрабатывается отдельно)
-    if (!STATE.searchQuery) {
-        requestAnimationFrame(() => {
-            const catalogSection = document.querySelector('.catalog-section');
-            if (catalogSection) {
-                const headerHeight = DOM.mainHeader?.offsetHeight || 70;
-                const catalogTop = catalogSection.getBoundingClientRect().top + window.pageYOffset;
-                
-                // Прокручиваем ТОЛЬКО если пользователь находится выше каталога
-                // и изменил категорию (не поиск)
-                if (window.pageYOffset < catalogTop - headerHeight - 20) {
-                    window.scrollTo({
-                        top: catalogTop - headerHeight - 20,
-                        behavior: 'smooth'
-                    });
-                }
-            }
-        });
-    }
 }
-
 
 function scrollToCatalog() {
     requestAnimationFrame(() => {
@@ -663,7 +605,6 @@ function scrollToCatalog() {
     });
 }
 
-
 function filterProductsByCategory(category) {
     if (category === STATE.currentCategory && !STATE.searchQuery) return;
     
@@ -672,11 +613,13 @@ function filterProductsByCategory(category) {
     
     if (DOM.searchInput) {
         DOM.searchInput.value = '';
-        DOM.searchClear.style.display = 'none';
+        if (DOM.searchClear) {
+            DOM.searchClear.style.display = 'none';
+        }
     }
     
     applyFilters();
-    scrollToCatalog(); // ВСЕГДА возвращаем наверх при выборе категории
+    scrollToCatalog();
     closeMobileMenu();
     
     console.log(`🎯 Фильтр: ${getCategoryName(category)}`);
@@ -692,14 +635,14 @@ function resetFilters() {
     if (DOM.sortText) DOM.sortText.textContent = 'По популярности';
     
     applyFilters();
-    scrollToCatalog(); // Возвращаем наверх при сбросе фильтров
+    scrollToCatalog();
     showNotification('Фильтры сброшены');
     
     console.log('🔄 Фильтры сброшены');
 }
 
 function updateActiveCategory() {
-    const isActive = (element, category) => element.dataset.category === STATE.currentCategory;
+    const isActive = (element) => element.dataset.category === STATE.currentCategory;
     
     DOM.categoryLinks.forEach(link => {
         const active = isActive(link);
@@ -732,8 +675,8 @@ function initSorting() {
     
     DOM.sortToggle.addEventListener('click', (e) => {
         e.stopPropagation();
-        DOM.sortMenu.classList.toggle('show');
-        DOM.sortToggle.setAttribute('aria-expanded', DOM.sortMenu.classList.contains('show'));
+        const isExpanded = DOM.sortMenu.classList.toggle('show');
+        DOM.sortToggle.setAttribute('aria-expanded', isExpanded);
     });
     
     document.addEventListener('click', (e) => {
@@ -785,13 +728,14 @@ function initViewToggle() {
                 t.setAttribute('aria-pressed', isActive);
             });
             
-            localStorage.setItem('ortocentr-view', viewType);
+            localStorage.setItem(CONFIG.VIEW_KEY, viewType);
             console.log(`👁️ Вид: ${viewType}`);
         });
     });
     
-    const savedView = localStorage.getItem('ortocentr-view');
-    if (savedView && (savedView === 'grid' || savedView === 'list')) {
+    // Восстановление сохраненного вида
+    const savedView = localStorage.getItem(CONFIG.VIEW_KEY);
+    if (savedView === 'grid' || savedView === 'list') {
         STATE.currentView = savedView;
         applyViewMode();
         
@@ -830,7 +774,6 @@ function initSearch() {
         checkEasterEgg();
         applyFilters();
         
-        // НЕ прокручиваем при поиске, только фильтруем
         console.log(`🔍 Поиск: "${STATE.searchQuery}"`);
     }, CONFIG.SEARCH_DEBOUNCE);
     
@@ -927,7 +870,9 @@ function activateEasterEgg() {
         const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQ=');
         audio.volume = 0.1;
         audio.play().catch(() => {});
-    } catch (e) {}
+    } catch (e) {
+        // Игнорируем ошибку аудио
+    }
     
     setTimeout(() => deactivateEasterEgg(), 10000);
 }
@@ -948,6 +893,7 @@ function deactivateEasterEgg() {
 function initImageModal() {
     if (!DOM.imageModal) return;
     
+    // Экспорт функции в глобальную область видимости
     window.showImageModal = function(productId) {
         const product = STATE.products.find(p => p.id === productId);
         if (!product) {
@@ -990,7 +936,7 @@ function fillModalData(product) {
     DOM.modalImage.alt = product.name;
     
     DOM.modalImage.addEventListener('error', function() {
-        if (this.src !== 'assets/images/placeholder.jpg' && this.src !== '/assets/images/placeholder.jpg') {
+        if (this.src !== 'assets/images/placeholder.jpg') {
             this.src = 'assets/images/placeholder.jpg';
         }
     });
@@ -1070,6 +1016,7 @@ function handleModalKeydown(e) {
 // ============================================
 
 function showNotification(message, type = 'info') {
+    // Удаляем старые уведомления
     document.querySelectorAll('.notification').forEach(n => n.remove());
     
     const notification = document.createElement('div');
@@ -1080,6 +1027,7 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
+    // Автоматическое скрытие
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => notification.remove(), 300);
@@ -1164,6 +1112,7 @@ function initPWA() {
         console.log('📱 Запущено как PWA');
     }
     
+    // Обработка онлайн/офлайн состояния
     window.addEventListener('online', () => {
         showNotification('Соединение восстановлено', 'success');
         console.log('🌐 Онлайн');
@@ -1182,33 +1131,32 @@ function initPWA() {
 // ============================================
 
 function setupEventListeners() {
+    // Основные кнопки
     if (DOM.resetFiltersBtn) DOM.resetFiltersBtn.addEventListener('click', resetFilters);
-    if (DOM.resetFiltersCatalogBtn) {
-        DOM.resetFiltersCatalogBtn.addEventListener('click', resetFilters);
-        console.log('✅ Кнопка сброса фильтров в catalog controls подключена');
-    }
+    if (DOM.resetFiltersCatalogBtn) DOM.resetFiltersCatalogBtn.addEventListener('click', resetFilters);
     if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
-
-    // Добавить обработчик для кнопки сброса
-    const themeResetBtn = document.getElementById('themeReset');
-    if (themeResetBtn) {
-        themeResetBtn.addEventListener('click', resetToSystemTheme);
+    if (DOM.themeReset) DOM.themeReset.addEventListener('click', resetToSystemTheme);
+    
+    // Кнопка "Наверх"
+    if (DOM.backToTop) {
+        DOM.backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
     }
     
-    DOM.categoryFilterBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterProductsByCategory(btn.dataset.category);
-            scrollToCatalog(); // Дублируем для надежности
-        });
-    });
-    
-    DOM.footerCategoryBtns.forEach(btn => {
+    // Обработчики категорий
+    const categoryHandlers = (btn) => {
         btn.addEventListener('click', () => {
             filterProductsByCategory(btn.dataset.category);
             scrollToCatalog();
         });
-    });
+    };
     
+    DOM.categoryFilterBtns.forEach(categoryHandlers);
+    DOM.footerCategoryBtns.forEach(categoryHandlers);
+    DOM.quickSelectBtns.forEach(categoryHandlers);
+    
+    // Навигационные ссылки
     DOM.categoryLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
@@ -1217,19 +1165,7 @@ function setupEventListeners() {
         });
     });
     
-    DOM.quickSelectBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            filterProductsByCategory(btn.dataset.category);
-            scrollToCatalog();
-        });
-    });
-    
-    if (DOM.backToTop) {
-        DOM.backToTop.addEventListener('click', () => {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-    
+    // Инициализация компонентов
     initSorting();
     initViewToggle();
     initSearch();
@@ -1239,9 +1175,13 @@ function setupEventListeners() {
     initScrollHeader();
     initPWA();
     
+    // Обновление года в футере
     const yearElement = document.getElementById('currentYear');
-    if (yearElement) yearElement.textContent = new Date().getFullYear();
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
     
+    // Кнопка "Наверх" в футере
     const footerScrollTop = document.getElementById('footerScrollTop');
     if (footerScrollTop) {
         footerScrollTop.addEventListener('click', () => {
@@ -1249,15 +1189,12 @@ function setupEventListeners() {
         });
     }
     
+    // Добавление атрибутов безопасности для внешних ссылок
     document.querySelectorAll('a[href^="http"]').forEach(link => {
         if (!link.href.includes(window.location.hostname)) {
             link.setAttribute('target', '_blank');
             link.setAttribute('rel', 'noopener noreferrer');
         }
-    });
-
-    DOM.quickSelectBtns.forEach(btn => {
-        btn.addEventListener('click', () => filterProductsByCategory(btn.dataset.category));
     });
     
     console.log('✅ Все обработчики событий настроены');
@@ -1268,21 +1205,22 @@ function setupEventListeners() {
 // ============================================
 
 async function init() {
-    console.log('🚀 Инициализация каталога «Ортоцентр» версии 3.2...');
+    console.log('🚀 Инициализация каталога «Ортоцентр» версии 3.3...');
     
     try {
         initDOMReferences();
         initTheme();
         await loadProducts();
+        
         document.title = `Ортоцентр | ${STATE.products.length} товаров`;
         
         console.log('✅ Каталог готов к работе!');
         console.log('📊 Статистика:', {
             товаров: STATE.products.length,
-            категорий: 4,
+            категорий: Object.keys(CATEGORY_MAP).length - 1, // без 'all'
             тема: STATE.currentTheme,
             вид: STATE.currentView,
-            версия: '3.2'
+            версия: '3.3'
         });
         
     } catch (error) {
@@ -1292,7 +1230,7 @@ async function init() {
 }
 
 // ============================================
-// 16. ЗАПУСК ПРИЛОЖЕНИЯ
+// 16. ЗАПУСК ПРИЛОЖЕНИЯ И ГЛОБАЛЬНЫЙ ЭКСПОРТ
 // ============================================
 
 if (document.readyState === 'loading') {
@@ -1301,14 +1239,16 @@ if (document.readyState === 'loading') {
     init();
 }
 
-window.addEventListener('error', function(event) {
+// Глобальная обработка ошибок
+window.addEventListener('error', (event) => {
     console.error('🚨 Глобальная ошибка:', event.error);
 });
 
-window.addEventListener('unhandledrejection', function(event) {
+window.addEventListener('unhandledrejection', (event) => {
     console.error('🚨 Необработанный Promise:', event.reason);
 });
 
+// Глобальный экспорт API приложения
 window.CatalogApp = {
     STATE,
     toggleTheme,
@@ -1316,11 +1256,7 @@ window.CatalogApp = {
     showImageModal,
     filterProductsByCategory,
     setTheme,
-    getVersion: () => '3.2'
+    getVersion: () => '3.3'
 };
 
-console.log('📦 CatalogApp v3.2 загружен');
-
-
-
-
+console.log('📦 CatalogApp v3.3 загружен');
