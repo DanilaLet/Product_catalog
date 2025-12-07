@@ -35,7 +35,7 @@
 <body>
     <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
-        <span class="back-to-top-icon">↑</span>
+        <i class="fas fa-chevron-up"></i>
     </button>
 
     <!-- Модальное окно для изображений -->
@@ -173,7 +173,7 @@
                                 type="search" 
                                 id="globalSearch" 
                                 class="search-input" 
-                                placeholder="Поиск зубных щеток, паст, ирригаторов..."
+                                placeholder="Поиск зубных щеток, пасты, ирригаторов..."
                                 aria-label="Поиск по каталогу"
                                 autocomplete="off"
                             >
@@ -375,7 +375,7 @@
                         </div>
                     </article>
                     
-                    <article class="category-card">
+                    <article class="category-card" id="categoryOther">
                         <div class="category-card-header">
                             <div class="category-icon" aria-hidden="true">
                                 <i class="fas fa-boxes"></i>
@@ -462,18 +462,23 @@
                     </h4>
                     <div class="footer-categories">
                         <button class="footer-category-btn glass-effect" data-category="all" aria-label="Показать все товары">
+                            <i class="fas fa-th-large"></i>
                             <span>Все товары</span>
                         </button>
                         <button class="footer-category-btn glass-effect" data-category="щетки" aria-label="Показать зубные щетки">
+                            <i class="fas fa-toothbrush"></i>
                             <span>Зубные щетки</span>
                         </button>
                         <button class="footer-category-btn glass-effect" data-category="пасты" aria-label="Показать зубные пасты">
+                            <i class="fas fa-paste"></i>
                             <span>Зубные пасты</span>
                         </button>
                         <button class="footer-category-btn glass-effect" data-category="ирригаторы" aria-label="Показать ирригаторы">
+                            <i class="fas fa-shower"></i>
                             <span>Ирригаторы</span>
                         </button>
                         <button class="footer-category-btn glass-effect" data-category="прочее" aria-label="Показать прочие товары">
+                            <i class="fas fa-boxes"></i>
                             <span>Прочее</span>
                         </button>
                     </div>
@@ -498,7 +503,7 @@
                             <span>Группа ВКонтакте</span>
                         </a>
                         <button class="footer-link" id="footerScrollTop" aria-label="Наверх">
-                            <i class="fas fa-chevron-up" aria-hidden="true"></i>
+                            <i class="fas fa-arrow-up"></i>
                             <span>Наверх</span>
                         </button>
                     </div>
@@ -514,6 +519,7 @@
                             </a>
                             <a href="https://t.me/centrortho" class="social-link" aria-label="Telegram" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-telegram"></i>
+                            </a>
                             <a href="mailto:didenkodent@yandex.ru" class="social-link" aria-label="Email" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-envelope"></i>
                             </a>
@@ -586,5 +592,3 @@
     </script>
 </body>
 </html>
-
-
