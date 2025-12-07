@@ -630,7 +630,6 @@ function createProductCard(product) {
                     alt="${product.name}" 
                     class="product-image"
                     loading="lazy"
-                    onerror="this.onerror=null; this.src='data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 100 100\"><rect width=\"100\" height=\"100\" fill=\"%23f0f0f0\"/><text x=\"50\" y=\"60\" font-size=\"40\" text-anchor=\"middle\" fill=\"%23b9c8c3\">🦷</text></svg>'"
                 >
             </div>
             
@@ -659,6 +658,25 @@ function createProductCard(product) {
     
     // Обработчик клика по изображению
     const imageContainer = card.querySelector('.product-image-container');
+    const img = card.querySelector('.product-image');
+    
+    // Управление состоянием загрузки изображения
+    imageContainer.classList.add('image-loading');
+    
+    img.addEventListener('load', function() {
+        imageContainer.classList.remove('image-loading');
+        imageContainer.classList.add('image-loaded');
+    });
+    
+    img.addEventListener('error', function() {
+        imageContainer.classList.remove('image-loading');
+        imageContainer.classList.add('image-error');
+        // Если не удалось загрузить, пробуем загрузить placeholder
+        if (this.src !== 'assets/images/placeholder.jpg' && this.src !== '/assets/images/placeholder.jpg') {
+            this.src = 'assets/images/placeholder.jpg';
+        }
+    });
+    
     imageContainer.addEventListener('click', () => {
         showImageModal(product.id);
     });
@@ -668,13 +686,6 @@ function createProductCard(product) {
         if (e.target.closest('.product-image-container') || 
             e.target.closest('.product-badges')) return;
         showImageModal(product.id);
-    });
-    
-    // Обработчик ошибки загрузки изображения
-    const img = card.querySelector('.product-image');
-    img.addEventListener('error', function() {
-        this.style.backgroundColor = 'var(--color-surface)';
-        this.style.padding = '20px';
     });
     
     return card;
@@ -1502,5 +1513,6 @@ window.CatalogApp = {
     setTheme: (theme) => setTheme(theme),
     getVersion: () => '3.2'
 };
+
 
 console.log('📦 CatalogApp v3.2 загружен');
