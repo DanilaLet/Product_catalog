@@ -1824,94 +1824,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   opacity: 1;
 }
 
-/* ===== 15. СКЕЛЕТОН-ЗАГРУЗКА ===== */
-.skeleton-container {
-  display: none;
-  width: 100%;
-  padding: var(--space-xl) 0;
-}
-
-.skeleton-container.active {
-  display: block;
-}
-
-.skeleton-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: var(--space-xl);
-}
-
-.skeleton-card {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--color-border);
-  height: 380px;
-}
-
-.skeleton-image {
-  width: 100%;
-  height: 200px;
-  background: linear-gradient(90deg, 
-    var(--color-gray-ultralight) 25%, 
-    var(--color-gray-lighter) 50%, 
-    var(--color-gray-ultralight) 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-}
-
-.skeleton-content {
-  padding: var(--space-lg);
-}
-
-.skeleton-text {
-  height: 16px;
-  background: linear-gradient(90deg, 
-    var(--color-gray-ultralight) 25%, 
-    var(--color-gray-lighter) 50%, 
-    var(--color-gray-ultralight) 75%);
-  background-size: 200% 100%;
-  margin-bottom: var(--space-md);
-  border-radius: var(--radius-sm);
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-}
-
-.skeleton-title { width: 70%; }
-.skeleton-category { width: 40%; height: 14px; }
-.skeleton-description { width: 90%; height: 12px; }
-.skeleton-price { width: 50%; height: 20px; margin-top: var(--space-lg); }
-
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.catalog-grid.list-view .skeleton-grid {
-  grid-template-columns: 1fr;
-  gap: var(--space-lg);
-}
-
-.catalog-grid.list-view .skeleton-card {
-  height: 120px;
-  display: flex;
-  flex-direction: row;
-}
-
-.catalog-grid.list-view .skeleton-image {
-  width: 120px;
-  height: 120px;
-  flex: 0 0 120px;
-  margin-right: var(--space-lg);
-}
-
-.catalog-grid.list-view .skeleton-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-/* ===== 16. IDLE-LOADER ===== */
+/* ===== 15. IDLE-LOADER ===== */
 .idle-loader {
   text-align: center;
   padding: 20px;
@@ -1936,7 +1849,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   animation: spin 1s linear infinite;
 }
 
-/* ===== 17. ОБЩИЕ СТИЛИ КНОПОК ===== */
+/* ===== 16. ОБЩИЕ СТИЛИ КНОПОК ===== */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -1973,7 +1886,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   box-shadow: var(--shadow-md);
 }
 
-/* ===== 18. СКРОЛЛБАР ===== */
+/* ===== 17. СКРОЛЛБАР ===== */
 ::-webkit-scrollbar { 
   width: 8px; 
   height: 8px; 
@@ -1993,7 +1906,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   background: var(--color-primary-dark); 
 }
 
-/* ===== 19. ДОСТУПНОСТЬ ===== */
+/* ===== 18. ДОСТУПНОСТЬ ===== */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -2022,7 +1935,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   border: 0;
 }
 
-/* ===== 20. БАЗОВЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ===== */
+/* ===== 19. БАЗОВЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ===== */
 img {
   max-width: 100%;
   height: auto;
