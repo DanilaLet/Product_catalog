@@ -33,6 +33,54 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
+
+    <script>
+    // Временный отладочный код
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('=== ОТЛАДКА МЕНЮ ===');
+        
+        // Проверяем, есть ли элементы
+        const menuToggle = document.getElementById('menuToggle');
+        const mainNav = document.getElementById('mainNav');
+        
+        console.log('menuToggle элемент:', menuToggle);
+        console.log('mainNav элемент:', mainNav);
+        console.log('Ширина экрана:', window.innerWidth);
+        console.log('Является ли мобильным:', window.innerWidth <= 768);
+        
+        // Добавляем простейший обработчик
+        if (menuToggle) {
+            menuToggle.addEventListener('click', function(e) {
+                console.log('🚨 КЛИК ПО КНОПКЕ МЕНЮ!');
+                console.log('Событие:', e);
+                console.log('Целевой элемент:', e.target);
+                
+                // Меняем цвет для визуальной проверки
+                this.style.backgroundColor = this.style.backgroundColor === 'red' ? '' : 'red';
+                
+                // Пробуем просто переключить класс
+                if (mainNav) {
+                    const isActive = mainNav.classList.contains('active');
+                    console.log('Меню активно:', isActive);
+                    
+                    if (!isActive) {
+                        mainNav.classList.add('active');
+                        console.log('Добавлен класс active');
+                    } else {
+                        mainNav.classList.remove('active');
+                        console.log('Удален класс active');
+                    }
+                }
+            });
+        } else {
+            console.error('❌ Кнопка меню не найдена!');
+        }
+        
+        // Проверяем CSS
+        console.log('CSS класса .main-nav:', mainNav ? window.getComputedStyle(mainNav).display : 'элемент не найден');
+    });
+    </script>
+    
     <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
         <i class="fas fa-chevron-up"></i>
@@ -586,4 +634,5 @@
     </script>
 </body>
 </html>
+
 
