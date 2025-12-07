@@ -715,7 +715,7 @@ function applyFilters() {
     updateActiveCategory();
     updateActiveSort();
     updateFooterFilters();
-    updateQuickSelectButtons();
+    updateQuickSelectButtons(); // ← ДОБАВЛЯЕМ ЭТУ СТРОЧКУ
     
     // Прокрутка к каталогу если нужно
     if (STATE.currentCategory !== 'all' || STATE.searchQuery) {
@@ -1523,5 +1523,6 @@ window.CatalogApp = {
 
 
 console.log('📦 CatalogApp v3.2 загружен');
+
 
 
