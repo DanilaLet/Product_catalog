@@ -626,6 +626,7 @@ function filterProductsByCategory(category) {
     }
     
     applyFilters();
+    scrollToCatalog(); // ВСЕГДА возвращаем наверх при выборе категории
     closeMobileMenu();
     
     console.log(`🎯 Фильтр: ${getCategoryName(category)}`);
@@ -641,6 +642,7 @@ function resetFilters() {
     if (DOM.sortText) DOM.sortText.textContent = 'По популярности';
     
     applyFilters();
+    scrollToCatalog(); // Возвращаем наверх при сбросе фильтров
     showNotification('Фильтры сброшены');
     
     console.log('🔄 Фильтры сброшены');
@@ -778,6 +780,7 @@ function initSearch() {
         checkEasterEgg();
         applyFilters();
         
+        // НЕ прокручиваем при поиске, только фильтруем
         console.log(`🔍 Поиск: "${STATE.searchQuery}"`);
     }, CONFIG.SEARCH_DEBOUNCE);
     
@@ -1137,17 +1140,31 @@ function setupEventListeners() {
     if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
     
     DOM.categoryFilterBtns.forEach(btn => {
-        btn.addEventListener('click', () => filterProductsByCategory(btn.dataset.category));
+        btn.addEventListener('click', () => {
+            filterProductsByCategory(btn.dataset.category);
+            scrollToCatalog(); // Дублируем для надежности
+        });
     });
     
     DOM.footerCategoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => filterProductsByCategory(btn.dataset.category));
+        btn.addEventListener('click', () => {
+            filterProductsByCategory(btn.dataset.category);
+            scrollToCatalog();
+        });
     });
     
     DOM.categoryLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             filterProductsByCategory(link.dataset.category);
+            scrollToCatalog();
+        });
+    });
+    
+    DOM.quickSelectBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            filterProductsByCategory(btn.dataset.category);
+            scrollToCatalog();
         });
     });
     
@@ -1247,4 +1264,5 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.2 загружен');
+
 
