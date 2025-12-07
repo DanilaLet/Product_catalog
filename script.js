@@ -1,6 +1,6 @@
 /**
  * КАТАЛОГ «ОРТОЦЕНТР» - ОСНОВНОЙ СКРИПТ
- * Версия: 4.1 (Оптимизированный рендеринг, Virtual DOM, JSDoc)
+ * Версия: 4.1 (Упрощенная, надежная)
  */
 
 // ============================================
@@ -117,15 +117,6 @@ const CATEGORY_MAP = {
     'прочее': { name: 'Прочее', icon: 'fa-boxes' },
     'all': { name: 'Все товары', icon: 'fa-th-large' }
 };
-
-/** @type {Map<string, HTMLElement>} */
-const productElements = new Map();
-
-/** @type {number} */
-let renderFrameId = null;
-
-/** @type {Array<{element: Element, event: string, handler: Function}>} */
-const eventHandlers = [];
 
 // ============================================
 // 2. ИНИЦИАЛИЗАЦИЯ DOM ЭЛЕМЕНТОВ
@@ -244,17 +235,6 @@ function formatFeatures(features) {
         ? features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')
         : '';
 }
-
-// Полифиллы для requestIdleCallback
-window.requestIdleCallback = window.requestIdleCallback || 
-    function(cb) { 
-        return setTimeout(() => { 
-            cb({ didTimeout: false, timeRemaining: () => 1 }); 
-        }, 1); 
-    };
-
-window.cancelIdleCallback = window.cancelIdleCallback ||
-    function(id) { clearTimeout(id); };
 
 // ============================================
 // 4. УПРАВЛЕНИЕ ТЕМОЙ
@@ -408,13 +388,13 @@ function initMobileMenu() {
         console.log('📱 Меню:', STATE.isMenuOpen ? 'открыто' : 'закрыто');
     }
     
-    addTrackedEventListener(DOM.menuToggle, 'click', (e) => {
+    DOM.menuToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
         toggleMenu();
     });
     
-    addTrackedEventListener(DOM.mainNav, 'click', (e) => {
+    DOM.mainNav.addEventListener('click', (e) => {
         if (e.target.closest('.nav-link')) {
             if (window.innerWidth <= 768 && STATE.isMenuOpen) {
                 toggleMenu();
@@ -422,7 +402,7 @@ function initMobileMenu() {
         }
     });
     
-    addTrackedEventListener(document, 'click', (e) => {
+    document.addEventListener('click', (e) => {
         if (STATE.isMenuOpen && 
             !DOM.menuToggle.contains(e.target) && 
             !DOM.mainNav.contains(e.target)) {
@@ -431,7 +411,7 @@ function initMobileMenu() {
     });
     
     let resizeTimeout;
-    addTrackedEventListener(window, 'resize', () => {
+    window.addEventListener('resize', () => {
         clearTimeout(resizeTimeout);
         resizeTimeout = setTimeout(() => {
             if (window.innerWidth > 768 && STATE.isMenuOpen) {
@@ -440,7 +420,7 @@ function initMobileMenu() {
         }, 250);
     });
     
-    addTrackedEventListener(document, 'keydown', (e) => {
+    document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && STATE.isMenuOpen) {
             toggleMenu();
         }
@@ -463,29 +443,87 @@ function closeMobileMenu() {
 // 6. СКЕЛЕТОНЫ И ПРОГРЕСС-БАР
 // ============================================
 
+/**
+ * Показывает скелетон-загрузку
+ */
 function showSkeleton() {
+    console.log('🔄 Показываем скелетон...');
+    
     if (DOM.catalogGrid) {
         DOM.catalogGrid.style.display = 'none';
     }
+    
     if (DOM.emptyState) {
         DOM.emptyState.style.display = 'none';
         DOM.emptyState.hidden = true;
     }
+    
     if (DOM.skeletonContainer) {
-        DOM.skeletonContainer.hidden = false;
+        createSkeletonCards();
         DOM.skeletonContainer.style.display = 'block';
+        DOM.skeletonContainer.classList.add('active');
     }
 }
 
+/**
+ * Скрывает скелетон-загрузку
+ */
 function hideSkeleton() {
-    if (DOM.skeletonContainer) {
-        DOM.skeletonContainer.hidden = true;
-        DOM.skeletonContainer.style.display = 'none';
-    }
+    console.log('✅ Скрываем скелетон...');
+    
     if (DOM.catalogGrid) {
         DOM.catalogGrid.style.display = 'grid';
-        DOM.catalogGrid.hidden = false;
     }
+    
+    if (DOM.skeletonContainer) {
+        DOM.skeletonContainer.style.display = 'none';
+        DOM.skeletonContainer.classList.remove('active');
+        DOM.skeletonContainer.innerHTML = '';
+    }
+}
+
+/**
+ * Создает карточки-скелетоны
+ */
+function createSkeletonCards() {
+    if (!DOM.skeletonContainer) return;
+    
+    const skeletonGrid = document.createElement('div');
+    skeletonGrid.className = 'skeleton-grid';
+    
+    const count = STATE.currentView === 'list' ? 5 : 8;
+    
+    for (let i = 0; i < count; i++) {
+        const skeletonCard = document.createElement('div');
+        skeletonCard.className = 'skeleton-card';
+        skeletonCard.style.animationDelay = `${i * 100}ms`;
+        
+        if (STATE.currentView === 'list') {
+            skeletonCard.innerHTML = `
+                <div class="skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-text skeleton-title"></div>
+                    <div class="skeleton-text skeleton-category"></div>
+                    <div class="skeleton-text skeleton-price"></div>
+                </div>
+            `;
+        } else {
+            skeletonCard.innerHTML = `
+                <div class="skeleton-image"></div>
+                <div class="skeleton-content">
+                    <div class="skeleton-text skeleton-title"></div>
+                    <div class="skeleton-text skeleton-category"></div>
+                    <div class="skeleton-text skeleton-description"></div>
+                    <div class="skeleton-text skeleton-price"></div>
+                </div>
+            `;
+        }
+        
+        skeletonGrid.appendChild(skeletonCard);
+    }
+    
+    DOM.skeletonContainer.innerHTML = '';
+    DOM.skeletonContainer.appendChild(skeletonGrid);
 }
 
 function initProgressBar() {
@@ -505,7 +543,7 @@ function initProgressBar() {
         }
     }
     
-    addTrackedEventListener(window, 'scroll', () => {
+    window.addEventListener('scroll', () => {
         requestAnimationFrame(updateProgressBar);
     }, { passive: true });
     
@@ -517,65 +555,75 @@ function initProgressBar() {
 // ============================================
 
 /**
- * Загружает продукты с оптимизациями
+ * Загружает продукты с фиксом бесконечной загрузки
  * @returns {Promise<void>}
  */
 async function loadProducts() {
+    console.log('📦 Начинаем загрузку товаров...');
+    
     try {
         STATE.isLoading = true;
         showSkeleton();
         
-        console.log('📦 Загрузка товаров...');
-        
+        console.log('🔄 Загрузка products.json...');
         const response = await fetch('products.json', {
             cache: 'no-cache',
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            headers: { 
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         });
         
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
         
         const data = await response.json();
-        STATE.products = data?.products ?? [];
+        console.log('📊 Получены данные:', data);
+        
+        if (!data || !data.products || !Array.isArray(data.products)) {
+            throw new Error('Некорректный формат данных products.json');
+        }
+        
+        STATE.products = data.products;
         STATE.filteredProducts = [...STATE.products];
         
-        console.log(`✅ Загружено ${STATE.products.length} товаров`);
+        console.log(`✅ Успешно загружено ${STATE.products.length} товаров`);
         
         try {
             localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
             localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
-        } catch (error) {
-            console.warn('⚠️ Не удалось сохранить в localStorage:', error.message);
+        } catch (e) {
+            console.warn('⚠️ Не удалось сохранить в localStorage:', e.message);
         }
         
         applyFilters();
-        setupEventListeners();
         
     } catch (error) {
         console.error('❌ Ошибка загрузки товаров:', error);
         
-        const cachedProducts = localStorage.getItem(CONFIG.PRODUCTS_KEY);
-        const lastUpdate = localStorage.getItem(CONFIG.UPDATE_KEY);
-        
-        if (cachedProducts) {
-            console.log('📦 Используем кэшированные товары из localStorage');
-            STATE.products = JSON.parse(cachedProducts);
-            STATE.filteredProducts = [...STATE.products];
-            applyFilters();
-            setupEventListeners();
-            
-            const updateDate = lastUpdate 
-                ? new Date(lastUpdate).toLocaleDateString() 
-                : 'неизвестно';
-            
-            showNotification(`Используем кэшированные данные (обновлено: ${updateDate})`, 'info');
-        } else {
-            showError('Не удалось загрузить каталог. Пожалуйста, проверьте соединение и обновите страницу.');
+        try {
+            const cached = localStorage.getItem(CONFIG.PRODUCTS_KEY);
+            if (cached) {
+                console.log('📦 Используем кэшированные данные');
+                STATE.products = JSON.parse(cached);
+                STATE.filteredProducts = [...STATE.products];
+                applyFilters();
+                
+                const lastUpdate = localStorage.getItem(CONFIG.UPDATE_KEY);
+                const date = lastUpdate ? new Date(lastUpdate).toLocaleString() : 'неизвестно';
+                console.log(`🕐 Данные обновлены: ${date}`);
+            } else {
+                throw new Error('Нет кэшированных данных');
+            }
+        } catch (cacheError) {
+            console.error('❌ Ошибка загрузки из кэша:', cacheError);
+            showError('Не удалось загрузить каталог. Пожалуйста, проверьте файл products.json');
         }
     } finally {
         STATE.isLoading = false;
         hideSkeleton();
+        console.log('🏁 Загрузка завершена');
     }
 }
 
@@ -601,169 +649,101 @@ function sortProducts(products) {
 }
 
 // ============================================
-// 8. ОПТИМИЗИРОВАННЫЙ РЕНДЕРИНГ
+// 8. РЕНДЕРИНГ ТОВАРОВ
 // ============================================
 
 /**
- * Оптимизированный рендеринг продуктов
- * @param {Product[]} productsToRender
+ * Рендерит товары (упрощенная версия)
  */
-function renderProductsOptimized(productsToRender) {
-    if (!DOM.catalogGrid) return;
-    
-    if (renderFrameId) {
-        cancelAnimationFrame(renderFrameId);
+function renderProducts() {
+    if (!DOM.catalogGrid) {
+        console.error('❌ DOM.catalogGrid не найден');
+        return;
     }
     
-    renderFrameId = requestAnimationFrame(() => {
-        performOptimizedRender(productsToRender);
-        renderFrameId = null;
-    });
-}
-
-/**
- * Выполняет оптимизированный рендеринг с дифференциальным обновлением
- * @param {Product[]} productsToRender
- */
-function performOptimizedRender(productsToRender) {
-    const startTime = performance.now();
+    console.log(`🎨 Рендеринг ${STATE.filteredProducts.length} товаров...`);
+    
+    DOM.catalogGrid.innerHTML = '';
+    
+    if (STATE.filteredProducts.length === 0) {
+        showEmptyState();
+        return;
+    }
+    
+    hideEmptyState();
+    
     const fragment = document.createDocumentFragment();
-    const newElements = new Map();
     
-    productElements.forEach((element, id) => {
-        if (!productsToRender.some(p => p.id.toString() === id)) {
-            element.remove();
-            productElements.delete(id);
-        }
+    STATE.filteredProducts.forEach((product, index) => {
+        const card = createProductCardElement(product, index);
+        fragment.appendChild(card);
     });
     
-    productsToRender.forEach((product, index) => {
-        const productId = product.id.toString();
-        
-        if (productElements.has(productId)) {
-            const existingElement = productElements.get(productId);
-            updateProductElement(existingElement, product, index);
-            newElements.set(productId, existingElement);
-        } else {
-            const newElement = STATE.currentView === 'list' 
-                ? createListProductCard(product)
-                : createProductCard(product);
-            
-            setupProductCardEvents(newElement, product);
-            applyElementAnimation(newElement, index);
-            
-            fragment.appendChild(newElement);
-            newElements.set(productId, newElement);
-        }
-    });
+    DOM.catalogGrid.appendChild(fragment);
+    applyViewMode();
     
-    if (fragment.children.length > 0) {
-        DOM.catalogGrid.appendChild(fragment);
-    }
-    
-    productElements.clear();
-    newElements.forEach((element, id) => productElements.set(id, element));
-    
-    const renderTime = performance.now() - startTime;
-    console.log(`⚡ Рендеринг ${productsToRender.length} товаров за ${renderTime.toFixed(1)}ms`);
+    console.log('✅ Рендеринг завершен');
 }
 
 /**
- * Обновляет существующий элемент продукта
- * @param {HTMLElement} element
- * @param {Product} product
- * @param {number} index
- */
-function updateProductElement(element, product, index) {
-    const title = element.querySelector('.product-title');
-    const price = element.querySelector('.product-price');
-    const category = element.querySelector('.product-category');
-    
-    if (title && title.textContent !== product.name) {
-        title.textContent = product.name;
-    }
-    
-    if (price && price.textContent !== formatPrice(product.price)) {
-        price.textContent = formatPrice(product.price);
-    }
-    
-    if (category && category.textContent !== getCategoryName(product.category)) {
-        category.textContent = getCategoryName(product.category);
-    }
-    
-    const badges = element.querySelector('.product-badges');
-    if (badges) {
-        if (product.isNew) {
-            if (!badges.querySelector('.badge-new')) {
-                badges.innerHTML = '<span class="product-badge badge-new">Новинка</span>';
-            }
-        } else {
-            badges.innerHTML = '';
-        }
-    }
-}
-
-/**
- * Настраивает события для карточки товара
- * @param {HTMLElement} card
- * @param {Product} product
- */
-function setupProductCardEvents(card, product) {
-    addTrackedEventListener(card, 'mouseenter', () => {
-        if (window.matchMedia('(hover: hover)').matches) {
-            card.style.transform = 'translateY(-5px)';
-        }
-    });
-    
-    addTrackedEventListener(card, 'mouseleave', () => {
-        card.style.transform = '';
-    });
-    
-    addTrackedEventListener(card, 'touchstart', () => {
-        card.style.opacity = '0.9';
-    }, { passive: true });
-    
-    addTrackedEventListener(card, 'touchend', () => {
-        card.style.opacity = '';
-    }, { passive: true });
-}
-
-/**
- * Применяет анимацию появления элемента
- * @param {HTMLElement} element
- * @param {number} index
- */
-function applyElementAnimation(element, index) {
-    element.style.opacity = '0';
-    element.style.transform = 'translateY(20px)';
-    
-    requestAnimationFrame(() => {
-        element.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        setTimeout(() => {
-            element.style.opacity = '1';
-            element.style.transform = 'translateY(0)';
-        }, index * 20);
-    });
-}
-
-/**
- * Создает карточку товара для вида сетки
- * @param {Product} product
+ * Создает элемент карточки товара
+ * @param {Product} product 
+ * @param {number} index 
  * @returns {HTMLElement}
  */
-function createProductCard(product) {
+function createProductCardElement(product, index) {
+    const isListView = STATE.currentView === 'list';
     const card = document.createElement('div');
+    
     card.className = 'product-card';
     card.dataset.id = product.id;
     card.dataset.category = product.category;
     
-    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
-    const features = formatFeatures(product.features?.slice(0, 3));
-    const featuresList = features ? `<ul class="product-features">${features}</ul>` : '';
+    if (isListView) {
+        card.innerHTML = createListCardHTML(product);
+    } else {
+        card.innerHTML = createGridCardHTML(product);
+    }
     
-    card.innerHTML = `
+    const imageContainer = card.querySelector('.product-image-container');
+    const img = card.querySelector('.product-image');
+    
+    if (imageContainer && img) {
+        setupImageLoading(imageContainer, img);
+    }
+    
+    requestAnimationFrame(() => {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        
+        setTimeout(() => {
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 30);
+    });
+    
+    return card;
+}
+
+/**
+ * Создает HTML для карточки в виде сетки
+ * @param {Product} product 
+ * @returns {string}
+ */
+function createGridCardHTML(product) {
+    const newBadge = product.isNew ? 
+        `<div class="product-badges"><span class="product-badge badge-new">Новинка</span></div>` : '';
+    
+    const features = product.features?.slice(0, 2).map(f => 
+        `<li class="product-feature"><i class="fas fa-check"></i> ${f}</li>`
+    ).join('') || '';
+    
+    const featuresHTML = features ? `<ul class="product-features">${features}</ul>` : '';
+    
+    return `
         <div class="product-card-inner">
-            <div class="product-badges">${newBadge}</div>
+            ${newBadge}
             <div class="product-image-container">
                 <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
             </div>
@@ -773,57 +753,25 @@ function createProductCard(product) {
                     <span class="product-category">${getCategoryName(product.category)}</span>
                 </div>
                 <p class="product-description">${product.description}</p>
-                ${featuresList}
+                ${featuresHTML}
                 <div class="product-footer">
                     <div class="product-price">${formatPrice(product.price)}</div>
                 </div>
             </div>
         </div>
     `;
-    
-    const imageContainer = card.querySelector('.product-image-container');
-    const img = card.querySelector('.product-image');
-    
-    if (imageContainer) imageContainer.classList.add('image-loading');
-    
-    if (img) {
-        addTrackedEventListener(img, 'load', () => {
-            if (imageContainer) {
-                imageContainer.classList.remove('image-loading');
-                imageContainer.classList.add('image-loaded');
-            }
-        }, { once: true });
-        
-        addTrackedEventListener(img, 'error', () => {
-            if (imageContainer) {
-                imageContainer.classList.remove('image-loading');
-                imageContainer.classList.add('image-error');
-                if (img.src !== 'assets/images/placeholder.jpg') {
-                    img.src = 'assets/images/placeholder.jpg';
-                }
-            }
-        }, { once: true });
-    }
-    
-    return card;
 }
 
 /**
- * Создает карточку товара для вида списка
- * @param {Product} product
- * @returns {HTMLElement}
+ * Создает HTML для карточки в виде списка
+ * @param {Product} product 
+ * @returns {string}
  */
-function createListProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.dataset.id = product.id;
-    card.dataset.category = product.category;
+function createListCardHTML(product) {
+    const newBadge = product.isNew ? 
+        `<div class="product-badges"><span class="product-badge badge-new">Новинка</span></div>` : '';
     
-    const newBadge = product.isNew 
-        ? `<div class="product-badges"><span class="product-badge badge-new">Новинка</span></div>` 
-        : '';
-    
-    card.innerHTML = `
+    return `
         <div class="product-card-inner">
             ${newBadge}
             <div class="product-image-container" aria-hidden="true">
@@ -834,33 +782,43 @@ function createListProductCard(product) {
                     <h3 class="product-title">${product.name}</h3>
                     <span class="product-category">${getCategoryName(product.category)}</span>
                 </div>
-                <div class="product-description" aria-hidden="true">${product.description}</div>
                 <div class="product-footer">
                     <div class="product-price">${formatPrice(product.price)}</div>
                 </div>
             </div>
         </div>
     `;
+}
+
+/**
+ * Настраивает загрузку изображения
+ * @param {HTMLElement} container 
+ * @param {HTMLImageElement} img 
+ */
+function setupImageLoading(container, img) {
+    container.classList.add('image-loading');
     
-    const imageContainer = card.querySelector('.product-image-container');
-    const img = card.querySelector('.product-image');
+    const handleLoad = () => {
+        container.classList.remove('image-loading');
+        container.classList.add('image-loaded');
+    };
     
-    if (imageContainer && img) {
-        imageContainer.classList.add('image-loading');
-        
-        addTrackedEventListener(img, 'load', () => {
-            imageContainer.classList.remove('image-loading');
-            imageContainer.classList.add('image-loaded');
-        }, { once: true });
-        
-        addTrackedEventListener(img, 'error', () => {
-            imageContainer.classList.remove('image-loading');
-            imageContainer.classList.add('image-error');
-            img.src = 'assets/images/placeholder.jpg';
-        }, { once: true });
+    const handleError = () => {
+        container.classList.remove('image-loading');
+        container.classList.add('image-error');
+        img.src = 'assets/images/placeholder.jpg';
+    };
+    
+    if (img.complete) {
+        if (img.naturalHeight > 0) {
+            handleLoad();
+        } else {
+            handleError();
+        }
+    } else {
+        img.addEventListener('load', handleLoad, { once: true });
+        img.addEventListener('error', handleError, { once: true });
     }
-    
-    return card;
 }
 
 function updateProductsCount() {
@@ -882,14 +840,21 @@ function updateCategoryText() {
 // ============================================
 
 /**
- * Выполняет фильтрацию продуктов
- * @returns {Product[]}
+ * Применяет фильтры и сортировку
  */
-function performFiltering() {
+function applyFilters() {
+    if (STATE.isLoading) {
+        console.log('⏳ Пропускаем фильтрацию - идет загрузка');
+        return;
+    }
+    
+    console.log('🔧 Применение фильтров...');
+    
     let result = [...STATE.products];
     
     if (STATE.currentCategory !== 'all') {
         result = result.filter(product => product.category === STATE.currentCategory);
+        console.log(`🎯 Фильтр по категории: ${STATE.currentCategory}, осталось: ${result.length}`);
     }
     
     if (STATE.searchQuery.trim()) {
@@ -897,26 +862,13 @@ function performFiltering() {
         result = result.filter(product => 
             product.name.toLowerCase().includes(query) ||
             product.description.toLowerCase().includes(query) ||
-            (product.features?.some(f => f.toLowerCase().includes(query)) ?? false)
+            (product.features?.some(f => f.toLowerCase().includes(query)) || false)
         );
+        console.log(`🔍 Поиск: "${query}", осталось: ${result.length}`);
     }
     
-    return sortProducts(result);
-}
-
-/**
- * Обновляет UI после фильтрации
- * @param {Product[]} filteredProducts
- */
-function updateUI(filteredProducts) {
-    STATE.filteredProducts = filteredProducts;
-    
-    if (STATE.filteredProducts.length === 0) {
-        showEmptyState();
-    } else {
-        hideEmptyState();
-        renderProductsOptimized(STATE.filteredProducts);
-    }
+    STATE.filteredProducts = sortProducts(result);
+    renderProducts();
     
     updateProductsCount();
     updateCategoryText();
@@ -924,27 +876,8 @@ function updateUI(filteredProducts) {
     updateActiveSort();
     updateFooterFilters();
     updateQuickSelectButtons();
-}
-
-/**
- * Применяет фильтры и оптимизирует рендеринг
- */
-function applyFilters() {
-    if (STATE.isLoading) return;
     
-    if ('requestIdleCallback' in window) {
-        requestIdleCallback(() => {
-            const filtered = performFiltering();
-            requestAnimationFrame(() => {
-                updateUI(filtered);
-            });
-        }, { timeout: 100 });
-    } else {
-        const filtered = performFiltering();
-        requestAnimationFrame(() => {
-            updateUI(filtered);
-        });
-    }
+    console.log(`✅ Фильтры применены. Товаров: ${STATE.filteredProducts.length}`);
 }
 
 function scrollToCatalog() {
@@ -1038,14 +971,14 @@ function initCategoryDropdown() {
         return;
     }
     
-    addTrackedEventListener(categoryToggle, 'click', (e) => {
+    categoryToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const isExpanded = categoryToggle.getAttribute('aria-expanded') === 'true';
         categoryToggle.setAttribute('aria-expanded', !isExpanded);
         categoryMenu.hidden = isExpanded;
     });
     
-    addTrackedEventListener(document, 'click', (e) => {
+    document.addEventListener('click', (e) => {
         if (!categoryToggle.contains(e.target) && !categoryMenu.contains(e.target)) {
             categoryToggle.setAttribute('aria-expanded', 'false');
             categoryMenu.hidden = true;
@@ -1053,7 +986,7 @@ function initCategoryDropdown() {
     });
     
     categoryOptions.forEach(option => {
-        addTrackedEventListener(option, 'click', () => {
+        option.addEventListener('click', () => {
             const category = option.dataset.category;
             filterProductsByCategory(category);
             
@@ -1098,13 +1031,13 @@ function updateCategoryDropdown() {
 function initSorting() {
     if (!DOM.sortOptions.length || !DOM.sortToggle || !DOM.sortMenu || !DOM.sortText) return;
     
-    addTrackedEventListener(DOM.sortToggle, 'click', (e) => {
+    DOM.sortToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const isExpanded = DOM.sortMenu.classList.toggle('show');
         DOM.sortToggle.setAttribute('aria-expanded', isExpanded);
     });
     
-    addTrackedEventListener(document, 'click', (e) => {
+    document.addEventListener('click', (e) => {
         if (!DOM.sortToggle.contains(e.target) && !DOM.sortMenu.contains(e.target)) {
             DOM.sortMenu.classList.remove('show');
             DOM.sortToggle.setAttribute('aria-expanded', 'false');
@@ -1112,7 +1045,7 @@ function initSorting() {
     });
     
     DOM.sortOptions.forEach(option => {
-        addTrackedEventListener(option, 'click', () => {
+        option.addEventListener('click', () => {
             const sortType = option.dataset.sort;
             if (sortType === STATE.currentSort) return;
             
@@ -1140,7 +1073,7 @@ function initViewToggle() {
     if (!DOM.viewToggles.length) return;
     
     DOM.viewToggles.forEach(toggle => {
-        addTrackedEventListener(toggle, 'click', () => {
+        toggle.addEventListener('click', () => {
             const viewType = toggle.id === 'viewGrid' ? 'grid' : 'list';
             if (viewType === STATE.currentView) return;
             
@@ -1154,8 +1087,7 @@ function initViewToggle() {
             });
             
             localStorage.setItem(CONFIG.VIEW_KEY, viewType);
-            
-            renderProductsOptimized(STATE.filteredProducts);
+            renderProducts();
             
             console.log(`👁️ Вид: ${viewType}`);
         });
@@ -1203,10 +1135,10 @@ function initSearch() {
         console.log(`🔍 Поиск: "${STATE.searchQuery}"`);
     }, CONFIG.SEARCH_DEBOUNCE);
     
-    addTrackedEventListener(DOM.searchInput, 'input', debouncedSearch);
+    DOM.searchInput.addEventListener('input', debouncedSearch);
     
     if (DOM.searchClear) {
-        addTrackedEventListener(DOM.searchClear, 'click', () => {
+        DOM.searchClear.addEventListener('click', () => {
             DOM.searchInput.value = '';
             STATE.searchQuery = '';
             DOM.searchClear.style.display = 'none';
@@ -1216,7 +1148,7 @@ function initSearch() {
         });
     }
     
-    addTrackedEventListener(DOM.searchInput, 'keydown', (e) => {
+    DOM.searchInput.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') {
             e.preventDefault();
             debouncedSearch();
@@ -1227,112 +1159,68 @@ function initSearch() {
 }
 
 // ============================================
-// 13. ОПТИМИЗИРОВАННОЕ УПРАВЛЕНИЕ СОБЫТИЯМИ
+// 13. НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
 // ============================================
 
-/**
- * Добавляет обработчик события с отслеживанием
- * @param {Element} element
- * @param {string} event
- * @param {Function} handler
- * @param {AddEventListenerOptions} [options]
- */
-function addTrackedEventListener(element, event, handler, options) {
-    element.addEventListener(event, handler, options);
-    eventHandlers.push({ element, event, handler });
-}
-
-/**
- * Очищает все отслеживаемые обработчики событий
- */
-function cleanupEventListeners() {
-    eventHandlers.forEach(({ element, event, handler }) => {
-        element.removeEventListener(event, handler);
-    });
-    eventHandlers.length = 0;
-    console.log('🧹 Все обработчики событий очищены');
-}
-
-/**
- * Настраивает обработчики событий с отслеживанием
- */
 function setupEventListeners() {
-    cleanupEventListeners();
+    if (DOM.resetFiltersBtn) DOM.resetFiltersBtn.addEventListener('click', resetFilters);
+    if (DOM.resetFiltersCatalogBtn) DOM.resetFiltersCatalogBtn.addEventListener('click', resetFilters);
+    if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
+    if (DOM.themeReset) DOM.themeReset.addEventListener('click', resetToSystemTheme);
     
-    try {
-        if (DOM.resetFiltersBtn) {
-            addTrackedEventListener(DOM.resetFiltersBtn, 'click', resetFilters);
-        }
-        
-        if (DOM.resetFiltersCatalogBtn) {
-            addTrackedEventListener(DOM.resetFiltersCatalogBtn, 'click', resetFilters);
-        }
-        
-        if (DOM.themeToggle) {
-            addTrackedEventListener(DOM.themeToggle, 'click', toggleTheme);
-        }
-        
-        if (DOM.themeReset) {
-            addTrackedEventListener(DOM.themeReset, 'click', resetToSystemTheme);
-        }
-        
-        if (DOM.backToTop) {
-            addTrackedEventListener(DOM.backToTop, 'click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-        
-        const categoryHandlers = (btn) => {
-            addTrackedEventListener(btn, 'click', () => {
-                filterProductsByCategory(btn.dataset.category);
-                scrollToCatalog();
-            });
-        };
-        
-        DOM.categoryFilterBtns.forEach(categoryHandlers);
-        DOM.footerCategoryBtns.forEach(categoryHandlers);
-        DOM.quickSelectBtns.forEach(categoryHandlers);
-        
-        DOM.categoryLinks.forEach(link => {
-            addTrackedEventListener(link, 'click', (e) => {
-                e.preventDefault();
-                filterProductsByCategory(link.dataset.category);
-                scrollToCatalog();
-            });
+    if (DOM.backToTop) {
+        DOM.backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-        
-        initSorting();
-        initViewToggle();
-        initSearch();
-        initMobileMenu();
-        initProgressBar();
-        initScrollHeader();
-        initCategoryDropdown();
-        
-        const yearElement = document.getElementById('currentYear');
-        if (yearElement) {
-            yearElement.textContent = new Date().getFullYear();
-        }
-        
-        const footerScrollTop = document.getElementById('footerScrollTop');
-        if (footerScrollTop) {
-            addTrackedEventListener(footerScrollTop, 'click', () => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            });
-        }
-        
-        document.querySelectorAll('a[href^="http"]').forEach(link => {
-            if (!link.href.includes(window.location.hostname)) {
-                link.setAttribute('target', '_blank');
-                link.setAttribute('rel', 'noopener noreferrer');
-            }
-        });
-        
-        console.log('✅ Все обработчики событий настроены с отслеживанием');
-        
-    } catch (error) {
-        console.error('❌ Ошибка настройки обработчиков событий:', error);
     }
+    
+    const categoryHandlers = (btn) => {
+        btn.addEventListener('click', () => {
+            filterProductsByCategory(btn.dataset.category);
+            scrollToCatalog();
+        });
+    };
+    
+    DOM.categoryFilterBtns.forEach(categoryHandlers);
+    DOM.footerCategoryBtns.forEach(categoryHandlers);
+    DOM.quickSelectBtns.forEach(categoryHandlers);
+    
+    DOM.categoryLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            filterProductsByCategory(link.dataset.category);
+            scrollToCatalog();
+        });
+    });
+    
+    initSorting();
+    initViewToggle();
+    initSearch();
+    initMobileMenu();
+    initProgressBar();
+    initScrollHeader();
+    initCategoryDropdown();
+    
+    const yearElement = document.getElementById('currentYear');
+    if (yearElement) {
+        yearElement.textContent = new Date().getFullYear();
+    }
+    
+    const footerScrollTop = document.getElementById('footerScrollTop');
+    if (footerScrollTop) {
+        footerScrollTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
+    
+    document.querySelectorAll('a[href^="http"]').forEach(link => {
+        if (!link.href.includes(window.location.hostname)) {
+            link.setAttribute('target', '_blank');
+            link.setAttribute('rel', 'noopener noreferrer');
+        }
+    });
+    
+    console.log('✅ Все обработчики событий настроены');
 }
 
 // ============================================
@@ -1380,21 +1268,35 @@ function hideEmptyState() {
     }
 }
 
+/**
+ * Показывает сообщение об ошибке
+ * @param {string} message 
+ */
 function showError(message) {
-    if (DOM.catalogGrid) {
-        DOM.catalogGrid.innerHTML = `
-            <div class="error-state">
+    console.error('🚨 Ошибка:', message);
+    
+    if (DOM.emptyState) {
+        DOM.emptyState.innerHTML = `
+            <div class="empty-icon">
                 <i class="fas fa-exclamation-triangle"></i>
-                <h3>Ошибка загрузки</h3>
-                <p>${message}</p>
-                <button class="btn btn-accent" onclick="window.location.reload()">
-                    <i class="fas fa-redo"></i> Обновить страницу
-                </button>
             </div>
+            <h3 class="empty-title">Ошибка загрузки</h3>
+            <p class="empty-description">${message}</p>
+            <button class="btn btn-accent empty-action" onclick="window.location.reload()">
+                <i class="fas fa-redo"></i>
+                Обновить страницу
+            </button>
         `;
+        
+        DOM.emptyState.style.display = 'flex';
+        DOM.emptyState.hidden = false;
     }
     
-    console.error('❌ Ошибка:', message);
+    if (DOM.catalogGrid) {
+        DOM.catalogGrid.style.display = 'none';
+    }
+    
+    hideSkeleton();
 }
 
 // ============================================
@@ -1430,12 +1332,12 @@ function initPWA() {
         console.log('📱 Запущено как PWA');
     }
     
-    addTrackedEventListener(window, 'online', () => {
+    window.addEventListener('online', () => {
         showNotification('Соединение восстановлено', 'success');
         console.log('🌐 Онлайн');
     });
     
-    addTrackedEventListener(window, 'offline', () => {
+    window.addEventListener('offline', () => {
         showNotification('Вы в офлайн-режиме', 'error');
         console.log('📴 Офлайн');
     });
@@ -1448,50 +1350,34 @@ function initPWA() {
 // ============================================
 
 /**
- * Инициализирует приложение с оптимизациями
- * @returns {Promise<void>}
+ * Инициализирует приложение
  */
 async function init() {
-    console.log('🚀 Инициализация каталога «Ортоцентр» версии 4.1...');
+    console.log('🚀 Инициализация каталога «Ортоцентр»...');
     
     try {
         initDOMReferences();
-        showSkeleton();
-        initTheme();
         
-        const loadPromise = loadProducts();
-        
-        if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => {
-                initScrollHeader();
-                initProgressBar();
-                initMobileMenu();
-            }, { timeout: 1000 });
-        } else {
-            setTimeout(() => {
-                initScrollHeader();
-                initProgressBar();
-                initMobileMenu();
-            }, 100);
+        if (!DOM.catalogGrid) {
+            throw new Error('Не найден элемент #catalogGrid');
         }
         
-        await loadPromise;
+        initTheme();
+        await loadProducts();
+        setupEventListeners();
         
         setTimeout(() => {
-            if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .catch(error => {
-                        console.warn('⚠️ Service Worker не зарегистрирован:', error);
-                    });
-            }
-        }, 2000);
+            initScrollHeader();
+            initProgressBar();
+            initMobileMenu();
+        }, 100);
         
-        console.log('✅ Каталог готов к работе!');
+        console.log('✅ Приложение инициализировано успешно!');
         
     } catch (error) {
-        console.error('❌ Критическая ошибка инициализации:', error);
+        console.error('❌ Ошибка инициализации:', error);
+        showError('Ошибка загрузки каталога. Пожалуйста, обновите страницу.');
         hideSkeleton();
-        showError('Критическая ошибка при загрузке каталога');
     }
 }
 
