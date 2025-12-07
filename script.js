@@ -588,6 +588,7 @@ function applyFilters() {
     updateActiveSort();
     updateFooterFilters();
     updateQuickSelectButtons();
+    updateCategoryDropdown(); // <-- Добавить эту строку
 }
 
 function scrollToCatalog() {
@@ -665,6 +666,90 @@ function updateFooterFilters() {
         btn.classList.toggle('active', btn.dataset.category === STATE.currentCategory);
     });
 }
+
+
+
+// ============================================
+// 8.1. ДРОПДАУН КАТЕГОРИЙ
+// ============================================
+
+function initCategoryDropdown() {
+    const categoryToggle = document.getElementById('categoryToggle');
+    const categoryMenu = document.getElementById('categoryMenu');
+    const categoryText = document.getElementById('categoryText');
+    const categoryOptions = document.querySelectorAll('.category-option');
+    
+    if (!categoryToggle || !categoryMenu || !categoryText) {
+        console.warn('⚠️ Элементы дропдауна категорий не найдены');
+        return;
+    }
+    
+    // Открытие/закрытие меню
+    categoryToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const isExpanded = categoryToggle.getAttribute('aria-expanded') === 'true';
+        categoryToggle.setAttribute('aria-expanded', !isExpanded);
+        categoryMenu.hidden = isExpanded;
+    });
+    
+    // Закрытие меню при клике вне
+    document.addEventListener('click', (e) => {
+        if (!categoryToggle.contains(e.target) && !categoryMenu.contains(e.target)) {
+            categoryToggle.setAttribute('aria-expanded', 'false');
+            categoryMenu.hidden = true;
+        }
+    });
+    
+    // Обработка выбора категории
+    categoryOptions.forEach(option => {
+        option.addEventListener('click', () => {
+            const category = option.dataset.category;
+            filterProductsByCategory(category);
+            
+            // Обновляем текст кнопки
+            categoryText.textContent = option.textContent;
+            
+            // Обновляем активный элемент
+            categoryOptions.forEach(opt => opt.classList.remove('active'));
+            option.classList.add('active');
+            
+            // Закрываем меню
+            categoryToggle.setAttribute('aria-expanded', 'false');
+            categoryMenu.hidden = true;
+            
+            console.log(`🎯 Выбрана категория: ${option.textContent}`);
+        });
+    });
+    
+    console.log('✅ Дропдаун категорий инициализирован');
+}
+
+// ============================================
+// 8.2. ОБНОВЛЕНИЕ ДРОПДАУНА ПРИ ФИЛЬТРАЦИИ
+// ============================================
+
+function updateCategoryDropdown() {
+    const categoryText = document.getElementById('categoryText');
+    const categoryOptions = document.querySelectorAll('.category-option');
+    
+    if (!categoryText || !categoryOptions.length) return;
+    
+    // Находим активную опцию
+    const activeOption = Array.from(categoryOptions).find(
+        option => option.dataset.category === STATE.currentCategory
+    );
+    
+    if (activeOption) {
+        categoryText.textContent = activeOption.textContent;
+        
+        // Обновляем классы
+        categoryOptions.forEach(option => {
+            option.classList.toggle('active', option.dataset.category === STATE.currentCategory);
+        });
+    }
+}
+
+
 
 // ============================================
 // 9. СОРТИРОВКА И ВИДЫ
@@ -1174,6 +1259,7 @@ function setupEventListeners() {
     initEasterEgg();
     initScrollHeader();
     initPWA();
+    initCategoryDropdown();
     
     // Обновление года в футере
     const yearElement = document.getElementById('currentYear');
@@ -1229,6 +1315,92 @@ async function init() {
     }
 }
 
+
+
+// ============================================
+// 15.1. ОБНОВИТЬ ФУНКЦИЮ renderProducts()
+// ============================================
+
+function renderProducts() {
+    if (!DOM.catalogGrid) return;
+    
+    // Очистка контейнера
+    while (DOM.catalogGrid.firstChild) {
+        DOM.catalogGrid.removeChild(DOM.catalogGrid.firstChild);
+    }
+    
+    if (STATE.filteredProducts.length === 0) {
+        showEmptyState();
+        return;
+    }
+    
+    hideEmptyState();
+    
+    // Создание карточек с анимацией
+    STATE.filteredProducts.forEach((product, index) => {
+        const card = STATE.currentView === 'list' 
+            ? createListProductCard(product)
+            : createProductCard(product);
+        
+        DOM.catalogGrid.appendChild(card);
+        
+        // Анимация появления
+        requestAnimationFrame(() => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            }, index * CONFIG.ANIMATION_DELAY);
+        });
+    });
+    
+    applyViewMode();
+}
+
+// ============================================
+// 15.2. НОВАЯ ФУНКЦИЯ ДЛЯ КАРТОЧЕК В СПИСКЕ
+// ============================================
+
+function createListProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.id = product.id;
+    card.dataset.category = product.category;
+    
+    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
+    
+    card.innerHTML = `
+        <div class="product-card-inner">
+            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
+            <div class="product-image-container">
+                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+            </div>
+            <div class="product-info">
+                <div class="product-header">
+                    <h3 class="product-title">${product.name}</h3>
+                    <span class="product-category">${getCategoryName(product.category)}</span>
+                </div>
+                <div class="product-footer">
+                    <div class="product-price">${formatPrice(product.price)}</div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Обработка кликов
+    card.addEventListener('click', (e) => {
+        if (!e.target.closest('.product-image-container') && !e.target.closest('.product-badges')) {
+            showImageModal(product.id);
+        }
+    });
+    
+    return card;
+}
+
+
 // ============================================
 // 16. ЗАПУСК ПРИЛОЖЕНИЯ И ГЛОБАЛЬНЫЙ ЭКСПОРТ
 // ============================================
@@ -1260,3 +1432,4 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.3 загружен');
+
