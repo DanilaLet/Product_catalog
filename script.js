@@ -52,7 +52,6 @@
  * DOM элементы
  * @typedef {Object} AppDOM
  * @property {HTMLElement} catalogGrid
- * @property {HTMLElement} loadingState
  * @property {HTMLElement} emptyState
  * @property {HTMLElement} productsCount
  * @property {HTMLElement} currentCategoryText
@@ -126,7 +125,6 @@ function initDOMReferences() {
     try {
         // Основные элементы
         DOM.catalogGrid = document.getElementById('catalogGrid');
-        DOM.skeletonContainer = document.getElementById('skeletonContainer');
         DOM.emptyState = document.getElementById('emptyState');
         DOM.productsCount = document.getElementById('productsCount');
         DOM.currentCategoryText = document.getElementById('currentCategoryText');
@@ -440,91 +438,8 @@ function closeMobileMenu() {
 }
 
 // ============================================
-// 6. СКЕЛЕТОНЫ И ПРОГРЕСС-БАР
+// 6. ПРОГРЕСС-БАР
 // ============================================
-
-/**
- * Показывает скелетон-загрузку
- */
-function showSkeleton() {
-    console.log('🔄 Показываем скелетон...');
-    
-    if (DOM.catalogGrid) {
-        DOM.catalogGrid.style.display = 'none';
-    }
-    
-    if (DOM.emptyState) {
-        DOM.emptyState.style.display = 'none';
-        DOM.emptyState.hidden = true;
-    }
-    
-    if (DOM.skeletonContainer) {
-        createSkeletonCards();
-        DOM.skeletonContainer.style.display = 'block';
-        DOM.skeletonContainer.classList.add('active');
-    }
-}
-
-/**
- * Скрывает скелетон-загрузку
- */
-function hideSkeleton() {
-    console.log('✅ Скрываем скелетон...');
-    
-    if (DOM.catalogGrid) {
-        DOM.catalogGrid.style.display = 'grid';
-    }
-    
-    if (DOM.skeletonContainer) {
-        DOM.skeletonContainer.style.display = 'none';
-        DOM.skeletonContainer.classList.remove('active');
-        DOM.skeletonContainer.innerHTML = '';
-    }
-}
-
-/**
- * Создает карточки-скелетоны
- */
-function createSkeletonCards() {
-    if (!DOM.skeletonContainer) return;
-    
-    const skeletonGrid = document.createElement('div');
-    skeletonGrid.className = 'skeleton-grid';
-    
-    const count = STATE.currentView === 'list' ? 5 : 8;
-    
-    for (let i = 0; i < count; i++) {
-        const skeletonCard = document.createElement('div');
-        skeletonCard.className = 'skeleton-card';
-        skeletonCard.style.animationDelay = `${i * 100}ms`;
-        
-        if (STATE.currentView === 'list') {
-            skeletonCard.innerHTML = `
-                <div class="skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton-text skeleton-title"></div>
-                    <div class="skeleton-text skeleton-category"></div>
-                    <div class="skeleton-text skeleton-price"></div>
-                </div>
-            `;
-        } else {
-            skeletonCard.innerHTML = `
-                <div class="skeleton-image"></div>
-                <div class="skeleton-content">
-                    <div class="skeleton-text skeleton-title"></div>
-                    <div class="skeleton-text skeleton-category"></div>
-                    <div class="skeleton-text skeleton-description"></div>
-                    <div class="skeleton-text skeleton-price"></div>
-                </div>
-            `;
-        }
-        
-        skeletonGrid.appendChild(skeletonCard);
-    }
-    
-    DOM.skeletonContainer.innerHTML = '';
-    DOM.skeletonContainer.appendChild(skeletonGrid);
-}
 
 function initProgressBar() {
     if (!DOM.progressBar) return;
@@ -555,52 +470,41 @@ function initProgressBar() {
 // ============================================
 
 /**
- * Загружает продукты с фиксом бесконечной загрузки
+ * Загружает продукты
  * @returns {Promise<void>}
  */
 async function loadProducts() {
-    console.log('📦 Начинаем загрузку товаров...');
+    console.log('📦 Загрузка товаров...');
     
     try {
-        STATE.isLoading = true;
-        showSkeleton();
+        const response = await fetch('products.json');
         
-        console.log('🔄 Загрузка products.json...');
-        const response = await fetch('products.json', {
-            cache: 'no-cache',
-            headers: { 
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-        }
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
-        console.log('📊 Получены данные:', data);
         
-        if (!data || !data.products || !Array.isArray(data.products)) {
-            throw new Error('Некорректный формат данных products.json');
+        if (!data || !data.products) {
+            throw new Error('Некорректный формат products.json');
         }
         
         STATE.products = data.products;
         STATE.filteredProducts = [...STATE.products];
         
-        console.log(`✅ Успешно загружено ${STATE.products.length} товаров`);
+        console.log(`✅ Загружено ${STATE.products.length} товаров`);
+        
+        renderProducts();
+        updateProductsCount();
+        updateCategoryText();
         
         try {
             localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
             localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
         } catch (e) {
-            console.warn('⚠️ Не удалось сохранить в localStorage:', e.message);
+            console.warn('⚠️ Не удалось сохранить в localStorage');
         }
         
-        applyFilters();
-        
     } catch (error) {
-        console.error('❌ Ошибка загрузки товаров:', error);
+        console.error('❌ Ошибка загрузки:', error);
         
         try {
             const cached = localStorage.getItem(CONFIG.PRODUCTS_KEY);
@@ -608,21 +512,17 @@ async function loadProducts() {
                 console.log('📦 Используем кэшированные данные');
                 STATE.products = JSON.parse(cached);
                 STATE.filteredProducts = [...STATE.products];
-                applyFilters();
-                
-                const lastUpdate = localStorage.getItem(CONFIG.UPDATE_KEY);
-                const date = lastUpdate ? new Date(lastUpdate).toLocaleString() : 'неизвестно';
-                console.log(`🕐 Данные обновлены: ${date}`);
+                renderProducts();
+                updateProductsCount();
+                updateCategoryText();
             } else {
-                throw new Error('Нет кэшированных данных');
+                showEmptyStateWithError('Не удалось загрузить каталог');
             }
         } catch (cacheError) {
-            console.error('❌ Ошибка загрузки из кэша:', cacheError);
-            showError('Не удалось загрузить каталог. Пожалуйста, проверьте файл products.json');
+            console.error('❌ Ошибка кэша:', cacheError);
+            showEmptyStateWithError('Не удалось загрузить каталог');
         }
     } finally {
-        STATE.isLoading = false;
-        hideSkeleton();
         console.log('🏁 Загрузка завершена');
     }
 }
@@ -653,11 +553,11 @@ function sortProducts(products) {
 // ============================================
 
 /**
- * Рендерит товары (упрощенная версия)
+ * Рендерит товары
  */
 function renderProducts() {
     if (!DOM.catalogGrid) {
-        console.error('❌ DOM.catalogGrid не найден');
+        console.error('❌ catalogGrid не найден');
         return;
     }
     
@@ -666,38 +566,42 @@ function renderProducts() {
     DOM.catalogGrid.innerHTML = '';
     
     if (STATE.filteredProducts.length === 0) {
-        showEmptyState();
+        if (DOM.emptyState) {
+            DOM.emptyState.hidden = false;
+        }
         return;
     }
     
-    hideEmptyState();
+    if (DOM.emptyState) {
+        DOM.emptyState.hidden = true;
+    }
     
     const fragment = document.createDocumentFragment();
     
     STATE.filteredProducts.forEach((product, index) => {
-        const card = createProductCardElement(product, index);
+        const card = createProductCard(product);
         fragment.appendChild(card);
     });
     
     DOM.catalogGrid.appendChild(fragment);
+    
     applyViewMode();
     
     console.log('✅ Рендеринг завершен');
 }
 
 /**
- * Создает элемент карточки товара
- * @param {Product} product 
- * @param {number} index 
+ * Создает карточку товара
+ * @param {Product} product
  * @returns {HTMLElement}
  */
-function createProductCardElement(product, index) {
-    const isListView = STATE.currentView === 'list';
+function createProductCard(product) {
     const card = document.createElement('div');
-    
     card.className = 'product-card';
     card.dataset.id = product.id;
     card.dataset.category = product.category;
+    
+    const isListView = STATE.currentView === 'list';
     
     if (isListView) {
         card.innerHTML = createListCardHTML(product);
@@ -711,17 +615,6 @@ function createProductCardElement(product, index) {
     if (imageContainer && img) {
         setupImageLoading(imageContainer, img);
     }
-    
-    requestAnimationFrame(() => {
-        card.style.opacity = '0';
-        card.style.transform = 'translateY(20px)';
-        card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-        
-        setTimeout(() => {
-            card.style.opacity = '1';
-            card.style.transform = 'translateY(0)';
-        }, index * 30);
-    });
     
     return card;
 }
@@ -843,18 +736,12 @@ function updateCategoryText() {
  * Применяет фильтры и сортировку
  */
 function applyFilters() {
-    if (STATE.isLoading) {
-        console.log('⏳ Пропускаем фильтрацию - идет загрузка');
-        return;
-    }
-    
     console.log('🔧 Применение фильтров...');
     
     let result = [...STATE.products];
     
     if (STATE.currentCategory !== 'all') {
         result = result.filter(product => product.category === STATE.currentCategory);
-        console.log(`🎯 Фильтр по категории: ${STATE.currentCategory}, осталось: ${result.length}`);
     }
     
     if (STATE.searchQuery.trim()) {
@@ -864,10 +751,10 @@ function applyFilters() {
             product.description.toLowerCase().includes(query) ||
             (product.features?.some(f => f.toLowerCase().includes(query)) || false)
         );
-        console.log(`🔍 Поиск: "${query}", осталось: ${result.length}`);
     }
     
     STATE.filteredProducts = sortProducts(result);
+    
     renderProducts();
     
     updateProductsCount();
@@ -915,7 +802,12 @@ function filterProductsByCategory(category) {
     console.log(`🎯 Фильтр: ${getCategoryName(category)}`);
 }
 
+/**
+ * Сбрасывает фильтры
+ */
 function resetFilters() {
+    console.log('🔄 Сброс фильтров...');
+    
     STATE.currentCategory = 'all';
     STATE.searchQuery = '';
     STATE.currentSort = 'default';
@@ -924,11 +816,13 @@ function resetFilters() {
     if (DOM.searchClear) DOM.searchClear.style.display = 'none';
     if (DOM.sortText) DOM.sortText.textContent = 'По популярности';
     
-    applyFilters();
-    scrollToCatalog();
-    showNotification('Фильтры сброшены');
+    DOM.sortOptions.forEach(opt => {
+        opt.classList.toggle('active', opt.dataset.sort === 'default');
+    });
     
-    console.log('🔄 Фильтры сброшены');
+    applyFilters();
+    
+    console.log('✅ Фильтры сброшены');
 }
 
 function updateActiveCategory() {
@@ -1246,32 +1140,28 @@ function showNotification(message, type = 'info') {
     console.log(`📢 Уведомление: ${message}`);
 }
 
-function showEmptyState() {
-    if (DOM.emptyState) {
-        DOM.emptyState.style.display = 'flex';
-        DOM.emptyState.hidden = false;
-    }
+function showEmptyStateWithError(message) {
+    if (!DOM.emptyState) return;
+    
+    DOM.emptyState.innerHTML = `
+        <div class="empty-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        <h3 class="empty-title">Ошибка загрузки</h3>
+        <p class="empty-description">${message}</p>
+        <button class="btn btn-accent empty-action" onclick="window.location.reload()">
+            <i class="fas fa-redo"></i>
+            Обновить страницу
+        </button>
+    `;
+    
+    DOM.emptyState.hidden = false;
+    
     if (DOM.catalogGrid) {
-        DOM.catalogGrid.style.display = 'none';
-        DOM.catalogGrid.hidden = true;
+        DOM.catalogGrid.innerHTML = '';
     }
 }
 
-function hideEmptyState() {
-    if (DOM.emptyState) {
-        DOM.emptyState.style.display = 'none';
-        DOM.emptyState.hidden = true;
-    }
-    if (DOM.catalogGrid) {
-        DOM.catalogGrid.style.display = 'grid';
-        DOM.catalogGrid.hidden = false;
-    }
-}
-
-/**
- * Показывает сообщение об ошибке
- * @param {string} message 
- */
 function showError(message) {
     console.error('🚨 Ошибка:', message);
     
@@ -1295,8 +1185,6 @@ function showError(message) {
     if (DOM.catalogGrid) {
         DOM.catalogGrid.style.display = 'none';
     }
-    
-    hideSkeleton();
 }
 
 // ============================================
@@ -1377,7 +1265,6 @@ async function init() {
     } catch (error) {
         console.error('❌ Ошибка инициализации:', error);
         showError('Ошибка загрузки каталога. Пожалуйста, обновите страницу.');
-        hideSkeleton();
     }
 }
 
