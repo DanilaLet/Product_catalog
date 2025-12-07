@@ -7,15 +7,24 @@
     <title>Ортоцентр | Каталог стоматологических товаров</title>
     <meta name="description" content="Профессиональные зубные щетки, пасты, ирригаторы и прочее. Бесплатная консультация в Волгограде. График работы: будни 08:00-20:00, выходные 09:00-15:00">
     
+    <!-- Оптимизированные шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome с оптимизацией -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+          integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
+          crossorigin="anonymous" 
+          referrerpolicy="no-referrer">
+    
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%23b9c8c3%22>🦷</text></svg>">
+    <!-- Favicon оптимизирован -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23b9c8c3'>🦷</text></svg>">
     
+    <!-- Мета-теги оптимизированы -->
     <meta name="theme-color" content="#b9c8c3">
     <meta property="og:title" content="Ортоцентр | Профессиональная стоматология в Волгограде">
     <meta property="og:description" content="Каталог профессиональных стоматологических товаров. График работы: будни 08:00-20:00, выходные 09:00-15:00">
@@ -24,11 +33,13 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
-    <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх">
-        <span class="back-to-top-icon">^</span>
+    <!-- Кнопка "Наверх" -->
+    <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
+        <span class="back-to-top-icon">↑</span>
     </button>
 
-    <div class="image-modal" id="imageModal">
+    <!-- Модальное окно для изображений -->
+    <dialog class="image-modal" id="imageModal">
         <div class="modal-overlay"></div>
         <div class="modal-content">
             <button class="modal-close" id="modalClose" aria-label="Закрыть">
@@ -45,7 +56,7 @@
             
             <div class="image-container">
                 <img id="modalImage" src="" alt="" class="modal-image" loading="eager">
-                <div class="image-loading">
+                <div class="image-loading" hidden>
                     <div class="loading-spinner"></div>
                 </div>
             </div>
@@ -74,12 +85,13 @@
                 </div>
             </div>
         </div>
-    </div>
+    </dialog>
 
+    <!-- Шапка сайта -->
     <header class="header" id="mainHeader">
         <div class="container">
             <div class="header-top">
-                <div class="logo" id="mainLogo">
+                <div class="logo">
                     <h1 class="logo-title">
                         <span class="logo-text">Ортоцентр</span>
                         <span class="logo-subtitle">Профессиональная стоматология</span>
@@ -93,14 +105,13 @@
                                 <i class="fas fa-moon"></i>
                             </span>
                         </button>
-                        <!-- Добавить эту кнопку -->
                         <button class="theme-reset" id="themeReset" aria-label="Использовать системную тему" 
-                                title="Вернуться к системной теме" style="display: none;">
+                                title="Вернуться к системной теме" hidden>
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
                     
-                    <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню">
+                    <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню" aria-expanded="false">
                         <span class="bar bar-top"></span>
                         <span class="bar bar-middle"></span>
                         <span class="bar bar-bottom"></span>
@@ -108,31 +119,31 @@
                 </div>
             </div>
 
-            <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
+            <nav class="main-nav" id="mainNav" aria-label="Основная навигация" hidden>
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
                         <li class="nav-item">
-                            <a href="#all-products" class="nav-link active" data-category="all" id="navAll">
+                            <a href="#all-products" class="nav-link active" data-category="all">
                                 <span class="nav-text">Все товары</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#brushes" class="nav-link" data-category="щетки" id="navBrushes">
+                            <a href="#brushes" class="nav-link" data-category="щетки">
                                 <span class="nav-text">Щетки</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#pastes" class="nav-link" data-category="пасты" id="navPastes">
+                            <a href="#pastes" class="nav-link" data-category="пасты">
                                 <span class="nav-text">Пасты</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#irrigators" class="nav-link" data-category="ирригаторы" id="navIrrigators">
+                            <a href="#irrigators" class="nav-link" data-category="ирригаторы">
                                 <span class="nav-text">Ирригаторы</span>
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="#other" class="nav-link" data-category="прочее" id="navOther">
+                            <a href="#other" class="nav-link" data-category="прочее">
                                 <span class="nav-text">Прочее</span>
                             </a>
                         </li>
@@ -142,32 +153,35 @@
         </div>
     </header>
 
+    <!-- Основное содержимое -->
     <main class="main-content" id="mainContent">
         <div class="container">
+            <!-- Герой-секция -->
             <section class="hero-section" aria-labelledby="heroTitle">
                 <div class="hero-content">
-                    <h2 id="heroTitle" class="hero-title">
+                    <h1 id="heroTitle" class="hero-title">
                         <span class="hero-highlight">Профессиональные</span> средства для гигиены полости рта
-                    </h2>
+                    </h1>
                     <p class="hero-description">
                         Качественные зубные щетки, пасты, ирригаторы и прочее от проверенных производителей в Волгограде
                     </p>
                     
                     <div class="hero-search">
                         <div class="search-wrapper">
-                            <i class="fas fa-search search-icon"></i>
+                            <i class="fas fa-search search-icon" aria-hidden="true"></i>
                             <input 
-                                type="text" 
+                                type="search" 
                                 id="globalSearch" 
                                 class="search-input" 
                                 placeholder="Поиск зубных щеток, паст, ирригаторов..."
                                 aria-label="Поиск по каталогу"
                                 autocomplete="off"
                             >
-                            <button class="search-clear" id="searchClear" aria-label="Очистить поиск" style="display: none;">
+                            <button class="search-clear" id="searchClear" aria-label="Очистить поиск" hidden>
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
+                        
                         <div class="search-hints">
                             <span class="hint">Попробуйте: "электрическая щетка" или "отбеливающая паста"</span>
                         </div>
@@ -189,13 +203,14 @@
                     </div>
                 </div>
                 
-                <div class="hero-decoration">
+                <div class="hero-decoration" aria-hidden="true">
                     <div class="decoration-circle circle-1"></div>
                     <div class="decoration-circle circle-2"></div>
                     <div class="decoration-circle circle-3"></div>
                 </div>
             </section>
 
+            <!-- Каталог товаров -->
             <section class="catalog-section" aria-labelledby="catalogTitle" id="all-products">
                 <div class="catalog-header">
                     <h2 id="catalogTitle" class="catalog-title">
@@ -204,24 +219,24 @@
                     </h2>
                     
                     <div class="catalog-controls">
-                        <div class="view-toggle-group">
-                            <button class="view-toggle active" id="viewGrid" aria-label="Показать сеткой">
+                        <div class="view-toggle-group" aria-label="Вид отображения">
+                            <button class="view-toggle active" id="viewGrid" aria-label="Показать сеткой" aria-pressed="true">
                                 <i class="fas fa-th"></i>
                                 <span class="view-label">Сетка</span>
                             </button>
-                            <button class="view-toggle" id="viewList" aria-label="Показать списком">
+                            <button class="view-toggle" id="viewList" aria-label="Показать списком" aria-pressed="false">
                                 <i class="fas fa-list"></i>
                                 <span class="view-label">Список</span>
                             </button>
                         </div>
                         
                         <div class="sort-dropdown">
-                            <button class="sort-toggle" id="sortToggle" aria-label="Сортировка">
+                            <button class="sort-toggle" id="sortToggle" aria-label="Сортировка" aria-expanded="false">
                                 <i class="fas fa-sort-amount-down"></i>
                                 <span id="sortText">По популярности</span>
                                 <i class="fas fa-chevron-down"></i>
                             </button>
-                            <div class="sort-menu" id="sortMenu">
+                            <div class="sort-menu" id="sortMenu" hidden>
                                 <button class="sort-option active" data-sort="default">По популярности</button>
                                 <button class="sort-option" data-sort="price-asc">Сначала дешевые</button>
                                 <button class="sort-option" data-sort="price-desc">Сначала дорогие</button>
@@ -247,7 +262,7 @@
                         </div>
                     </div>
                     
-                    <div class="empty-state" id="emptyState" style="display: none;">
+                    <div class="empty-state" id="emptyState" hidden>
                         <div class="empty-icon">
                             <i class="fas fa-search"></i>
                         </div>
@@ -263,14 +278,15 @@
                 </div>
             </section>
 
+            <!-- Информация о категориях -->
             <section class="categories-info" aria-labelledby="categoriesTitle">
                 <h2 id="categoriesTitle" class="categories-title">Категории товаров</h2>
                 <p class="categories-subtitle">Полный ассортимент для комплексного ухода</p>
                 
                 <div class="categories-grid">
-                    <article class="category-card" id="categoryBrushes">
+                    <article class="category-card">
                         <div class="category-card-header">
-                            <div class="category-icon">
+                            <div class="category-icon" aria-hidden="true">
                                 <i class="fas fa-toothbrush"></i>
                             </div>
                             <h3 class="category-card-title">Зубные щетки</h3>
@@ -280,9 +296,9 @@
                                 Электрические, ультразвуковые, мануальные щетки для профессиональной гигиены.
                             </p>
                             <ul class="category-features">
-                                <li><i class="fas fa-check"></i> Разная жесткость щетины</li>
-                                <li><i class="fas fa-check"></i> С таймерами и датчиками</li>
-                                <li><i class="fas fa-check"></i> Для чувствительных зубов</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Разная жесткость щетины</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> С таймерами и датчиками</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Для чувствительных зубов</li>
                             </ul>
                         </div>
                         <div class="category-card-footer">
@@ -293,9 +309,9 @@
                         </div>
                     </article>
                     
-                    <article class="category-card" id="categoryPastes">
+                    <article class="category-card">
                         <div class="category-card-header">
-                            <div class="category-icon">
+                            <div class="category-icon" aria-hidden="true">
                                 <i class="fas fa-paste"></i>
                             </div>
                             <h3 class="category-card-title">Зубные пасты</h3>
@@ -305,9 +321,9 @@
                                 Лечебно-профилактические, отбеливающие, для чувствительных зубов.
                             </p>
                             <ul class="category-features">
-                                <li><i class="fas fa-check"></i> С биокальцием и фтором</li>
-                                <li><i class="fas fa-check"></i> Без SLS и парабенов</li>
-                                <li><i class="fas fa-check"></i> Натуральные компоненты</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> С биокальцием и фтором</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Без SLS и парабенов</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Натуральные компоненты</li>
                             </ul>
                         </div>
                         <div class="category-card-footer">
@@ -318,9 +334,9 @@
                         </div>
                     </article>
                     
-                    <article class="category-card" id="categoryIrrigators">
+                    <article class="category-card">
                         <div class="category-card-header">
-                            <div class="category-icon">
+                            <div class="category-icon" aria-hidden="true">
                                 <i class="fas fa-shower"></i>
                             </div>
                             <h3 class="category-card-title">Ирригаторы</h3>
@@ -330,9 +346,9 @@
                                 Стационарные и портативные ирригаторы для профессиональной чистки.
                             </p>
                             <ul class="category-features">
-                                <li><i class="fas fa-check"></i> Регулируемое давление</li>
-                                <li><i class="fas fa-check"></i> Несколько насадок</li>
-                                <li><i class="fas fa-check"></i> Компактные модели</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Регулируемое давление</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Несколько насадок</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Компактные модели</li>
                             </ul>
                         </div>
                         <div class="category-card-footer">
@@ -343,9 +359,9 @@
                         </div>
                     </article>
                     
-                    <article class="category-card" id="categoryOther">
+                    <article class="category-card">
                         <div class="category-card-header">
-                            <div class="category-icon">
+                            <div class="category-icon" aria-hidden="true">
                                 <i class="fas fa-boxes"></i>
                             </div>
                             <h3 class="category-card-title">Прочее</h3>
@@ -355,9 +371,9 @@
                                 Зубные нити, ополаскиватели, ёршики, аксессуары и другие средства гигиены.
                             </p>
                             <ul class="category-features">
-                                <li><i class="fas fa-check"></i> Зубные нити и ёршики</li>
-                                <li><i class="fas fa-check"></i> Ополаскиватели</li>
-                                <li><i class="fas fa-check"></i> Средства для протезов</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Зубные нити и ёршики</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Ополаскиватели</li>
+                                <li><i class="fas fa-check" aria-hidden="true"></i> Средства для протезов</li>
                             </ul>
                         </div>
                         <div class="category-card-footer">
@@ -372,7 +388,8 @@
         </div>
     </main>
 
-    <footer class="footer" id="mainFooter">
+    <!-- Подвал сайта -->
+    <footer class="footer">
         <div class="container">
             <div class="footer-content">
                 <div class="footer-column">
@@ -386,23 +403,23 @@
                     
                     <div class="footer-contacts">
                         <div class="contact-item">
-                            <i class="fas fa-map-marker-alt"></i>
+                            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
                             <div class="contact-info">
                                 <span class="contact-label">Адрес</span>
-                                <span class="contact-value">г. Волгоград, ул. Землячки, д. 58, к. 1</span>
+                                <address class="contact-value">г. Волгоград, ул. Землячки, д. 58, к. 1</address>
                             </div>
                         </div>
                         
                         <div class="contact-item">
-                            <i class="fab fa-whatsapp"></i>
+                            <i class="fab fa-whatsapp" aria-hidden="true"></i>
                             <div class="contact-info">
                                 <span class="contact-label">WhatsApp</span>
-                                <a href="tel:+79963560303" class="contact-value">8 (996) 356-03-03</a>
+                                <a href="https://wa.me/79963560303" class="contact-value">8 (996) 356-03-03</a>
                             </div>
                         </div>
                         
                         <div class="contact-item">
-                            <i class="fas fa-phone"></i>
+                            <i class="fas fa-phone" aria-hidden="true"></i>
                             <div class="contact-info">
                                 <span class="contact-label">Телефон</span>
                                 <a href="tel:+78442490003" class="contact-value">8 (8442) 49-00-03</a>
@@ -410,7 +427,7 @@
                         </div>
                         
                         <div class="contact-item">
-                            <i class="far fa-clock"></i>
+                            <i class="far fa-clock" aria-hidden="true"></i>
                             <div class="contact-info">
                                 <span class="contact-label">График работы</span>
                                 <span class="contact-value">
@@ -424,7 +441,7 @@
                 
                 <div class="footer-column">
                     <h4 class="footer-heading">
-                        <i class="fas fa-th-large"></i>
+                        <i class="fas fa-th-large" aria-hidden="true"></i>
                         Категории
                     </h4>
                     <div class="footer-categories">
@@ -448,44 +465,44 @@
                 
                 <div class="footer-column">
                     <h4 class="footer-heading">
-                        <i class="fas fa-external-link-alt"></i>
+                        <i class="fas fa-external-link-alt" aria-hidden="true"></i>
                         Быстрые ссылки
                     </h4>
                     <div class="footer-links">
-                        <a href="https://didenkodent.ru" class="footer-link" target="_blank" rel="noopener" aria-label="Основной сайт">
-                            <i class="fas fa-globe"></i>
+                        <a href="https://didenkodent.ru" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="Основной сайт">
+                            <i class="fas fa-globe" aria-hidden="true"></i>
                             <span>Основной сайт</span>
                         </a>
-                        <a href="https://t.me/centrortho" class="footer-link" target="_blank" rel="noopener" aria-label="Телеграм-канал">
-                            <i class="fab fa-telegram"></i>
+                        <a href="https://t.me/centrortho" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="Телеграм-канал">
+                            <i class="fab fa-telegram" aria-hidden="true"></i>
                             <span>Телеграм-канал</span>
                         </a>
-                        <a href="https://vk.com/didenko.dent" class="footer-link" target="_blank" rel="noopener" aria-label="Группа ВКонтакте">
-                            <i class="fab fa-vk"></i>
+                        <a href="https://vk.com/didenko.dent" class="footer-link" target="_blank" rel="noopener noreferrer" aria-label="Группа ВКонтакте">
+                            <i class="fab fa-vk" aria-hidden="true"></i>
                             <span>Группа ВКонтакте</span>
                         </a>
                         <button class="footer-link" id="footerScrollTop" aria-label="Наверх">
-                            <i class="fas fa-chevron-up"></i>
+                            <i class="fas fa-chevron-up" aria-hidden="true"></i>
                             <span>Наверх</span>
                         </button>
                     </div>
                     
                     <div class="footer-social">
                         <h4 class="footer-heading">
-                            <i class="fas fa-share-alt"></i>
+                            <i class="fas fa-share-alt" aria-hidden="true"></i>
                             Связаться с нами
                         </h4>
                         <div class="social-links">
-                            <a href="https://wa.me/79963560303" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener">
+                            <a href="https://wa.me/79963560303" class="social-link" aria-label="WhatsApp" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-whatsapp"></i>
                             </a>
-                            <a href="https://t.me/centrortho" class="social-link" aria-label="Telegram" target="_blank" rel="noopener">
+                            <a href="https://t.me/centrortho" class="social-link" aria-label="Telegram" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-telegram"></i>
                             </a>
-                            <a href="viber://chat?number=+79963560303" class="social-link" aria-label="Viber" target="_blank" rel="noopener">
+                            <a href="viber://chat?number=+79963560303" class="social-link" aria-label="Viber" target="_blank" rel="noopener noreferrer">
                                 <i class="fab fa-viber"></i>
                             </a>
-                            <a href="mailto:info@ortocentr.ru" class="social-link" aria-label="Email" target="_blank" rel="noopener">
+                            <a href="mailto:info@ortocentr.ru" class="social-link" aria-label="Email" target="_blank" rel="noopener noreferrer">
                                 <i class="fas fa-envelope"></i>
                             </a>
                         </div>
@@ -499,7 +516,7 @@
                         &copy; <span id="currentYear">2025</span> Ортоцентр. Все права защищены.
                     </p>
                     <p class="footer-disclaimer">
-                        <i class="fas fa-info-circle"></i>
+                        <i class="fas fa-info-circle" aria-hidden="true"></i>
                         Не является публичной офертой. Точную стоимость и наличие товара необходимо уточнять у администратора.
                     </p>
                 </div>
@@ -507,11 +524,11 @@
                 <div class="footer-tech">
                     <div class="tech-info">
                         <p class="tech-note">
-                            <i class="fas fa-code"></i>
+                            <i class="fas fa-code" aria-hidden="true"></i>
                             Сайт оптимизирован для мобильных устройств
                         </p>
                         <p class="tech-pwa">
-                            <i class="fas fa-mobile-alt"></i>
+                            <i class="fas fa-mobile-alt" aria-hidden="true"></i>
                             Доступен для установки как PWA-приложение
                         </p>
                     </div>
@@ -523,104 +540,37 @@
     <script src="script.js" defer></script>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Упрощенный и оптимизированный JavaScript
+        document.addEventListener('DOMContentLoaded', () => {
+            // Установка текущего года
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
             }
             
+            // Кнопка "Наверх" в футере
             const footerScrollTop = document.getElementById('footerScrollTop');
             if (footerScrollTop) {
                 footerScrollTop.addEventListener('click', () => {
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
                 });
             }
             
+            // Регистрация Service Worker
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/service-worker.js')
-                        .then(registration => {
-                            console.log('✅ Service Worker зарегистрирован:', registration.scope);
-                        })
-                        .catch(error => {
-                            console.log('⚠️ Service Worker не зарегистрирован:', error);
-                        });
+                        .catch(error => console.warn('Service Worker не зарегистрирован:', error));
                 });
             }
             
+            // Проверка PWA
             if (window.matchMedia('(display-mode: standalone)').matches) {
-                document.body.classList.add('pwa-installed');
+                document.documentElement.classList.add('pwa-installed');
             }
             
-            console.log('🚀 Каталог «Ортоцентр» загружен и готов к работе');
-        });
-        
-        document.addEventListener('DOMContentLoaded', function() {
-            const style = document.createElement('style');
-            style.textContent = `
-                .fa-wifi-slash:before { content: "📶"; }
-                .fa-info-circle:before { content: "ℹ️"; }
-                .fa-sync-alt:before { content: "🔄"; }
-                .fa-home:before { content: "🏠"; }
-                .fa-lightbulb:before { content: "💡"; }
-                .fa-toothbrush:before { content: "🪥"; }
-                .fa-paste:before { content: "🧴"; }
-                .fa-shower:before { content: "🚿"; }
-                .fa-boxes:before { content: "📦"; }
-                .fa-times:before { content: "✖️"; }
-                .fa-arrow-left:before { content: "⬅️"; }
-                .fa-chevron-up:before { content: "⬆️"; }
-                .fa-chevron-down:before { content: "⬇️"; }
-                .fa-chevron-left:before { content: "⬅️"; }
-                .fa-chevron-right:before { content: "➡️"; }
-                .fa-th-large:before { content: "📦"; }
-                .fa-list:before { content: "📋"; }
-                .fa-sort-amount-down:before { content: "🔽"; }
-                .fa-check:before { content: "✅"; }
-                .fa-arrow-right:before { content: "➡️"; }
-                .fa-map-marker-alt:before { content: "📍"; }
-                .fa-phone:before { content: "📞"; }
-                .fa-clock:before { content: "🕒"; }
-                .fa-external-link-alt:before { content: "↗️"; }
-                .fa-globe:before { content: "🌐"; }
-                .fa-share-alt:before { content: "🔗"; }
-                .fa-envelope:before { content: "✉️"; }
-                .fa-mobile-alt:before { content: "📱"; }
-                .fa-code:before { content: "💻"; }
-                .fa-moon:before { content: "🌙"; }
-                .fa-sun:before { content: "☀️"; }
-                .fa-search:before { content: "🔍"; }
-                .fa-redo:before { content: "🔄"; }
-                .fa-exclamation-triangle:before { content: "⚠️"; }
-                .fa-spinner:before { content: "🔄"; }
-                .fa-filter:before { content: "🔧"; }
-                .fa-whatsapp:before { content: "💬"; }
-                .fab.fa-whatsapp:before { content: "💬"; }
-                .fab.fa-telegram:before { content: "📨"; }
-                .fab.fa-vk:before { content: "VK"; }
-                .fab.fa-viber:before { content: "💜"; }
-            `;
-            
-            setTimeout(() => {
-                const testIcon = document.createElement('i');
-                testIcon.className = 'fas fa-test';
-                document.body.appendChild(testIcon);
-                const computedStyle = window.getComputedStyle(testIcon, ':before');
-                const content = computedStyle.content;
-                
-                if (content === 'none' || content === '') {
-                    console.log('⚠️ FontAwesome не загружен, применяем fallback');
-                    document.head.appendChild(style);
-                }
-                
-                testIcon.remove();
-            }, 1000);
+            console.log('✅ Каталог «Ортоцентр» загружен');
         });
     </script>
 </body>
 </html>
-
-
