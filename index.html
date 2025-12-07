@@ -33,9 +33,6 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
-
-
-    
     <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
         <i class="fas fa-chevron-up"></i>
@@ -90,7 +87,7 @@
         </div>
     </dialog>
 
-    <!-- Шапка сайта -->
+    <!-- Шапка сайта - УДАЛЕНО МОБИЛЬНОЕ МЕНЮ -->
     <header class="header" id="mainHeader">
         <div class="container">
             <div class="header-top">
@@ -112,11 +109,14 @@
                                 title="Вернуться к системной теме" hidden>
                             <i class="fas fa-sync-alt"></i>
                         </button>
-                    </div>            
+                    </div>
+                    
+                    <!-- УДАЛЕНО: menu-toggle кнопка -->
                 </div>
             </div>
 
-            <nav class="main-nav" id="mainNav" aria-label="Основная навигация" hidden>
+            <!-- Навигация по категориям (остается для десктопа) -->
+            <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
                         <li class="nav-item">
@@ -170,7 +170,7 @@
                                 type="search" 
                                 id="globalSearch" 
                                 class="search-input" 
-                                placeholder="Поиск зубных щеток, пасты, ирригаторов..."
+                                placeholder="Поиск зубных щеток, паст, ирригаторов..."
                                 aria-label="Поиск по каталогу"
                                 autocomplete="off"
                             >
@@ -183,17 +183,29 @@
                             <span class="hint">Попробуйте: "электрическая щетка" или "отбеливающая паста"</span>
                         </div>
 
+                        <!-- ОБНОВЛЕННЫЙ "БЫСТРЫЙ ВЫБОР" с иконками -->
                         <div class="category-quick-select">
-                            <div class="quick-select-title">Быстрый выбор:</div>
+                            <div class="quick-select-title">Выберите категорию:</div>
                             <div class="quick-select-buttons">
+                                <button class="quick-select-btn" data-category="all" aria-label="Все товары">
+                                    <i class="fas fa-th-large"></i>
+                                    <span>Все товары</span>
+                                </button>
                                 <button class="quick-select-btn" data-category="щетки" aria-label="Зубные щетки">
+                                    <i class="fas fa-toothbrush"></i>
                                     <span>Щетки</span>
                                 </button>
                                 <button class="quick-select-btn" data-category="пасты" aria-label="Зубные пасты">
+                                    <i class="fas fa-paste"></i>
                                     <span>Пасты</span>
                                 </button>
                                 <button class="quick-select-btn" data-category="ирригаторы" aria-label="Ирригаторы">
+                                    <i class="fas fa-shower"></i>
                                     <span>Ирригаторы</span>
+                                </button>
+                                <button class="quick-select-btn" data-category="прочее" aria-label="Прочие товары">
+                                    <i class="fas fa-boxes"></i>
+                                    <span>Прочее</span>
                                 </button>
                             </div>
                         </div>
@@ -242,21 +254,7 @@
                             </div>
                         </div>
 
-                        <div class="category-dropdown">
-                            <button class="category-toggle" id="categoryToggle" aria-label="Категории" aria-expanded="false">
-                                <i class="fas fa-filter"></i>
-                                <span id="categoryText">Все категории</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </button>
-                            <div class="category-menu" id="categoryMenu" hidden>
-                                <button class="category-option active" data-category="all">Все товары</button>
-                                <button class="category-option" data-category="щетки">Зубные щетки</button>
-                                <button class="category-option" data-category="пасты">Зубные пасты</button>
-                                <button class="category-option" data-category="ирригаторы">Ирригаторы</button>
-                                <button class="category-option" data-category="прочее">Прочее</button>
-                            </div>
-                        </div>
-
+                        <!-- УДАЛЕНО: category-dropdown -->
                         
                         <button class="reset-filters-btn" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
@@ -291,7 +289,7 @@
                 </div>
             </section>
 
-            <!-- Информация о категориях -->
+            <!-- Информация о категориях (оставляем) -->
             <section class="categories-info" aria-labelledby="categoriesTitle">
                 <h2 id="categoriesTitle" class="categories-title">Категории товаров</h2>
                 <p class="categories-subtitle">Полный ассортимент для комплексного ухода</p>
@@ -589,6 +587,3 @@
     </script>
 </body>
 </html>
-
-
-
