@@ -196,11 +196,26 @@ function initTheme() {
     try {
         const savedTheme = localStorage.getItem(CONFIG.THEME_KEY);
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-        const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
+        
+        let initialTheme;
+        
+        // Если пользователь уже выбирал тему, используем её
+        if (savedTheme) {
+            initialTheme = savedTheme;
+            // Показываем кнопку сброса
+            if (document.getElementById('themeReset')) {
+                document.getElementById('themeReset').style.display = 'flex';
+            }
+        } else {
+            // Иначе используем системную
+            initialTheme = systemPrefersDark ? 'dark' : 'light';
+        }
         
         setTheme(initialTheme);
         
+        // Слушатель изменения системной темы
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+            // Меняем тему только если пользователь не выбрал вручную
             if (!localStorage.getItem(CONFIG.THEME_KEY)) {
                 setTheme(e.matches ? 'dark' : 'light');
             }
@@ -248,7 +263,34 @@ function setTheme(theme) {
 
 function toggleTheme() {
     const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-    setTheme(currentTheme === 'light' ? 'dark' : 'light');
+    const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+    
+    // Сохраняем выбор пользователя
+    localStorage.setItem(CONFIG.THEME_KEY, newTheme);
+    
+    // Показываем кнопку сброса
+    if (document.getElementById('themeReset')) {
+        document.getElementById('themeReset').style.display = 'flex';
+    }
+    
+    setTheme(newTheme);
+}
+
+// Новая функция сброса к системной теме
+function resetToSystemTheme() {
+    // Удаляем сохраненную тему
+    localStorage.removeItem(CONFIG.THEME_KEY);
+    
+    // Скрываем кнопку сброса
+    if (document.getElementById('themeReset')) {
+        document.getElementById('themeReset').style.display = 'none';
+    }
+    
+    // Устанавливаем системную тему
+    const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    setTheme(systemPrefersDark ? 'dark' : 'light');
+    
+    showNotification('Используется системная тема');
 }
 
 // ============================================
@@ -1146,6 +1188,12 @@ function setupEventListeners() {
         console.log('✅ Кнопка сброса фильтров в catalog controls подключена');
     }
     if (DOM.themeToggle) DOM.themeToggle.addEventListener('click', toggleTheme);
+
+    // Добавить обработчик для кнопки сброса
+    const themeResetBtn = document.getElementById('themeReset');
+    if (themeResetBtn) {
+        themeResetBtn.addEventListener('click', resetToSystemTheme);
+    }
     
     DOM.categoryFilterBtns.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -1272,6 +1320,7 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.2 загружен');
+
 
 
 
