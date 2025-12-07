@@ -296,34 +296,13 @@ body.pwa-installed {
   opacity: 1;
 }
 
-.contact-schedule {
-  display: block;
-  visibility: visible;
-  opacity: 1;
-  height: auto;
-  margin-top: var(--space-xs);
-}
 
-.contact-hours {
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  color: var(--color-text-secondary);
-  font-size: 0.85rem;
-  background: var(--color-primary-pale);
-  padding: 6px 12px;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-base);
-}
 
-/* При скролле скрываем график */
-.header.scrolled .contact-schedule {
-  display: none;
-}
 
-.header.scrolled .contact-hours {
-  display: none;
-}
+
+
+
+
 
 .contact-phone-group {
   display: flex;
@@ -2060,12 +2039,6 @@ body.easter-egg-active .logo-text::after {
     margin: var(--space-xs) 0;
   }
   
-  .contact-phone-group {
-    flex-direction: row;
-    justify-content: space-between;
-    gap: var(--space-md);
-  }
-  
   .contact-phone {
     flex: 1;
     justify-content: center;
@@ -2426,16 +2399,9 @@ img {
 
 /* ===== 18. ИСПРАВЛЕНИЯ ДЛЯ ХЭДЕРА НА ДЕСКТОПЕ ===== */
 @media (min-width: 769px) {
-  .contact-schedule {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-  }
+
   
-  .contact-hours {
-    display: flex !important;
-  }
-}
+
 
 /* ===== 19. ДОПОЛНИТЕЛЬНАЯ АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ ===== */
 @media (max-width: 600px) {
@@ -2454,3 +2420,4 @@ img {
 
 
 /* ===== 20. КОНЕЦ СТИЛЕЙ ===== */
+
