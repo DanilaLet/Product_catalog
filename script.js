@@ -1130,6 +1130,14 @@ function fillModalData(product) {
     // Основные данные
     DOM.modalImage.src = product.image;
     DOM.modalImage.alt = product.name;
+    
+    // Обработка ошибок для модального изображения
+    DOM.modalImage.addEventListener('error', function() {
+        if (this.src !== 'assets/images/placeholder.jpg' && this.src !== '/assets/images/placeholder.jpg') {
+            this.src = 'assets/images/placeholder.jpg';
+        }
+    });
+    
     DOM.modalProductName.textContent = product.name;
     DOM.modalProductPrice.textContent = formatPrice(product.price);
     DOM.modalProductDescription.textContent = product.description;
@@ -1516,3 +1524,4 @@ window.CatalogApp = {
 
 
 console.log('📦 CatalogApp v3.2 загружен');
+
