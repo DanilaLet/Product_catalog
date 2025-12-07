@@ -575,21 +575,44 @@ function applyFilters() {
     updateFooterFilters();
     updateQuickSelectButtons();
     
+    // УБИРАЕМ автоматическую прокрутку при фильтрации
+    // Только если НЕ поисковый запрос (поиск обрабатывается отдельно)
+    if (!STATE.searchQuery) {
+        requestAnimationFrame(() => {
+            const catalogSection = document.querySelector('.catalog-section');
+            if (catalogSection) {
+                const headerHeight = DOM.mainHeader?.offsetHeight || 70;
+                const catalogTop = catalogSection.getBoundingClientRect().top + window.pageYOffset;
+                
+                // Прокручиваем ТОЛЬКО если пользователь находится выше каталога
+                // и изменил категорию (не поиск)
+                if (window.pageYOffset < catalogTop - headerHeight - 20) {
+                    window.scrollTo({
+                        top: catalogTop - headerHeight - 20,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        });
+    }
+}
+
+
+function scrollToCatalog() {
     requestAnimationFrame(() => {
         const catalogSection = document.querySelector('.catalog-section');
-        if (catalogSection && (STATE.currentCategory !== 'all' || STATE.searchQuery)) {
+        if (catalogSection) {
             const headerHeight = DOM.mainHeader?.offsetHeight || 70;
             const catalogTop = catalogSection.getBoundingClientRect().top + window.pageYOffset;
             
-            if (window.pageYOffset < catalogTop - headerHeight - 20) {
-                window.scrollTo({
-                    top: catalogTop - headerHeight - 20,
-                    behavior: 'smooth'
-                });
-            }
+            window.scrollTo({
+                top: catalogTop - headerHeight - 20,
+                behavior: 'smooth'
+            });
         }
     });
 }
+
 
 function filterProductsByCategory(category) {
     if (category === STATE.currentCategory && !STATE.searchQuery) return;
@@ -1224,3 +1247,4 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v3.2 загружен');
+
