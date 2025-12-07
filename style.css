@@ -2050,3 +2050,195 @@ img {
   height: auto;
   display: block;
 }
+
+/* Дропдаун категорий */
+.category-dropdown {
+    position: relative;
+}
+
+.category-toggle {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    font-size: 0.95rem;
+    color: var(--color-text);
+    cursor: pointer;
+    min-width: 180px;
+    justify-content: space-between;
+    min-height: 44px;
+    transition: all var(--transition-fast);
+}
+
+.category-toggle:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-ultralight);
+}
+
+.category-toggle i:first-child {
+    color: var(--color-primary);
+}
+
+.category-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--color-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    margin-top: var(--space-xs);
+    padding: var(--space-sm);
+    display: flex;
+    flex-direction: column;
+    z-index: var(--z-modal);
+    box-shadow: var(--shadow-lg);
+}
+
+.category-menu[hidden] {
+    display: none;
+}
+
+.category-option {
+    padding: var(--space-sm) var(--space-md);
+    border: none;
+    background: transparent;
+    text-align: left;
+    color: var(--color-text);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--transition-fast);
+    font-size: 0.95rem;
+}
+
+.category-option:hover {
+    background: var(--color-surface);
+    color: var(--color-primary);
+}
+
+.category-option.active {
+    background: var(--color-primary);
+    color: var(--color-text-light);
+    font-weight: var(--font-weight-semibold);
+}
+
+/* Вид списка на мобильных */
+@media (max-width: 768px) {
+    .catalog-grid.list-view .product-card {
+        flex-direction: row;
+        align-items: center;
+        padding: var(--space-md);
+        min-height: 80px;
+    }
+    
+    .catalog-grid.list-view .product-image-container {
+        display: none;
+    }
+    
+    .catalog-grid.list-view .product-badges {
+        display: none;
+    }
+    
+    .catalog-grid.list-view .product-info {
+        padding: 0;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+        gap: var(--space-md);
+    }
+    
+    .catalog-grid.list-view .product-header {
+        margin-bottom: 0;
+        flex: 1;
+    }
+    
+    .catalog-grid.list-view .product-title {
+        font-size: 1rem;
+        margin-bottom: var(--space-xs);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 200px;
+    }
+    
+    .catalog-grid.list-view .product-category {
+        font-size: 0.75rem;
+        padding: 2px 8px;
+    }
+    
+    .catalog-grid.list-view .product-description {
+        display: none;
+    }
+    
+    .catalog-grid.list-view .product-features {
+        display: none;
+    }
+    
+    .catalog-grid.list-view .product-footer {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+        flex: 0 0 auto;
+    }
+    
+    .catalog-grid.list-view .product-price {
+        font-size: 1.1rem;
+        white-space: nowrap;
+    }
+    
+    /* Для очень маленьких экранов */
+    @media (max-width: 480px) {
+        .catalog-grid.list-view .product-title {
+            max-width: 150px;
+        }
+        
+        .catalog-grid.list-view .product-price {
+            font-size: 1rem;
+        }
+    }
+}
+
+/* Стили для категорий в списке на десктопе */
+@media (min-width: 769px) {
+    .catalog-grid.list-view .product-card {
+        flex-direction: row;
+        padding: var(--space-md);
+    }
+    
+    .catalog-grid.list-view .product-image-container {
+        width: 100px;
+        height: 100px;
+        flex: 0 0 100px;
+        margin-right: var(--space-lg);
+        margin-bottom: 0;
+    }
+    
+    .catalog-grid.list-view .product-info {
+        padding: 0;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        flex: 1;
+    }
+    
+    .catalog-grid.list-view .product-header {
+        flex: 1;
+        margin-right: var(--space-lg);
+    }
+    
+    .catalog-grid.list-view .product-footer {
+        border-top: none;
+        padding-top: 0;
+        margin-top: 0;
+        flex: 0 0 auto;
+    }
+    
+    .catalog-grid.list-view .product-description {
+        display: none;
+    }
+}
