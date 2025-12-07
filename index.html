@@ -33,6 +33,9 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
+    <!-- Прогресс-бар -->
+    <div class="progress-bar" id="progressBar"></div>
+    
     <!-- Кнопка "Наверх" -->
     <button class="back-to-top" id="backToTop" aria-label="Вернуться наверх" hidden>
         <i class="fas fa-chevron-up"></i>
@@ -183,29 +186,24 @@
                             <span class="hint">Попробуйте: "электрическая щетка" или "отбеливающая паста"</span>
                         </div>
 
-                        <!-- ОБНОВЛЕННЫЙ "БЫСТРЫЙ ВЫБОР" с иконками -->
+                        <!-- ОБНОВЛЕННЫЙ "БЫСТРЫЙ ВЫБОР" без иконок -->
                         <div class="category-quick-select">
                             <div class="quick-select-title">Выберите категорию:</div>
                             <div class="quick-select-buttons">
                                 <button class="quick-select-btn" data-category="all" aria-label="Все товары">
-                                    <i class="fas fa-th-large"></i>
-                                    <span>Все товары</span>
+                                    Все товары
                                 </button>
                                 <button class="quick-select-btn" data-category="щетки" aria-label="Зубные щетки">
-                                    <i class="fas fa-toothbrush"></i>
-                                    <span>Щетки</span>
+                                    Щетки
                                 </button>
                                 <button class="quick-select-btn" data-category="пасты" aria-label="Зубные пасты">
-                                    <i class="fas fa-paste"></i>
-                                    <span>Пасты</span>
+                                    Пасты
                                 </button>
                                 <button class="quick-select-btn" data-category="ирригаторы" aria-label="Ирригаторы">
-                                    <i class="fas fa-shower"></i>
-                                    <span>Ирригаторы</span>
+                                    Ирригаторы
                                 </button>
                                 <button class="quick-select-btn" data-category="прочее" aria-label="Прочие товары">
-                                    <i class="fas fa-boxes"></i>
-                                    <span>Прочее</span>
+                                    Прочее
                                 </button>
                             </div>
                         </div>
@@ -253,8 +251,6 @@
                                 <button class="sort-option" data-sort="name">По названию</button>
                             </div>
                         </div>
-
-                        <!-- УДАЛЕНО: category-dropdown -->
                         
                         <button class="reset-filters-btn" id="resetFiltersBtn">
                             <i class="fas fa-redo"></i>
@@ -285,6 +281,66 @@
                             <i class="fas fa-redo"></i>
                             Сбросить фильтры
                         </button>
+                    </div>
+                    
+                    <!-- Добавить скелетоны -->
+                    <div class="skeleton-container" id="skeletonContainer" hidden>
+                        <div class="skeleton-grid">
+                            <div class="skeleton-card" style="animation-delay: 0ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card" style="animation-delay: 50ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card" style="animation-delay: 100ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card" style="animation-delay: 150ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card" style="animation-delay: 200ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                            <div class="skeleton-card" style="animation-delay: 250ms">
+                                <div class="skeleton-image"></div>
+                                <div class="skeleton-content">
+                                    <div class="skeleton-text skeleton-title"></div>
+                                    <div class="skeleton-text skeleton-category"></div>
+                                    <div class="skeleton-text skeleton-description"></div>
+                                    <div class="skeleton-text skeleton-price"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -553,15 +609,12 @@
     <script src="script.js" defer></script>
     
     <script>
-        // Упрощенный и оптимизированный JavaScript
         document.addEventListener('DOMContentLoaded', () => {
-            // Установка текущего года
             const yearElement = document.getElementById('currentYear');
             if (yearElement) {
                 yearElement.textContent = new Date().getFullYear();
             }
             
-            // Кнопка "Наверх" в футере
             const footerScrollTop = document.getElementById('footerScrollTop');
             if (footerScrollTop) {
                 footerScrollTop.addEventListener('click', () => {
@@ -569,7 +622,6 @@
                 });
             }
             
-            // Регистрация Service Worker
             if ('serviceWorker' in navigator) {
                 window.addEventListener('load', () => {
                     navigator.serviceWorker.register('/service-worker.js')
@@ -577,7 +629,6 @@
                 });
             }
             
-            // Проверка PWA
             if (window.matchMedia('(display-mode: standalone)').matches) {
                 document.documentElement.classList.add('pwa-installed');
             }
