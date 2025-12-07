@@ -1,6 +1,6 @@
 /**
  * КАТАЛОГ «ОРТОЦЕНТР» - ОСНОВНОЙ СКРИПТ
- * Версия: 3.3 (Оптимизированная)
+ * Версия: 3.5 (Исправления кликов, меню, просмотренные товары)
  */
 
 // ============================================
@@ -13,11 +13,10 @@ const CONFIG = {
     SCROLL_THRESHOLD: 100,
     ANIMATION_DELAY: 50,
     THEME_KEY: 'ortocentr-theme',
-    EASTER_EGG_CODE: 'СТОМАТОЛОГИЯ',
-    CACHE_NAME: 'ortocentr-cache-v2.0',
     VIEW_KEY: 'ortocentr-view',
     PRODUCTS_KEY: 'ortocentr-products',
-    UPDATE_KEY: 'ortocentr-last-update'
+    UPDATE_KEY: 'ortocentr-last-update',
+    VIEWED_KEY: 'ortocentr-viewed'
 };
 
 const STATE = {
@@ -31,14 +30,12 @@ const STATE = {
     isLoading: false,
     currentTheme: 'light',
     currentModalImageIndex: 0,
-    logoClickCount: 0,
-    isEasterEggActive: false,
-    isMenuOpen: false
+    isMenuOpen: false,
+    viewedProducts: new Set()
 };
 
 const DOM = {};
 
-// Сопоставления категорий и иконок (вынесены из функций)
 const CATEGORY_MAP = {
     'щетки': { name: 'Зубные щетки', icon: 'fa-toothbrush' },
     'пасты': { name: 'Зубные пасты', icon: 'fa-paste' },
@@ -80,7 +77,6 @@ function initDOMReferences() {
         DOM.menuToggle = document.getElementById('menuToggle');
         DOM.mainNav = document.getElementById('mainNav');
         DOM.mainHeader = document.getElementById('mainHeader');
-        DOM.mainLogo = document.getElementById('mainLogo');
         
         // Модальное окно
         DOM.imageModal = document.getElementById('imageModal');
@@ -136,10 +132,6 @@ function getCategoryName(category) {
     return CATEGORY_MAP[category]?.name || category;
 }
 
-function getCategoryIcon(category) {
-    return CATEGORY_MAP[category]?.icon || 'fa-box';
-}
-
 function getRussianPlural(number) {
     const forms = ['товар', 'товара', 'товаров'];
     const cases = [2, 0, 1, 1, 1, 2];
@@ -157,7 +149,43 @@ function formatFeatures(features) {
 }
 
 // ============================================
-// 4. УПРАВЛЕНИЕ ТЕМОЙ
+// 4. ПРОСМОТРЕННЫЕ ТОВАРЫ
+// ============================================
+
+function initViewedProducts() {
+    try {
+        const viewed = localStorage.getItem(CONFIG.VIEWED_KEY);
+        if (viewed) {
+            STATE.viewedProducts = new Set(JSON.parse(viewed));
+        }
+    } catch (error) {
+        console.warn('⚠️ Не удалось загрузить просмотренные товары:', error);
+    }
+}
+
+function markProductAsViewed(productId) {
+    STATE.viewedProducts.add(productId.toString());
+    
+    try {
+        localStorage.setItem(CONFIG.VIEWED_KEY, 
+            JSON.stringify(Array.from(STATE.viewedProducts)));
+    } catch (error) {
+        console.warn('⚠️ Не удалось сохранить просмотренные товары:', error);
+    }
+    
+    // Обновляем отображение карточки
+    const card = document.querySelector(`.product-card[data-id="${productId}"]`);
+    if (card) {
+        card.classList.add('viewed');
+    }
+}
+
+function isProductViewed(productId) {
+    return STATE.viewedProducts.has(productId.toString());
+}
+
+// ============================================
+// 5. УПРАВЛЕНИЕ ТЕМОЙ
 // ============================================
 
 function initTheme() {
@@ -166,15 +194,12 @@ function initTheme() {
         const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         
         const initialTheme = savedTheme || (systemPrefersDark ? 'dark' : 'light');
-        
         setTheme(initialTheme);
         
-        // Показываем кнопку сброса если тема сохранена
         if (DOM.themeReset) {
             DOM.themeReset.style.display = savedTheme ? 'flex' : 'none';
         }
         
-        // Слушатель изменения системной темы
         window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
             if (!localStorage.getItem(CONFIG.THEME_KEY)) {
                 setTheme(e.matches ? 'dark' : 'light');
@@ -206,7 +231,6 @@ function setTheme(theme) {
             }
         }
         
-        // Анимация перехода темы
         document.body.classList.add('theme-transition');
         setTimeout(() => document.body.classList.remove('theme-transition'), 500);
         
@@ -243,7 +267,7 @@ function resetToSystemTheme() {
 }
 
 // ============================================
-// 5. ХЭДЕР ПРИ СКРОЛЛЕ И МОБИЛЬНОЕ МЕНЮ
+// 6. ХЭДЕР И МОБИЛЬНОЕ МЕНЮ
 // ============================================
 
 function initScrollHeader() {
@@ -257,6 +281,7 @@ function initScrollHeader() {
         
         if (DOM.backToTop) {
             DOM.backToTop.classList.toggle('scrolled', isScrolled);
+            DOM.backToTop.hidden = !isScrolled;
         }
         
         DOM.mainHeader.classList.toggle('scrolled', isScrolled);
@@ -283,6 +308,10 @@ function initScrollHeader() {
     setTimeout(() => {
         if (window.pageYOffset > CONFIG.SCROLL_THRESHOLD) {
             DOM.mainHeader.classList.add('scrolled');
+            if (DOM.backToTop) {
+                DOM.backToTop.hidden = false;
+                DOM.backToTop.classList.add('scrolled');
+            }
         }
     }, 100);
     
@@ -290,31 +319,28 @@ function initScrollHeader() {
 }
 
 function initMobileMenu() {
-    if (!DOM.menuToggle || !DOM.mainNav) return;
+    if (!DOM.menuToggle || !DOM.mainNav) {
+        console.warn('⚠️ Элементы мобильного меню не найдены');
+        return;
+    }
     
     function toggleMenu() {
         STATE.isMenuOpen = !STATE.isMenuOpen;
         const expanded = STATE.isMenuOpen.toString();
         
         DOM.menuToggle.setAttribute('aria-expanded', expanded);
+        DOM.menuToggle.classList.toggle('active');
         DOM.mainNav.classList.toggle('active');
         document.body.classList.toggle('menu-open');
-        
-        const bars = DOM.menuToggle.querySelectorAll('.bar');
-        if (STATE.isMenuOpen) {
-            bars[0].style.transform = 'rotate(45deg) translate(6px, 6px)';
-            bars[1].style.opacity = '0';
-            bars[2].style.transform = 'rotate(-45deg) translate(6px, -6px)';
-        } else {
-            bars[0].style.transform = 'none';
-            bars[1].style.opacity = '1';
-            bars[2].style.transform = 'none';
-        }
         
         console.log('📱 Меню:', STATE.isMenuOpen ? 'открыто' : 'закрыто');
     }
     
-    DOM.menuToggle.addEventListener('click', toggleMenu);
+    DOM.menuToggle.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        toggleMenu();
+    });
     
     // Закрытие меню при клике на ссылку
     document.querySelectorAll('.nav-link').forEach(link => {
@@ -348,18 +374,14 @@ function closeMobileMenu() {
     if (STATE.isMenuOpen && DOM.menuToggle && DOM.mainNav) {
         STATE.isMenuOpen = false;
         DOM.menuToggle.setAttribute('aria-expanded', 'false');
+        DOM.menuToggle.classList.remove('active');
         DOM.mainNav.classList.remove('active');
         document.body.classList.remove('menu-open');
-        
-        const bars = DOM.menuToggle.querySelectorAll('.bar');
-        bars[0].style.transform = 'none';
-        bars[1].style.opacity = '1';
-        bars[2].style.transform = 'none';
     }
 }
 
 // ============================================
-// 6. РАБОТА С ДАННЫМИ
+// 7. РАБОТА С ДАННЫМИ
 // ============================================
 
 async function loadProducts() {
@@ -384,10 +406,10 @@ async function loadProducts() {
         
         console.log(`✅ Загружено ${STATE.products.length} товаров`);
         
+        initViewedProducts();
         applyFilters();
         setupEventListeners();
         
-        // Кэширование данных
         try {
             localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
             localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
@@ -398,7 +420,6 @@ async function loadProducts() {
     } catch (error) {
         console.error('❌ Ошибка загрузки товаров:', error);
         
-        // Попытка загрузить из кэша
         try {
             const cachedProducts = localStorage.getItem(CONFIG.PRODUCTS_KEY);
             const lastUpdate = localStorage.getItem(CONFIG.UPDATE_KEY);
@@ -407,6 +428,7 @@ async function loadProducts() {
                 console.log('📦 Используем кэшированные товары из localStorage');
                 STATE.products = JSON.parse(cachedProducts);
                 STATE.filteredProducts = [...STATE.products];
+                initViewedProducts();
                 applyFilters();
                 setupEventListeners();
                 
@@ -427,12 +449,10 @@ async function loadProducts() {
 function filterProducts() {
     let result = [...STATE.products];
     
-    // Фильтрация по категории
     if (STATE.currentCategory !== 'all') {
         result = result.filter(product => product.category === STATE.currentCategory);
     }
     
-    // Фильтрация по поиску
     if (STATE.searchQuery.trim()) {
         const query = STATE.searchQuery.toLowerCase().trim();
         result = result.filter(product => 
@@ -464,13 +484,12 @@ function sortProducts(products) {
 }
 
 // ============================================
-// 7. РЕНДЕРИНГ
+// 8. РЕНДЕРИНГ ТОВАРОВ
 // ============================================
 
 function renderProducts() {
     if (!DOM.catalogGrid) return;
     
-    // Очистка контейнера
     while (DOM.catalogGrid.firstChild) {
         DOM.catalogGrid.removeChild(DOM.catalogGrid.firstChild);
     }
@@ -482,10 +501,25 @@ function renderProducts() {
     
     hideEmptyState();
     
-    // Создание карточек с анимацией
     STATE.filteredProducts.forEach((product, index) => {
-        const card = createProductCard(product);
+        const card = STATE.currentView === 'list' 
+            ? createListProductCard(product)
+            : createProductCard(product);
+        
         DOM.catalogGrid.appendChild(card);
+        
+        // Добавляем класс для просмотренных товаров
+        if (isProductViewed(product.id)) {
+            card.classList.add('viewed');
+        }
+        
+        // Обработчик клика
+        card.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            showImageModal(product.id);
+            markProductAsViewed(product.id);
+        });
         
         // Анимация появления
         requestAnimationFrame(() => {
@@ -509,7 +543,7 @@ function createProductCard(product) {
     card.dataset.id = product.id;
     card.dataset.category = product.category;
     
-    const newBadge = product.isNew ? '<span class="product-badge badge-new">Новинка</span>' : '';
+    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
     const features = formatFeatures(product.features?.slice(0, 3));
     const featuresList = features ? `<ul class="product-features">${features}</ul>` : '';
     
@@ -537,28 +571,55 @@ function createProductCard(product) {
     const imageContainer = card.querySelector('.product-image-container');
     const img = card.querySelector('.product-image');
     
-    imageContainer.classList.add('image-loading');
+    if (imageContainer) imageContainer.classList.add('image-loading');
     
-    img.addEventListener('load', () => {
-        imageContainer.classList.remove('image-loading');
-        imageContainer.classList.add('image-loaded');
-    });
+    if (img) {
+        img.addEventListener('load', () => {
+            if (imageContainer) {
+                imageContainer.classList.remove('image-loading');
+                imageContainer.classList.add('image-loaded');
+            }
+        });
+        
+        img.addEventListener('error', () => {
+            if (imageContainer) {
+                imageContainer.classList.remove('image-loading');
+                imageContainer.classList.add('image-error');
+                if (img.src !== 'assets/images/placeholder.jpg') {
+                    img.src = 'assets/images/placeholder.jpg';
+                }
+            }
+        });
+    }
     
-    img.addEventListener('error', () => {
-        imageContainer.classList.remove('image-loading');
-        imageContainer.classList.add('image-error');
-        if (img.src !== 'assets/images/placeholder.jpg') {
-            img.src = 'assets/images/placeholder.jpg';
-        }
-    });
+    return card;
+}
+
+function createListProductCard(product) {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.dataset.id = product.id;
+    card.dataset.category = product.category;
     
-    // Обработчики кликов
-    imageContainer.addEventListener('click', () => showImageModal(product.id));
-    card.addEventListener('click', (e) => {
-        if (!e.target.closest('.product-image-container') && !e.target.closest('.product-badges')) {
-            showImageModal(product.id);
-        }
-    });
+    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
+    
+    card.innerHTML = `
+        <div class="product-card-inner">
+            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
+            <div class="product-image-container">
+                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+            </div>
+            <div class="product-info">
+                <div class="product-header">
+                    <h3 class="product-title">${product.name}</h3>
+                    <span class="product-category">${getCategoryName(product.category)}</span>
+                </div>
+                <div class="product-footer">
+                    <div class="product-price">${formatPrice(product.price)}</div>
+                </div>
+            </div>
+        </div>
+    `;
     
     return card;
 }
@@ -578,7 +639,7 @@ function updateCategoryText() {
 }
 
 // ============================================
-// 8. ФИЛЬТРАЦИЯ И СОРТИРОВКА
+// 9. ФИЛЬТРАЦИЯ И СОРТИРОВКА
 // ============================================
 
 function applyFilters() {
@@ -588,7 +649,6 @@ function applyFilters() {
     updateActiveSort();
     updateFooterFilters();
     updateQuickSelectButtons();
-    updateCategoryDropdown(); // <-- Добавить эту строку
 }
 
 function scrollToCatalog() {
@@ -667,10 +727,8 @@ function updateFooterFilters() {
     });
 }
 
-
-
 // ============================================
-// 8.1. ДРОПДАУН КАТЕГОРИЙ
+// 10. ДРОПДАУН КАТЕГОРИЙ
 // ============================================
 
 function initCategoryDropdown() {
@@ -684,7 +742,6 @@ function initCategoryDropdown() {
         return;
     }
     
-    // Открытие/закрытие меню
     categoryToggle.addEventListener('click', (e) => {
         e.stopPropagation();
         const isExpanded = categoryToggle.getAttribute('aria-expanded') === 'true';
@@ -692,7 +749,6 @@ function initCategoryDropdown() {
         categoryMenu.hidden = isExpanded;
     });
     
-    // Закрытие меню при клике вне
     document.addEventListener('click', (e) => {
         if (!categoryToggle.contains(e.target) && !categoryMenu.contains(e.target)) {
             categoryToggle.setAttribute('aria-expanded', 'false');
@@ -700,20 +756,16 @@ function initCategoryDropdown() {
         }
     });
     
-    // Обработка выбора категории
     categoryOptions.forEach(option => {
         option.addEventListener('click', () => {
             const category = option.dataset.category;
             filterProductsByCategory(category);
             
-            // Обновляем текст кнопки
             categoryText.textContent = option.textContent;
             
-            // Обновляем активный элемент
             categoryOptions.forEach(opt => opt.classList.remove('active'));
             option.classList.add('active');
             
-            // Закрываем меню
             categoryToggle.setAttribute('aria-expanded', 'false');
             categoryMenu.hidden = true;
             
@@ -724,17 +776,12 @@ function initCategoryDropdown() {
     console.log('✅ Дропдаун категорий инициализирован');
 }
 
-// ============================================
-// 8.2. ОБНОВЛЕНИЕ ДРОПДАУНА ПРИ ФИЛЬТРАЦИИ
-// ============================================
-
 function updateCategoryDropdown() {
     const categoryText = document.getElementById('categoryText');
     const categoryOptions = document.querySelectorAll('.category-option');
     
     if (!categoryText || !categoryOptions.length) return;
     
-    // Находим активную опцию
     const activeOption = Array.from(categoryOptions).find(
         option => option.dataset.category === STATE.currentCategory
     );
@@ -742,17 +789,14 @@ function updateCategoryDropdown() {
     if (activeOption) {
         categoryText.textContent = activeOption.textContent;
         
-        // Обновляем классы
         categoryOptions.forEach(option => {
             option.classList.toggle('active', option.dataset.category === STATE.currentCategory);
         });
     }
 }
 
-
-
 // ============================================
-// 9. СОРТИРОВКА И ВИДЫ
+// 11. СОРТИРОВКА И ВИДЫ
 // ============================================
 
 function initSorting() {
@@ -814,11 +858,13 @@ function initViewToggle() {
             });
             
             localStorage.setItem(CONFIG.VIEW_KEY, viewType);
+            
+            renderProducts();
+            
             console.log(`👁️ Вид: ${viewType}`);
         });
     });
     
-    // Восстановление сохраненного вида
     const savedView = localStorage.getItem(CONFIG.VIEW_KEY);
     if (savedView === 'grid' || savedView === 'list') {
         STATE.currentView = savedView;
@@ -843,7 +889,7 @@ function applyViewMode() {
 }
 
 // ============================================
-// 10. ПОИСК И ПАСХАЛКА
+// 12. ПОИСК
 // ============================================
 
 function initSearch() {
@@ -856,7 +902,6 @@ function initSearch() {
             DOM.searchClear.style.display = STATE.searchQuery ? 'flex' : 'none';
         }
         
-        checkEasterEgg();
         applyFilters();
         
         console.log(`🔍 Поиск: "${STATE.searchQuery}"`);
@@ -885,100 +930,13 @@ function initSearch() {
     console.log('✅ Поиск инициализирован');
 }
 
-function initEasterEgg() {
-    if (!DOM.mainLogo) return;
-    
-    let lastClickTime = 0;
-    const clickTimeout = 2000;
-    
-    DOM.mainLogo.addEventListener('click', () => {
-        const now = Date.now();
-        
-        if (now - lastClickTime > clickTimeout) {
-            STATE.logoClickCount = 0;
-        }
-        
-        STATE.logoClickCount++;
-        lastClickTime = now;
-        
-        console.log(`🎯 Логотип кликнут: ${STATE.logoClickCount} раз`);
-        
-        if (STATE.logoClickCount >= 3) {
-            DOM.mainLogo.style.transform = 'scale(1.1)';
-            setTimeout(() => DOM.mainLogo.style.transform = '', 200);
-        }
-        
-        if (STATE.logoClickCount >= 5) {
-            console.log('🎉 Пасхалка готова! Введите "СТОМАТОЛОГИЯ" в поиске');
-            
-            setTimeout(() => {
-                if (STATE.logoClickCount >= 5) {
-                    STATE.logoClickCount = 0;
-                    console.log('⏰ Пасхалка деактивирована (таймаут)');
-                }
-            }, 30000);
-        }
-    });
-    
-    console.log('✅ Пасхалка инициализирована');
-}
-
-function checkEasterEgg() {
-    if (STATE.searchQuery.toUpperCase() === CONFIG.EASTER_EGG_CODE && STATE.logoClickCount >= 5) {
-        activateEasterEgg();
-        STATE.searchQuery = '';
-        if (DOM.searchInput) DOM.searchInput.value = '';
-        applyFilters();
-    }
-}
-
-function activateEasterEgg() {
-    if (STATE.isEasterEggActive) return;
-    
-    STATE.isEasterEggActive = true;
-    document.body.classList.add('easter-egg-active');
-    
-    console.log('🎉🎉🎉 ПАСХАЛКА АКТИВИРОВАНА! 🎉🎉🎉');
-    
-    showNotification('🎉 Пасхалка найдена! Специальный режим активирован', 'success');
-    
-    document.querySelectorAll('.product-card').forEach((card, index) => {
-        setTimeout(() => {
-            card.style.transform = 'rotateY(360deg)';
-            card.style.transition = 'transform 1s ease';
-            
-            setTimeout(() => card.style.transform = '', 1000);
-        }, index * 100);
-    });
-    
-    try {
-        const audio = new Audio('data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAZGF0YQQ=');
-        audio.volume = 0.1;
-        audio.play().catch(() => {});
-    } catch (e) {
-        // Игнорируем ошибку аудио
-    }
-    
-    setTimeout(() => deactivateEasterEgg(), 10000);
-}
-
-function deactivateEasterEgg() {
-    STATE.isEasterEggActive = false;
-    document.body.classList.remove('easter-egg-active');
-    STATE.logoClickCount = 0;
-    
-    showNotification('Пасхалка завершена', 'info');
-    console.log('🎯 Пасхалка деактивирована');
-}
-
 // ============================================
-// 11. МОДАЛЬНОЕ ОКНО ИЗОБРАЖЕНИЙ
+// 13. МОДАЛЬНОЕ ОКНО
 // ============================================
 
 function initImageModal() {
     if (!DOM.imageModal) return;
     
-    // Экспорт функции в глобальную область видимости
     window.showImageModal = function(productId) {
         const product = STATE.products.find(p => p.id === productId);
         if (!product) {
@@ -1097,11 +1055,10 @@ function handleModalKeydown(e) {
 }
 
 // ============================================
-// 12. УВЕДОМЛЕНИЯ И СОСТОЯНИЯ
+// 14. УВЕДОМЛЕНИЯ И СОСТОЯНИЯ
 // ============================================
 
 function showNotification(message, type = 'info') {
-    // Удаляем старые уведомления
     document.querySelectorAll('.notification').forEach(n => n.remove());
     
     const notification = document.createElement('div');
@@ -1112,7 +1069,6 @@ function showNotification(message, type = 'info') {
     
     document.body.appendChild(notification);
     
-    // Автоматическое скрытие
     setTimeout(() => {
         notification.style.animation = 'slideOutRight 0.3s ease';
         setTimeout(() => notification.remove(), 300);
@@ -1138,13 +1094,25 @@ function hideLoading() {
 }
 
 function showEmptyState() {
-    if (DOM.emptyState) DOM.emptyState.style.display = 'flex';
-    if (DOM.catalogGrid) DOM.catalogGrid.style.display = 'none';
+    if (DOM.emptyState) {
+        DOM.emptyState.style.display = 'flex';
+        DOM.emptyState.hidden = false;
+    }
+    if (DOM.catalogGrid) {
+        DOM.catalogGrid.style.display = 'none';
+        DOM.catalogGrid.hidden = true;
+    }
 }
 
 function hideEmptyState() {
-    if (DOM.emptyState) DOM.emptyState.style.display = 'none';
-    if (DOM.catalogGrid) DOM.catalogGrid.style.display = 'grid';
+    if (DOM.emptyState) {
+        DOM.emptyState.style.display = 'none';
+        DOM.emptyState.hidden = true;
+    }
+    if (DOM.catalogGrid) {
+        DOM.catalogGrid.style.display = 'grid';
+        DOM.catalogGrid.hidden = false;
+    }
 }
 
 function showError(message) {
@@ -1165,7 +1133,7 @@ function showError(message) {
 }
 
 // ============================================
-// 13. PWA И SERVICE WORKER
+// 15. PWA И SERVICE WORKER
 // ============================================
 
 function initPWA() {
@@ -1197,7 +1165,6 @@ function initPWA() {
         console.log('📱 Запущено как PWA');
     }
     
-    // Обработка онлайн/офлайн состояния
     window.addEventListener('online', () => {
         showNotification('Соединение восстановлено', 'success');
         console.log('🌐 Онлайн');
@@ -1212,7 +1179,7 @@ function initPWA() {
 }
 
 // ============================================
-// 14. НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
+// 16. НАСТРОЙКА ОБРАБОТЧИКОВ СОБЫТИЙ
 // ============================================
 
 function setupEventListeners() {
@@ -1256,7 +1223,6 @@ function setupEventListeners() {
     initSearch();
     initMobileMenu();
     initImageModal();
-    initEasterEgg();
     initScrollHeader();
     initPWA();
     initCategoryDropdown();
@@ -1287,11 +1253,11 @@ function setupEventListeners() {
 }
 
 // ============================================
-// 15. ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ
+// 17. ОСНОВНАЯ ИНИЦИАЛИЗАЦИЯ
 // ============================================
 
 async function init() {
-    console.log('🚀 Инициализация каталога «Ортоцентр» версии 3.3...');
+    console.log('🚀 Инициализация каталога «Ортоцентр» версии 3.5...');
     
     try {
         initDOMReferences();
@@ -1303,10 +1269,10 @@ async function init() {
         console.log('✅ Каталог готов к работе!');
         console.log('📊 Статистика:', {
             товаров: STATE.products.length,
-            категорий: Object.keys(CATEGORY_MAP).length - 1, // без 'all'
+            просмотрено: STATE.viewedProducts.size,
             тема: STATE.currentTheme,
             вид: STATE.currentView,
-            версия: '3.3'
+            версия: '3.5'
         });
         
     } catch (error) {
@@ -1315,94 +1281,8 @@ async function init() {
     }
 }
 
-
-
 // ============================================
-// 15.1. ОБНОВИТЬ ФУНКЦИЮ renderProducts()
-// ============================================
-
-function renderProducts() {
-    if (!DOM.catalogGrid) return;
-    
-    // Очистка контейнера
-    while (DOM.catalogGrid.firstChild) {
-        DOM.catalogGrid.removeChild(DOM.catalogGrid.firstChild);
-    }
-    
-    if (STATE.filteredProducts.length === 0) {
-        showEmptyState();
-        return;
-    }
-    
-    hideEmptyState();
-    
-    // Создание карточек с анимацией
-    STATE.filteredProducts.forEach((product, index) => {
-        const card = STATE.currentView === 'list' 
-            ? createListProductCard(product)
-            : createProductCard(product);
-        
-        DOM.catalogGrid.appendChild(card);
-        
-        // Анимация появления
-        requestAnimationFrame(() => {
-            card.style.opacity = '0';
-            card.style.transform = 'translateY(20px)';
-            
-            setTimeout(() => {
-                card.style.opacity = '1';
-                card.style.transform = 'translateY(0)';
-                card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            }, index * CONFIG.ANIMATION_DELAY);
-        });
-    });
-    
-    applyViewMode();
-}
-
-// ============================================
-// 15.2. НОВАЯ ФУНКЦИЯ ДЛЯ КАРТОЧЕК В СПИСКЕ
-// ============================================
-
-function createListProductCard(product) {
-    const card = document.createElement('div');
-    card.className = 'product-card';
-    card.dataset.id = product.id;
-    card.dataset.category = product.category;
-    
-    const newBadge = product.isNew ? `<span class="product-badge badge-new">Новинка</span>` : '';
-    
-    card.innerHTML = `
-        <div class="product-card-inner">
-            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
-            <div class="product-image-container">
-                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
-            </div>
-            <div class="product-info">
-                <div class="product-header">
-                    <h3 class="product-title">${product.name}</h3>
-                    <span class="product-category">${getCategoryName(product.category)}</span>
-                </div>
-                <div class="product-footer">
-                    <div class="product-price">${formatPrice(product.price)}</div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Обработка кликов
-    card.addEventListener('click', (e) => {
-        if (!e.target.closest('.product-image-container') && !e.target.closest('.product-badges')) {
-            showImageModal(product.id);
-        }
-    });
-    
-    return card;
-}
-
-
-// ============================================
-// 16. ЗАПУСК ПРИЛОЖЕНИЯ И ГЛОБАЛЬНЫЙ ЭКСПОРТ
+// 18. ЗАПУСК ПРИЛОЖЕНИЯ И ГЛОБАЛЬНЫЙ ЭКСПОРТ
 // ============================================
 
 if (document.readyState === 'loading') {
@@ -1428,8 +1308,7 @@ window.CatalogApp = {
     showImageModal,
     filterProductsByCategory,
     setTheme,
-    getVersion: () => '3.3'
+    getVersion: () => '3.5'
 };
 
-console.log('📦 CatalogApp v3.3 загружен');
-
+console.log('📦 CatalogApp v3.5 загружен');
