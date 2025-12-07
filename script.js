@@ -123,9 +123,20 @@ const CATEGORY_MAP = {
 
 function initDOMReferences() {
     try {
-        // Основные элементы
+        // Основные элементы (проверяем критически важные)
         DOM.catalogGrid = document.getElementById('catalogGrid');
         DOM.emptyState = document.getElementById('emptyState');
+        
+        console.log('DOM.catalogGrid:', DOM.catalogGrid);
+        console.log('DOM.emptyState:', DOM.emptyState);
+        
+        if (!DOM.catalogGrid) {
+            console.error('❌ ОШИБКА: Не найден #catalogGrid');
+        }
+        if (!DOM.emptyState) {
+            console.error('❌ ОШИБКА: Не найден #emptyState');
+        }
+        
         DOM.productsCount = document.getElementById('productsCount');
         DOM.currentCategoryText = document.getElementById('currentCategoryText');
         DOM.progressBar = document.getElementById('progressBar');
@@ -478,13 +489,12 @@ async function loadProducts() {
     
     try {
         const response = await fetch('products.json');
-        
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         
         const data = await response.json();
         
         if (!data || !data.products) {
-            throw new Error('Некорректный формат products.json');
+            throw new Error('Некорректный формат данных');
         }
         
         STATE.products = data.products;
@@ -496,12 +506,8 @@ async function loadProducts() {
         updateProductsCount();
         updateCategoryText();
         
-        try {
-            localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
-            localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
-        } catch (e) {
-            console.warn('⚠️ Не удалось сохранить в localStorage');
-        }
+        localStorage.setItem(CONFIG.PRODUCTS_KEY, JSON.stringify(STATE.products));
+        localStorage.setItem(CONFIG.UPDATE_KEY, new Date().toISOString());
         
     } catch (error) {
         console.error('❌ Ошибка загрузки:', error);
@@ -522,8 +528,6 @@ async function loadProducts() {
             console.error('❌ Ошибка кэша:', cacheError);
             showEmptyStateWithError('Не удалось загрузить каталог');
         }
-    } finally {
-        console.log('🏁 Загрузка завершена');
     }
 }
 
@@ -556,8 +560,8 @@ function sortProducts(products) {
  * Рендерит товары
  */
 function renderProducts() {
-    if (!DOM.catalogGrid) {
-        console.error('❌ catalogGrid не найден');
+    if (!DOM.catalogGrid || !DOM.emptyState) {
+        console.error('❌ Не найдены необходимые DOM элементы');
         return;
     }
     
@@ -566,24 +570,25 @@ function renderProducts() {
     DOM.catalogGrid.innerHTML = '';
     
     if (STATE.filteredProducts.length === 0) {
-        if (DOM.emptyState) {
-            DOM.emptyState.hidden = false;
-        }
-        return;
-    }
-    
-    if (DOM.emptyState) {
+        console.log('📭 Нет товаров для отображения, показываем empty state');
+        DOM.emptyState.style.display = 'flex';
+        DOM.emptyState.hidden = false;
+        DOM.catalogGrid.style.display = 'none';
+    } else {
+        console.log(`🛒 Отображаем ${STATE.filteredProducts.length} товаров`);
+        DOM.emptyState.style.display = 'none';
         DOM.emptyState.hidden = true;
+        DOM.catalogGrid.style.display = 'grid';
+        
+        const fragment = document.createDocumentFragment();
+        
+        STATE.filteredProducts.forEach((product, index) => {
+            const card = createProductCard(product);
+            fragment.appendChild(card);
+        });
+        
+        DOM.catalogGrid.appendChild(fragment);
     }
-    
-    const fragment = document.createDocumentFragment();
-    
-    STATE.filteredProducts.forEach((product, index) => {
-        const card = createProductCard(product);
-        fragment.appendChild(card);
-    });
-    
-    DOM.catalogGrid.appendChild(fragment);
     
     applyViewMode();
     
@@ -755,16 +760,15 @@ function applyFilters() {
     
     STATE.filteredProducts = sortProducts(result);
     
+    console.log(`📊 После фильтрации: ${STATE.filteredProducts.length} товаров`);
+    
     renderProducts();
     
     updateProductsCount();
     updateCategoryText();
     updateActiveCategory();
-    updateActiveSort();
-    updateFooterFilters();
-    updateQuickSelectButtons();
     
-    console.log(`✅ Фильтры применены. Товаров: ${STATE.filteredProducts.length}`);
+    console.log('✅ Фильтры применены');
 }
 
 function scrollToCatalog() {
@@ -817,7 +821,10 @@ function resetFilters() {
     if (DOM.sortText) DOM.sortText.textContent = 'По популярности';
     
     DOM.sortOptions.forEach(opt => {
-        opt.classList.toggle('active', opt.dataset.sort === 'default');
+        opt.classList.remove('active');
+        if (opt.dataset.sort === 'default') {
+            opt.classList.add('active');
+        }
     });
     
     applyFilters();
@@ -1140,8 +1147,14 @@ function showNotification(message, type = 'info') {
     console.log(`📢 Уведомление: ${message}`);
 }
 
+/**
+ * Показывает ошибку в empty state
+ * @param {string} message 
+ */
 function showEmptyStateWithError(message) {
-    if (!DOM.emptyState) return;
+    if (!DOM.emptyState || !DOM.catalogGrid) return;
+    
+    console.log(`🚨 Показываем ошибку: ${message}`);
     
     DOM.emptyState.innerHTML = `
         <div class="empty-icon">
@@ -1155,11 +1168,9 @@ function showEmptyStateWithError(message) {
         </button>
     `;
     
+    DOM.emptyState.style.display = 'flex';
     DOM.emptyState.hidden = false;
-    
-    if (DOM.catalogGrid) {
-        DOM.catalogGrid.innerHTML = '';
-    }
+    DOM.catalogGrid.style.display = 'none';
 }
 
 function showError(message) {
