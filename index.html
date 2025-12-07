@@ -7,12 +7,12 @@
     <title>Ортоцентр | Каталог стоматологических товаров</title>
     <meta name="description" content="Профессиональные зубные щетки, пасты, ирригаторы и прочее. Бесплатная консультация в Волгограде. График работы: будни 08:00-20:00, выходные 09:00-15:00">
     
-    <!-- Оптимизированные шрифты -->
+    <!-- Шрифты -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400..800&display=swap" rel="stylesheet">
     
-    <!-- FontAwesome с оптимизацией -->
+    <!-- Иконки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
           integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" 
           crossorigin="anonymous" 
@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="style.css">
     <link rel="manifest" href="manifest.json">
     
-    <!-- Favicon оптимизирован -->
+    <!-- Фавикон -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90' fill='%23b9c8c3'>🦷</text></svg>">
     
-    <!-- Мета-теги оптимизированы -->
+    <!-- Мета-теги -->
     <meta name="theme-color" content="#b9c8c3">
     <meta property="og:title" content="Ортоцентр | Профессиональная стоматология в Волгограде">
     <meta property="og:description" content="Каталог профессиональных стоматологических товаров. График работы: будни 08:00-20:00, выходные 09:00-15:00">
@@ -33,7 +33,7 @@
     <link rel="canonical" href="https://ортцентр.рф">
 </head>
 <body>
-    <!-- Прогресс-бар -->
+    <!-- Прогресс-бар прокрутки -->
     <div class="progress-bar" id="progressBar"></div>
     
     <!-- Кнопка "Наверх" -->
@@ -41,56 +41,7 @@
         <i class="fas fa-chevron-up"></i>
     </button>
 
-    <!-- Модальное окно для изображений -->
-    <dialog class="image-modal" id="imageModal">
-        <div class="modal-overlay"></div>
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose" aria-label="Закрыть">
-                <i class="fas fa-times"></i>
-            </button>
-            
-            <button class="modal-nav modal-prev" id="modalPrev" aria-label="Предыдущее изображение">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            
-            <button class="modal-nav modal-next" id="modalNext" aria-label="Следующее изображение">
-                <i class="fas fa-chevron-right"></i>
-            </button>
-            
-            <div class="image-container">
-                <img id="modalImage" src="" alt="" class="modal-image" loading="eager">
-                <div class="image-loading" hidden>
-                    <div class="loading-spinner"></div>
-                </div>
-            </div>
-            
-            <div class="image-info">
-                <div class="image-info-header">
-                    <h3 id="modalProductName" class="product-name"></h3>
-                    <div class="product-price" id="modalProductPrice"></div>
-                </div>
-                
-                <div class="product-details">
-                    <p id="modalProductDescription" class="product-description"></p>
-                    
-                    <div class="product-meta">
-                        <span class="product-category" id="modalProductCategory"></span>
-                    </div>
-                    
-                    <ul class="product-features" id="modalProductFeatures"></ul>
-                </div>
-                
-                <div class="modal-actions">
-                    <button class="btn btn-primary" id="modalCategoryFilter" data-category="">
-                        <i class="fas fa-filter"></i>
-                        Показать все в категории
-                    </button>
-                </div>
-            </div>
-        </div>
-    </dialog>
-
-    <!-- Шапка сайта - УДАЛЕНО МОБИЛЬНОЕ МЕНЮ -->
+    <!-- Шапка сайта -->
     <header class="header" id="mainHeader">
         <div class="container">
             <div class="header-top">
@@ -113,12 +64,10 @@
                             <i class="fas fa-sync-alt"></i>
                         </button>
                     </div>
-                    
-                    <!-- УДАЛЕНО: menu-toggle кнопка -->
                 </div>
             </div>
 
-            <!-- Навигация по категориям (остается для десктопа) -->
+            <!-- Навигация по категориям -->
             <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
@@ -186,7 +135,7 @@
                             <span class="hint">Попробуйте: "электрическая щетка" или "отбеливающая паста"</span>
                         </div>
 
-                        <!-- ОБНОВЛЕННЫЙ "БЫСТРЫЙ ВЫБОР" без иконок -->
+                        <!-- Быстрый выбор категорий -->
                         <div class="category-quick-select">
                             <div class="quick-select-title">Выберите категорию:</div>
                             <div class="quick-select-buttons">
@@ -259,6 +208,7 @@
                     </div>
                 </div>
 
+                <!-- Контейнер для оптимизированного рендеринга -->
                 <div class="catalog-container">
                     <div class="catalog-grid" id="catalogGrid">
                         <div class="loading-state" id="loadingState">
@@ -283,7 +233,7 @@
                         </button>
                     </div>
                     
-                    <!-- Добавить скелетоны -->
+                    <!-- Скелетоны для загрузки -->
                     <div class="skeleton-container" id="skeletonContainer" hidden>
                         <div class="skeleton-grid">
                             <div class="skeleton-card" style="animation-delay: 0ms">
@@ -343,9 +293,14 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Лоадер для idle-рендеринга -->
+                <div class="idle-loader" id="idleLoader" hidden>
+                    <div class="loader-text">Загрузка следующих товаров...</div>
+                </div>
             </section>
 
-            <!-- Информация о категориях (оставляем) -->
+            <!-- Информация о категориях -->
             <section class="categories-info" aria-labelledby="categoriesTitle">
                 <h2 id="categoriesTitle" class="categories-title">Категории товаров</h2>
                 <p class="categories-subtitle">Полный ассортимент для комплексного ухода</p>
