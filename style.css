@@ -1,6 +1,6 @@
 /* ============================================
    ФИРМЕННАЯ ДИЗАЙН-СИСТЕМА "ОРТОЦЕНТР"
-   Версия: 3.6 (Без мобильного меню)
+   Версия: 3.7 (С мобильным меню)
 ============================================ */
 
 /* ===== 1. РАСШИРЕННАЯ ЦВЕТОВАЯ ПАЛИТРА ===== */
@@ -169,7 +169,7 @@ body {
 
 body.pwa-installed { padding-top: var(--top-safe); }
 
-/* ===== 3. ХЭДЕР ===== */
+/* ===== 3. ОБНОВЛЕННЫЙ ХЭДЕР ===== */
 .header {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
@@ -206,7 +206,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   grid-template-columns: auto 1fr auto;
   align-items: center;
   padding: var(--space-sm) 0;
-  gap: var(--space-lg);
+  gap: var(--space-md);
   flex-shrink: 0;
 }
 
@@ -218,7 +218,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
 /* Логотип */
 .logo {
   flex: 0 0 auto;
-  min-width: 200px;
+  min-width: 160px;
   transition: all var(--transition-base);
 }
 
@@ -268,11 +268,63 @@ body.pwa-installed { padding-top: var(--top-safe); }
   margin-top: 0; 
 }
 
+/* Кнопка бургер-меню (только для мобильных) */
+.menu-toggle {
+  display: none; /* По умолчанию скрыта */
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: var(--color-primary-pale);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  margin-right: var(--space-sm);
+  transition: all var(--transition-fast);
+}
+
+.menu-toggle-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+}
+
+.menu-line {
+  width: 20px;
+  height: 2px;
+  background: var(--color-primary);
+  margin: 3px 0;
+  border-radius: 1px;
+  transition: all var(--transition-fast);
+}
+
+.menu-toggle.active .menu-line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.menu-toggle.active .menu-line:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active .menu-line:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+.menu-toggle:hover {
+  background: var(--color-primary-ultralight);
+}
+
 /* Управление */
 .header-controls {
   display: flex;
   align-items: center;
-  gap: var(--space-md);
+  gap: var(--space-sm);
+  justify-content: flex-end;
 }
 
 .theme-switcher.compact {
@@ -304,14 +356,15 @@ body.pwa-installed { padding-top: var(--top-safe); }
 
 .theme-reset:hover { transform: rotate(180deg); }
 
-/* Навигация */
-.main-nav {
+/* ДЕСКТОПНАЯ НАВИГАЦИЯ */
+.desktop-nav {
+  display: block;
   margin-top: auto;
   padding-bottom: var(--space-xs);
   transition: all var(--transition-base);
 }
 
-.header.scrolled .main-nav { margin-top: 0; }
+.header.scrolled .desktop-nav { margin-top: 0; }
 
 .nav-scroll-container {
   overflow-x: auto;
@@ -378,6 +431,118 @@ body.pwa-installed { padding-top: var(--top-safe); }
   white-space: nowrap;
   font-size: 0.85rem;
   text-align: center;
+}
+
+/* ===== МОБИЛЬНОЕ МЕНЮ ===== */
+.mobile-nav {
+  position: fixed;
+  top: 0;
+  right: -320px; /* Скрыто за экраном */
+  width: 300px;
+  height: 100vh;
+  background: var(--color-background);
+  border-left: 1px solid var(--color-border);
+  z-index: var(--z-modal);
+  transition: right var(--transition-base);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.mobile-nav.active {
+  right: 0;
+}
+
+.mobile-nav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-lg);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.mobile-nav-title {
+  font-size: 1.2rem;
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text);
+}
+
+.mobile-nav-close {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: var(--color-surface);
+  border-radius: var(--radius-round);
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.mobile-nav-close:hover {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.mobile-nav-list {
+  list-style: none;
+  padding: var(--space-md);
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.mobile-nav-item {
+  margin-bottom: var(--space-xs);
+}
+
+.mobile-nav-link {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  text-decoration: none;
+  color: var(--color-text);
+  border-radius: var(--radius-lg);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-medium);
+}
+
+.mobile-nav-link i {
+  width: 24px;
+  color: var(--color-primary);
+  font-size: 1.1rem;
+}
+
+.mobile-nav-link.active {
+  background: var(--color-primary);
+  color: var(--color-text-light);
+}
+
+.mobile-nav-link.active i {
+  color: var(--color-text-light);
+}
+
+.mobile-nav-link:hover:not(.active) {
+  background: var(--color-primary-ultralight);
+}
+
+.mobile-nav-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(3px);
+  z-index: calc(var(--z-modal) - 1);
+  display: none;
+}
+
+.mobile-nav-overlay.active {
+  display: block;
 }
 
 /* ===== 4. КНОПКА "НАВЕРХ" ===== */
@@ -1529,31 +1694,51 @@ body.pwa-installed { padding-top: var(--top-safe); }
   }
   
   .header-top { 
-    grid-template-columns: 1fr auto; 
-    gap: var(--space-md); 
+    grid-template-columns: auto 1fr auto;
+    gap: var(--space-sm);
+    padding: 8px 0;
   }
   
   .logo { 
-    min-width: auto; 
+    min-width: 140px; 
     flex: 1; 
   }
   
-  .main-nav {
-    margin-top: var(--space-md);
-    padding: var(--space-sm) 0;
+  .logo-text {
+    font-size: 1.3rem;
   }
   
-  .nav-list { 
-    gap: var(--space-xs); 
+  .logo-subtitle {
+    font-size: 0.8rem;
   }
   
-  .nav-link {
-    padding: var(--space-xs) var(--space-sm);
-    min-width: 70px;
+  /* Показываем бургер-меню на мобильных */
+  .menu-toggle {
+    display: flex;
+    order: 1; /* Первый элемент после логотипа */
   }
   
-  .nav-text { 
-    font-size: 0.8rem; 
+  /* Переносим кнопку темы влево */
+  .header-controls {
+    order: 3; /* Третий элемент (после бургера) */
+    justify-content: flex-end;
+  }
+  
+  /* Скрываем десктопную навигацию на мобильных */
+  .desktop-nav {
+    display: none !important;
+  }
+  
+  /* Настройка размеров кнопок на мобильных */
+  .theme-toggle,
+  .theme-reset {
+    width: 40px;
+    height: 40px;
+  }
+  
+  /* Увеличиваем отступы для touch */
+  .theme-switcher.compact {
+    gap: 4px;
   }
   
   .footer-content { 
@@ -1659,12 +1844,37 @@ body.pwa-installed { padding-top: var(--top-safe); }
 }
 
 @media (max-width: 480px) {
-  .logo-text { 
-    font-size: 1.4rem; 
+  .header-top {
+    grid-template-columns: 1fr auto auto;
   }
   
-  .logo-subtitle { 
-    font-size: 0.8rem; 
+  .logo {
+    min-width: auto;
+    flex: 1;
+  }
+  
+  .logo-text {
+    font-size: 1.2rem;
+  }
+  
+  .menu-toggle {
+    width: 40px;
+    height: 40px;
+    margin-right: 0;
+  }
+  
+  .header-controls {
+    gap: 4px;
+  }
+  
+  .theme-toggle,
+  .theme-reset {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .mobile-nav {
+    width: 280px;
   }
   
   .nav-link { 
@@ -1710,7 +1920,26 @@ body.pwa-installed { padding-top: var(--top-safe); }
   }
 }
 
+/* Для очень маленьких экранов */
 @media (max-width: 360px) {
+  .header-top {
+    grid-template-columns: auto auto auto;
+  }
+  
+  .logo {
+    flex: 0 0 auto;
+  }
+  
+  .logo-text {
+    font-size: 1.1rem;
+  }
+  
+  .theme-toggle,
+  .theme-reset {
+    width: 34px;
+    height: 34px;
+  }
+  
   .quick-select-buttons { 
     gap: var(--space-xs); 
   }
