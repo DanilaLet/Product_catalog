@@ -45,6 +45,14 @@
                     </h1>
                 </div>
                 
+                <button class="menu-toggle" id="menuToggle" aria-label="Открыть меню" aria-expanded="false">
+                    <span class="menu-toggle-icon">
+                        <span class="menu-line"></span>
+                        <span class="menu-line"></span>
+                        <span class="menu-line"></span>
+                    </span>
+                </button>
+                
                 <div class="header-controls">
                     <div class="theme-switcher compact">
                         <button class="theme-toggle" id="themeToggle" aria-label="Переключить тему">
@@ -60,7 +68,7 @@
                 </div>
             </div>
 
-            <nav class="main-nav" id="mainNav" aria-label="Основная навигация">
+            <nav class="main-nav desktop-nav" id="mainNav" aria-label="Основная навигация">
                 <div class="nav-scroll-container">
                     <ul class="nav-list">
                         <li class="nav-item">
@@ -93,6 +101,50 @@
             </nav>
         </div>
     </header>
+
+    <nav class="mobile-nav" id="mobileNav" aria-label="Мобильная навигация" hidden>
+        <div class="mobile-nav-header">
+            <h3 class="mobile-nav-title">Категории</h3>
+            <button class="mobile-nav-close" id="mobileNavClose" aria-label="Закрыть меню">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        
+        <ul class="mobile-nav-list">
+            <li class="mobile-nav-item">
+                <a href="#all-products" class="mobile-nav-link" data-category="all">
+                    <i class="fas fa-th-large"></i>
+                    <span class="mobile-nav-text">Все товары</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#brushes" class="mobile-nav-link" data-category="щетки">
+                    <i class="fas fa-toothbrush"></i>
+                    <span class="mobile-nav-text">Зубные щетки</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#pastes" class="mobile-nav-link" data-category="пасты">
+                    <i class="fas fa-paste"></i>
+                    <span class="mobile-nav-text">Зубные пасты</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#irrigators" class="mobile-nav-link" data-category="ирригаторы">
+                    <i class="fas fa-shower"></i>
+                    <span class="mobile-nav-text">Ирригаторы</span>
+                </a>
+            </li>
+            <li class="mobile-nav-item">
+                <a href="#other" class="mobile-nav-link" data-category="прочее">
+                    <i class="fas fa-boxes"></i>
+                    <span class="mobile-nav-text">Прочее</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="mobile-nav-overlay" id="mobileNavOverlay" hidden></div>
 
     <main class="main-content" id="mainContent">
         <div class="container">
