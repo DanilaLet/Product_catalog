@@ -68,8 +68,9 @@
  * @property {HTMLElement} themeReset
  * @property {HTMLElement} backToTop
  * @property {HTMLElement} menuToggle
- * @property {HTMLElement} mainNav
- * @property {HTMLElement} mainHeader
+ * @property {HTMLElement} mobileNav
+ * @property {HTMLElement} mobileNavClose
+ * @property {HTMLElement} mobileNavOverlay
  * @property {HTMLElement} progressBar
  * @property {HTMLElement} skeletonContainer
  * @property {NodeList} categoryLinks
@@ -78,6 +79,7 @@
  * @property {NodeList} categoryFilterBtns
  * @property {NodeList} footerCategoryBtns
  * @property {NodeList} quickSelectBtns
+ * @property {NodeList} mobileNavLinks
  * @property {HTMLElement} searchHints
  */
 
@@ -157,10 +159,11 @@ function initDOMReferences() {
         DOM.themeReset = document.getElementById('themeReset');
         DOM.backToTop = document.getElementById('backToTop');
         
-        // Навигация
+        // Мобильное меню
         DOM.menuToggle = document.getElementById('menuToggle');
-        DOM.mainNav = document.getElementById('mainNav');
-        DOM.mainHeader = document.getElementById('mainHeader');
+        DOM.mobileNav = document.getElementById('mobileNav');
+        DOM.mobileNavClose = document.getElementById('mobileNavClose');
+        DOM.mobileNavOverlay = document.getElementById('mobileNavOverlay');
         
         // Коллекции элементов
         DOM.categoryLinks = document.querySelectorAll('.nav-link');
@@ -169,6 +172,7 @@ function initDOMReferences() {
         DOM.categoryFilterBtns = document.querySelectorAll('.category-filter-btn');
         DOM.footerCategoryBtns = document.querySelectorAll('.footer-category-btn');
         DOM.quickSelectBtns = document.querySelectorAll('.quick-select-btn');
+        DOM.mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
         DOM.searchHints = document.querySelector('.search-hints');
         
         console.log('✅ DOM элементы инициализированы');
@@ -321,7 +325,7 @@ function resetToSystemTheme() {
 // ============================================
 
 function initScrollHeader() {
-    if (!DOM.mainHeader) return;
+    if (!DOM.menuToggle) return;
     
     let lastScrollTop = 0;
     let ticking = false;
@@ -334,12 +338,10 @@ function initScrollHeader() {
             DOM.backToTop.hidden = !isScrolled;
         }
         
-        DOM.mainHeader.classList.toggle('scrolled', isScrolled);
-        
         if (scrollTop > lastScrollTop && scrollTop > 200 && !STATE.isMenuOpen) {
-            DOM.mainHeader.style.transform = 'translateY(-100%)';
+            DOM.menuToggle.style.transform = 'translateY(-100%)';
         } else {
-            DOM.mainHeader.style.transform = 'translateY(0)';
+            DOM.menuToggle.style.transform = 'translateY(0)';
         }
         
         lastScrollTop = scrollTop;
@@ -357,7 +359,6 @@ function initScrollHeader() {
     
     setTimeout(() => {
         if (window.pageYOffset > CONFIG.SCROLL_THRESHOLD) {
-            DOM.mainHeader.classList.add('scrolled');
             if (DOM.backToTop) {
                 DOM.backToTop.hidden = false;
                 DOM.backToTop.classList.add('scrolled');
@@ -368,73 +369,90 @@ function initScrollHeader() {
     console.log('✅ Скролл хэдера инициализирован');
 }
 
+/**
+ * Инициализирует мобильное меню
+ */
 function initMobileMenu() {
-    if (!DOM.menuToggle || !DOM.mainNav) {
+    if (!DOM.menuToggle || !DOM.mobileNav || !DOM.mobileNavClose || !DOM.mobileNavOverlay) {
         console.warn('⚠️ Элементы мобильного меню не найдены');
         return;
     }
     
-    function toggleMenu() {
-        STATE.isMenuOpen = !STATE.isMenuOpen;
-        const expanded = STATE.isMenuOpen.toString();
+    let isMobileMenuOpen = false;
+    
+    function toggleMobileMenu() {
+        isMobileMenuOpen = !isMobileMenuOpen;
         
-        DOM.menuToggle.setAttribute('aria-expanded', expanded);
-        DOM.menuToggle.classList.toggle('active');
-        DOM.mainNav.classList.toggle('active');
-        document.body.classList.toggle('menu-open');
+        DOM.menuToggle.classList.toggle('active', isMobileMenuOpen);
+        DOM.menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
         
-        console.log('📱 Меню:', STATE.isMenuOpen ? 'открыто' : 'закрыто');
+        DOM.mobileNav.hidden = !isMobileMenuOpen;
+        DOM.mobileNavOverlay.hidden = !isMobileMenuOpen;
+        
+        if (isMobileMenuOpen) {
+            DOM.mobileNav.classList.add('active');
+            DOM.mobileNavOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        } else {
+            DOM.mobileNav.classList.remove('active');
+            DOM.mobileNavOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+        
+        console.log('📱 Мобильное меню:', isMobileMenuOpen ? 'открыто' : 'закрыто');
+    }
+    
+    function closeMobileMenu() {
+        if (isMobileMenuOpen) {
+            toggleMobileMenu();
+        }
     }
     
     DOM.menuToggle.addEventListener('click', (e) => {
         e.preventDefault();
         e.stopPropagation();
-        toggleMenu();
+        toggleMobileMenu();
     });
     
-    DOM.mainNav.addEventListener('click', (e) => {
-        if (e.target.closest('.nav-link')) {
-            if (window.innerWidth <= 768 && STATE.isMenuOpen) {
-                toggleMenu();
+    DOM.mobileNavClose.addEventListener('click', closeMobileMenu);
+    DOM.mobileNavOverlay.addEventListener('click', closeMobileMenu);
+    
+    DOM.mobileNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const category = link.dataset.category;
+            if (category) {
+                filterProductsByCategory(category);
+                closeMobileMenu();
+                scrollToCatalog();
             }
-        }
-    });
-    
-    document.addEventListener('click', (e) => {
-        if (STATE.isMenuOpen && 
-            !DOM.menuToggle.contains(e.target) && 
-            !DOM.mainNav.contains(e.target)) {
-            toggleMenu();
-        }
-    });
-    
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-        clearTimeout(resizeTimeout);
-        resizeTimeout = setTimeout(() => {
-            if (window.innerWidth > 768 && STATE.isMenuOpen) {
-                toggleMenu();
-            }
-        }, 250);
+        });
     });
     
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && STATE.isMenuOpen) {
-            toggleMenu();
+        if (e.key === 'Escape' && isMobileMenuOpen) {
+            closeMobileMenu();
+        }
+    });
+    
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && isMobileMenuOpen) {
+            closeMobileMenu();
         }
     });
     
     console.log('✅ Мобильное меню инициализировано');
 }
 
-function closeMobileMenu() {
-    if (STATE.isMenuOpen && DOM.menuToggle && DOM.mainNav) {
-        STATE.isMenuOpen = false;
-        DOM.menuToggle.setAttribute('aria-expanded', 'false');
-        DOM.menuToggle.classList.remove('active');
-        DOM.mainNav.classList.remove('active');
-        document.body.classList.remove('menu-open');
-    }
+/**
+ * Обновляет активные ссылки в мобильном меню
+ */
+function updateMobileMenuActiveLinks() {
+    if (!DOM.mobileNavLinks.length) return;
+    
+    DOM.mobileNavLinks.forEach(link => {
+        const isActive = link.dataset.category === STATE.currentCategory;
+        link.classList.toggle('active', isActive);
+    });
 }
 
 // ============================================
@@ -760,6 +778,7 @@ function applyFilters() {
     updateProductsCount();
     updateCategoryText();
     updateActiveCategory();
+    updateMobileMenuActiveLinks();
     
     console.log('✅ Фильтры применены');
 }
@@ -768,7 +787,7 @@ function scrollToCatalog() {
     requestAnimationFrame(() => {
         const catalogSection = document.querySelector('.catalog-section');
         if (catalogSection) {
-            const headerHeight = DOM.mainHeader?.offsetHeight || 70;
+            const headerHeight = DOM.menuToggle?.offsetHeight || 70;
             const catalogTop = catalogSection.getBoundingClientRect().top + window.pageYOffset;
             
             window.scrollTo({
@@ -794,9 +813,10 @@ function filterProductsByCategory(category) {
     
     applyFilters();
     scrollToCatalog();
-    closeMobileMenu();
     
-    console.log(`🎯 Фильтр: ${getCategoryName(category)}`);
+    updateMobileMenuActiveLinks();
+    
+    console.log(`🎯 Категория: ${getCategoryName(category)}`);
 }
 
 /**
@@ -813,14 +833,9 @@ function resetFilters() {
     if (DOM.searchClear) DOM.searchClear.style.display = 'none';
     if (DOM.sortText) DOM.sortText.textContent = 'По популярности';
     
-    DOM.sortOptions.forEach(opt => {
-        opt.classList.remove('active');
-        if (opt.dataset.sort === 'default') {
-            opt.classList.add('active');
-        }
-    });
-    
     applyFilters();
+    
+    updateMobileMenuActiveLinks();
     
     console.log('✅ Фильтры сброшены');
 }
@@ -1258,7 +1273,6 @@ async function init() {
         setTimeout(() => {
             initScrollHeader();
             initProgressBar();
-            initMobileMenu();
         }, 100);
         
         console.log('✅ Приложение инициализировано успешно!');
