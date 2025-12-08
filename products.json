@@ -10,7 +10,7 @@
         "Детский дизайн",
         "Мягкие щетинки"
       ],
-      "image": "assets/images/products/brush-3-12-лет-revyline-kids-s-4800.jpg",
+      "image": "assets/images/products/brush-3-12-лет-revyline-kids-s-4800.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:48:17.258649"
@@ -25,7 +25,7 @@
         "Восстановление десен",
         "Мгновенное действие"
       ],
-      "image": "assets/images/products/other-biorepair-collutorio-gengive-m.jpg",
+      "image": "assets/images/products/other-biorepair-collutorio-gengive-m.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:48:29.238556"
@@ -40,7 +40,7 @@
         "Эргономичная ручка",
         "Многоуровневая щетина"
       ],
-      "image": "assets/images/products/brush-biorepair-curve-denti.jpg",
+      "image": "assets/images/products/brush-biorepair-curve-denti.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:48:39.287357"
@@ -70,7 +70,7 @@
         "Ночное восстановление",
         "Защита эмали"
       ],
-      "image": "assets/images/products/paste-biorepair-intensive-night.jpg",
+      "image": "assets/images/products/paste-biorepair-intensive-night.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:49:46.099640"
@@ -85,7 +85,7 @@
         "Безопасна при проглатывании",
         "Защита от кариеса"
       ],
-      "image": "assets/images/products/paste-biorepair-kids.jpg",
+      "image": "assets/images/products/paste-biorepair-kids.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:49:54.255935"
@@ -100,7 +100,7 @@
         "Быстрое действие",
         "Укрепление эмали"
       ],
-      "image": "assets/images/products/other-дентостофин.jpg",
+      "image": "assets/images/products/other-дентостофин.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:02.976339"
@@ -115,7 +115,7 @@
         "Без фтора",
         "Безопасна при проглатывании"
       ],
-      "image": "assets/images/products/paste-elmex-0-2.jpg",
+      "image": "assets/images/products/paste-elmex-0-2.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:10.759794"
@@ -130,7 +130,7 @@
         "Защита молочных зубов",
         "Мягкая абразивность"
       ],
-      "image": "assets/images/products/paste-elmex-2-6.jpg",
+      "image": "assets/images/products/paste-elmex-2-6.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:18.044758"
@@ -145,7 +145,7 @@
         "Защита постоянных зубов",
         "Аминофторид"
       ],
-      "image": "assets/images/products/paste-elmex-6-12.jpg",
+      "image": "assets/images/products/paste-elmex-6-12.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:24.056528"
@@ -160,7 +160,7 @@
         "Интенсивная защита",
         "Укрепление эмали"
       ],
-      "image": "assets/images/products/paste-elmex-kariesschutz.jpg",
+      "image": "assets/images/products/paste-elmex-kariesschutz.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:30.014750"
@@ -175,7 +175,7 @@
         "Низкая абразивность",
         "Уход за деснами"
       ],
-      "image": "assets/images/products/paste-emra-delicate-cleaning.jpg",
+      "image": "assets/images/products/paste-emra-delicate-cleaning.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:46.641790"
@@ -190,7 +190,7 @@
         "Активное отбеливание",
         "Безопасно для эмали"
       ],
-      "image": "assets/images/products/paste-emra-extra-whitening.jpg",
+      "image": "assets/images/products/paste-emra-extra-whitening.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:50:54.468989"
@@ -205,7 +205,7 @@
         "Чистка брекетов",
         "Уход за деснами"
       ],
-      "image": "assets/images/products/brush-emra-монопучок.jpg",
+      "image": "assets/images/products/brush-emra-монопучок.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:02.027969"
@@ -220,7 +220,7 @@
         "Освежающий вкус",
         "Антикариесный эффект"
       ],
-      "image": "assets/images/products/paste-emra-prosecco-mood.jpg",
+      "image": "assets/images/products/paste-emra-prosecco-mood.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:08.901513"
@@ -235,7 +235,7 @@
         "7000 щетинок",
         "Очищение межзубных промежутков"
       ],
-      "image": "assets/images/products/brush-emra-sora-7k.jpg",
+      "image": "assets/images/products/brush-emra-sora-7k.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:16.820006"
@@ -250,7 +250,7 @@
         "Эффективное очищение",
         "Устранение запаха"
       ],
-      "image": "assets/images/products/other-kорега-зубные-капы-и-ретейнеры.jpg",
+      "image": "assets/images/products/other-kорега-зубные-капы-и-ретейнеры.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:23.849627"
@@ -265,7 +265,7 @@
         "Мягкая щетина",
         "Эргономичная ручка"
       ],
-      "image": "assets/images/products/brush-longa-vita-toot-зубная-щетка.jpg",
+      "image": "assets/images/products/brush-longa-vita-toot-зубная-щетка.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:45.004707"
@@ -280,7 +280,7 @@
         "Широкий спектр действия",
         "Без спирта"
       ],
-      "image": "assets/images/products/other-мирамистин.jpg",
+      "image": "assets/images/products/other-мирамистин.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:51:52.749449"
@@ -295,7 +295,7 @@
         "Использование без воды",
         "Освежение дыхания"
       ],
-      "image": "assets/images/products/other-пенка-emra.jpg",
+      "image": "assets/images/products/other-пенка-emra.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:04.193568"
@@ -310,7 +310,7 @@
         "Борьба с бактериями",
         "Защита десен"
       ],
-      "image": "assets/images/products/other-пенка-waterdent-антибактериаль.jpg",
+      "image": "assets/images/products/other-пенка-waterdent-антибактериаль.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:12.280350"
@@ -325,7 +325,7 @@
         "Многофункциональный уход",
         "Свежесть дыхания"
       ],
-      "image": "assets/images/products/other-пенка-waterdent-комплексный-ух.jpg",
+      "image": "assets/images/products/other-пенка-waterdent-комплексный-ух.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:18.968088"
@@ -340,7 +340,7 @@
         "Реминерализация эмали",
         "Снижение чувствительности"
       ],
-      "image": "assets/images/products/other-пенка-waterdent-укрепление-эма.jpg",
+      "image": "assets/images/products/other-пенка-waterdent-укрепление-эма.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:26.533072"
@@ -355,7 +355,7 @@
         "Глубокое очищение",
         "Безопасный состав"
       ],
-      "image": "assets/images/products/other-пенка-профессор-персин-очищающ.jpg",
+      "image": "assets/images/products/other-пенка-профессор-персин-очищающ.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:35.813780"
@@ -370,7 +370,7 @@
         "Для брекетов и мостов",
         "Прочная нить"
       ],
-      "image": "assets/images/products/other-pesitro-flosser-orthopick.jpg",
+      "image": "assets/images/products/other-pesitro-flosser-orthopick.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:52:44.199170"
@@ -385,7 +385,7 @@
         "Удобная ручка",
         "Гибкий кончик"
       ],
-      "image": "assets/images/products/other-pesitro-flosser-picks.jpg",
+      "image": "assets/images/products/other-pesitro-flosser-picks.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:53:04.525660"
@@ -400,7 +400,7 @@
         "Безопасный состав",
         "Для детей и взрослых"
       ],
-      "image": "assets/images/products/other-plaque-agent.jpg",
+      "image": "assets/images/products/other-plaque-agent.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:53:15.628020"
@@ -415,7 +415,7 @@
         "3D-технология",
         "Таймер"
       ],
-      "image": "assets/images/products/brush-revyline-rl020.jpg",
+      "image": "assets/images/products/brush-revyline-rl020.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:53:30.410764"
@@ -430,7 +430,7 @@
         "Звуковая технология",
         "Сменные насадки"
       ],
-      "image": "assets/images/products/brush-revyline-rl025.jpg",
+      "image": "assets/images/products/brush-revyline-rl025.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:53:40.533756"
@@ -445,7 +445,7 @@
         "Антибактериальная щетина",
         "Эргономичный дизайн"
       ],
-      "image": "assets/images/products/brush-revyline-rl030.jpg",
+      "image": "assets/images/products/brush-revyline-rl030.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:53:54.982599"
@@ -460,7 +460,7 @@
         "Несколько режимов",
         "Датчик давления"
       ],
-      "image": "assets/images/products/brush-revyline-rl060.jpg",
+      "image": "assets/images/products/brush-revyline-rl060.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:04.540360"
@@ -475,7 +475,7 @@
         "10 режимов давления",
         "Большой резервуар"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl100.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl100.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:16.118725"
@@ -490,7 +490,7 @@
         "Технология микропузырьков",
         "Компактный дизайн"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl150.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl150.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:24.818488"
@@ -505,7 +505,7 @@
         "Гигиена языка",
         "Удобная форма"
       ],
-      "image": "assets/images/products/other-revyline-скребок-для-языка.jpg",
+      "image": "assets/images/products/other-revyline-скребок-для-языка.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:35.655948"
@@ -520,7 +520,7 @@
         "Портативный",
         "Эффективная чистка"
       ],
-      "image": "assets/images/products/other-revyline-smartfloss.jpg",
+      "image": "assets/images/products/other-revyline-smartfloss.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:44.205262"
@@ -535,7 +535,7 @@
         "Одна насадка в комплекте",
         "Простое управление"
       ],
-      "image": "assets/images/products/brush-revyline-sm1000-зубная-щетка.jpg",
+      "image": "assets/images/products/brush-revyline-sm1000-зубная-щетка.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:54:55.446577"
@@ -550,7 +550,7 @@
         "Мягкие щетинки",
         "Ультратихая работа"
       ],
-      "image": "assets/images/products/brush-revyline-sm6000-зубная-щетка.jpg",
+      "image": "assets/images/products/brush-revyline-sm6000-зубная-щетка.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:55:04.490302"
@@ -565,7 +565,7 @@
         "Защита от натирания",
         "Гипоаллергенный"
       ],
-      "image": "assets/images/products/other-revyline-воск.jpg",
+      "image": "assets/images/products/other-revyline-воск.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:55:15.819617"
@@ -580,7 +580,7 @@
         "Бережная формула",
         "Предотвращает воспаления"
       ],
-      "image": "assets/images/products/paste-rocs-implants.jpg",
+      "image": "assets/images/products/paste-rocs-implants.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:55:29.232393"
@@ -595,7 +595,7 @@
         "Защита от кариеса",
         "Безопасный состав"
       ],
-      "image": "assets/images/products/paste-rocs-junior-6-12.jpg",
+      "image": "assets/images/products/paste-rocs-junior-6-12.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:55:41.018729"
@@ -610,7 +610,7 @@
         "Низкая абразивность",
         "Приятный вкус"
       ],
-      "image": "assets/images/products/paste-rocs-kids-3-7.jpg",
+      "image": "assets/images/products/paste-rocs-kids-3-7.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:55:52.202645"
@@ -625,7 +625,7 @@
         "Снижение чувствительности",
         "Восстановление эмали"
       ],
-      "image": "assets/images/products/paste-rocs-medical-sensitive.jpg",
+      "image": "assets/images/products/paste-rocs-medical-sensitive.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:56:05.228959"
@@ -640,7 +640,7 @@
         "Биоактивные минералы",
         "Без фтора"
       ],
-      "image": "assets/images/products/paste-rocs-minerals.jpg",
+      "image": "assets/images/products/paste-rocs-minerals.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:56:14.673486"
@@ -655,7 +655,7 @@
         "Органический состав",
         "Защита десен"
       ],
-      "image": "assets/images/products/paste-splat-sonatural-6-11.jpg",
+      "image": "assets/images/products/paste-splat-sonatural-6-11.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:57:05.306656"
@@ -670,7 +670,7 @@
         "Фтор для защиты",
         "Свежесть дыхания"
       ],
-      "image": "assets/images/products/other-vitis-anticaries.jpg",
+      "image": "assets/images/products/other-vitis-anticaries.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:57:16.827142"
@@ -685,7 +685,7 @@
         "Антибактериальное действие",
         "Укрепление десен"
       ],
-      "image": "assets/images/products/paste-vitis-gingival.jpg",
+      "image": "assets/images/products/paste-vitis-gingival.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:57:40.386261"
@@ -700,7 +700,7 @@
         "Защита от кариеса",
         "Укрепление эмали"
       ],
-      "image": "assets/images/products/paste-vitis-junior.jpg",
+      "image": "assets/images/products/paste-vitis-junior.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:57:49.574325"
@@ -715,7 +715,7 @@
         "Безопасна при проглатывании",
         "Защита молочных зубов"
       ],
-      "image": "assets/images/products/paste-vitis-kids.jpg",
+      "image": "assets/images/products/paste-vitis-kids.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:01.360390"
@@ -730,7 +730,7 @@
         "Для брекетов и элайнеров",
         "Антибактериальный"
       ],
-      "image": "assets/images/products/other-vitis-orthodontic.jpg",
+      "image": "assets/images/products/other-vitis-orthodontic.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:09.687083"
@@ -745,7 +745,7 @@
         "Быстрое действие",
         "Долговременный эффект"
       ],
-      "image": "assets/images/products/paste-vitis-sensitive.jpg",
+      "image": "assets/images/products/paste-vitis-sensitive.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:24.248993"
@@ -760,7 +760,7 @@
         "Успокаивает десны",
         "Снижает чувствительность"
       ],
-      "image": "assets/images/products/other-vitis-sensitive.jpg",
+      "image": "assets/images/products/other-vitis-sensitive.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:33.348223"
@@ -775,7 +775,7 @@
         "Эффективное очищение",
         "Удаляет запахи"
       ],
-      "image": "assets/images/products/other-water-dent-средство-для-очистк.jpg",
+      "image": "assets/images/products/other-water-dent-средство-для-очистк.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:41.302157"
@@ -790,7 +790,7 @@
         "Плотное прилегание",
         "Пролонгированный эффект"
       ],
-      "image": "assets/images/products/other-асепта-адгезивный-бальзам-для-.jpg",
+      "image": "assets/images/products/other-асепта-адгезивный-бальзам-для-.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:58:55.717932"
@@ -805,7 +805,7 @@
         "Интенсивная формула",
         "Восстановление эмали"
       ],
-      "image": "assets/images/products/other-biorepair-collutorio-ad-alta-d.jpg",
+      "image": "assets/images/products/other-biorepair-collutorio-ad-alta-d.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:59:09.921055"
@@ -820,7 +820,7 @@
         "Компактный размер",
         "Все необходимое"
       ],
-      "image": "assets/images/products/other-silcamed-дорожный-набор.jpg",
+      "image": "assets/images/products/other-silcamed-дорожный-набор.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:59:20.558260"
@@ -835,7 +835,7 @@
         "Несколько насадок",
         "Регулируемое давление"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl410.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl410.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:59:35.990320"
@@ -850,7 +850,7 @@
         "Ультразвуковая технология",
         "Большой резервуар"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl500.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl500.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T12:59:47.772254"
@@ -865,7 +865,7 @@
         "Импульсная технология",
         "Эргономичный дизайн"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl610.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl610.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T13:00:09.269578"
@@ -880,10 +880,11 @@
         "Портативный",
         "Мощная подача воды"
       ],
-      "image": "assets/images/products/irrigator-revyline-rl650.jpg",
+      "image": "assets/images/products/irrigator-revyline-rl650.png",
       "isNew": false,
       "addedDate": "2025-12-08T11:58:59.443871",
       "lastModified": "2025-12-08T13:00:19.877866"
     }
   ]
+
 }
