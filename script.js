@@ -234,17 +234,6 @@ function getRussianPlural(number) {
     ];
 }
 
-/**
- * Форматирует список особенностей в HTML
- * @param {string[]} features
- * @returns {string}
- */
-function formatFeatures(features) {
-    return features?.length 
-        ? features.map(f => `<li><i class="fas fa-check"></i> ${f}</li>`).join('')
-        : '';
-}
-
 // ============================================
 // 4. УПРАВЛЕНИЕ ТЕМОЙ
 // ============================================
@@ -560,44 +549,44 @@ function sortProducts(products) {
  * Рендерит товары
  */
 function renderProducts() {
-    if (!DOM.catalogGrid || !DOM.emptyState) {
-        console.error('❌ Не найдены необходимые DOM элементы');
-        return;
-    }
-    
-    console.log(`🎨 Рендеринг ${STATE.filteredProducts.length} товаров...`);
+    if (!DOM.catalogGrid || !DOM.emptyState) return;
     
     DOM.catalogGrid.innerHTML = '';
     
     if (STATE.filteredProducts.length === 0) {
-        console.log('📭 Нет товаров для отображения, показываем empty state');
-        DOM.emptyState.style.display = 'flex';
-        DOM.emptyState.hidden = false;
         DOM.catalogGrid.style.display = 'none';
-    } else {
-        console.log(`🛒 Отображаем ${STATE.filteredProducts.length} товаров`);
-        DOM.emptyState.style.display = 'none';
-        DOM.emptyState.hidden = true;
-        DOM.catalogGrid.style.display = 'grid';
-        
-        const fragment = document.createDocumentFragment();
-        
-        STATE.filteredProducts.forEach((product, index) => {
-            const card = createProductCard(product);
-            fragment.appendChild(card);
-        });
-        
-        DOM.catalogGrid.appendChild(fragment);
+        DOM.emptyState.style.display = 'flex';
+        return;
     }
     
-    applyViewMode();
+    DOM.emptyState.style.display = 'none';
+    DOM.catalogGrid.style.display = 'grid';
     
-    console.log('✅ Рендеринг завершен');
+    const fragment = document.createDocumentFragment();
+    
+    STATE.filteredProducts.forEach((product, index) => {
+        const card = createProductCard(product);
+        
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        
+        fragment.appendChild(card);
+        
+        setTimeout(() => {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+        }, index * 50);
+    });
+    
+    DOM.catalogGrid.appendChild(fragment);
+    
+    applyViewMode();
 }
 
 /**
- * Создает карточку товара
- * @param {Product} product
+ * Создает карточку товара в зависимости от режима просмотра
+ * @param {Product} product 
  * @returns {HTMLElement}
  */
 function createProductCard(product) {
@@ -614,11 +603,8 @@ function createProductCard(product) {
         card.innerHTML = createGridCardHTML(product);
     }
     
-    const imageContainer = card.querySelector('.product-image-container');
-    const img = card.querySelector('.product-image');
-    
-    if (imageContainer && img) {
-        setupImageLoading(imageContainer, img);
+    if (!isListView) {
+        setupProductImage(card, product);
     }
     
     return card;
@@ -631,17 +617,14 @@ function createProductCard(product) {
  */
 function createGridCardHTML(product) {
     const newBadge = product.isNew ? 
-        `<div class="product-badges"><span class="product-badge badge-new">Новинка</span></div>` : '';
+        '<span class="product-badge badge-new">Новинка</span>' : '';
     
-    const features = product.features?.slice(0, 2).map(f => 
-        `<li class="product-feature"><i class="fas fa-check"></i> ${f}</li>`
-    ).join('') || '';
-    
-    const featuresHTML = features ? `<ul class="product-features">${features}</ul>` : '';
+    const features = product.features ? 
+        product.features.slice(0, 2).map(f => `<li class="product-feature"><i class="fas fa-check"></i> ${f}</li>`).join('') : '';
     
     return `
         <div class="product-card-inner">
-            ${newBadge}
+            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
             <div class="product-image-container">
                 <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
             </div>
@@ -651,7 +634,7 @@ function createGridCardHTML(product) {
                     <span class="product-category">${getCategoryName(product.category)}</span>
                 </div>
                 <p class="product-description">${product.description}</p>
-                ${featuresHTML}
+                ${features ? `<ul class="product-features">${features}</ul>` : ''}
                 <div class="product-footer">
                     <div class="product-price">${formatPrice(product.price)}</div>
                 </div>
@@ -667,14 +650,11 @@ function createGridCardHTML(product) {
  */
 function createListCardHTML(product) {
     const newBadge = product.isNew ? 
-        `<div class="product-badges"><span class="product-badge badge-new">Новинка</span></div>` : '';
+        '<span class="product-badge badge-new">Новинка</span>' : '';
     
     return `
         <div class="product-card-inner">
-            ${newBadge}
-            <div class="product-image-container" aria-hidden="true">
-                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
-            </div>
+            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
             <div class="product-info">
                 <div class="product-header">
                     <h3 class="product-title">${product.name}</h3>
@@ -689,33 +669,46 @@ function createListCardHTML(product) {
 }
 
 /**
- * Настраивает загрузку изображения
- * @param {HTMLElement} container 
- * @param {HTMLImageElement} img 
+ * Настраивает загрузку и отображение изображения
+ * @param {HTMLElement} card 
+ * @param {Product} product 
  */
-function setupImageLoading(container, img) {
-    container.classList.add('image-loading');
+function setupProductImage(card, product) {
+    const imageContainer = card.querySelector('.product-image-container');
+    const img = card.querySelector('.product-image');
     
-    const handleLoad = () => {
-        container.classList.remove('image-loading');
-        container.classList.add('image-loaded');
-    };
+    if (!imageContainer || !img) return;
     
-    const handleError = () => {
-        container.classList.remove('image-loading');
-        container.classList.add('image-error');
-        img.src = 'assets/images/placeholder.jpg';
-    };
+    imageContainer.classList.add('image-loading');
     
-    if (img.complete) {
-        if (img.naturalHeight > 0) {
-            handleLoad();
-        } else {
-            handleError();
-        }
+    if (img.complete && img.naturalHeight > 0) {
+        imageContainer.classList.remove('image-loading');
+        imageContainer.classList.add('image-loaded');
     } else {
-        img.addEventListener('load', handleLoad, { once: true });
-        img.addEventListener('error', handleError, { once: true });
+        img.addEventListener('load', () => {
+            imageContainer.classList.remove('image-loading');
+            imageContainer.classList.add('image-loaded');
+        }, { once: true });
+        
+        img.addEventListener('error', () => {
+            imageContainer.classList.remove('image-loading');
+            imageContainer.classList.add('image-error');
+        }, { once: true });
+    }
+}
+
+/**
+ * Применяет режим просмотра
+ */
+function applyViewMode() {
+    if (!DOM.catalogGrid) return;
+    
+    DOM.catalogGrid.classList.remove('grid-view', 'list-view');
+    
+    if (STATE.currentView === 'list') {
+        DOM.catalogGrid.classList.add('list-view');
+    } else {
+        DOM.catalogGrid.classList.add('grid-view');
     }
 }
 
@@ -970,16 +963,19 @@ function updateActiveSort() {
     });
 }
 
+/**
+ * Инициализирует переключение режимов просмотра
+ */
 function initViewToggle() {
     if (!DOM.viewToggles.length) return;
     
     DOM.viewToggles.forEach(toggle => {
         toggle.addEventListener('click', () => {
             const viewType = toggle.id === 'viewGrid' ? 'grid' : 'list';
+            
             if (viewType === STATE.currentView) return;
             
             STATE.currentView = viewType;
-            applyViewMode();
             
             DOM.viewToggles.forEach(t => {
                 const isActive = t === toggle;
@@ -988,9 +984,10 @@ function initViewToggle() {
             });
             
             localStorage.setItem(CONFIG.VIEW_KEY, viewType);
+            
             renderProducts();
             
-            console.log(`👁️ Вид: ${viewType}`);
+            console.log(`👁️ Режим просмотра: ${viewType}`);
         });
     });
     
@@ -1008,13 +1005,6 @@ function initViewToggle() {
     }
     
     console.log('✅ Переключение видов инициализировано');
-}
-
-function applyViewMode() {
-    if (!DOM.catalogGrid) return;
-    
-    DOM.catalogGrid.classList.toggle('list-view', STATE.currentView === 'list');
-    DOM.catalogGrid.classList.toggle('grid-view', STATE.currentView === 'grid');
 }
 
 // ============================================
