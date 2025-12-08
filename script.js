@@ -81,6 +81,7 @@
  * @property {NodeList} quickSelectBtns
  * @property {NodeList} mobileNavLinks
  * @property {HTMLElement} searchHints
+ * @property {HTMLElement} mainHeader
  */
 
 const CONFIG = /** @type {AppConfig} */ ({
@@ -128,15 +129,20 @@ function initDOMReferences() {
         // Основные элементы (проверяем критически важные)
         DOM.catalogGrid = document.getElementById('catalogGrid');
         DOM.emptyState = document.getElementById('emptyState');
+        DOM.mainHeader = document.querySelector('header');
         
         console.log('DOM.catalogGrid:', DOM.catalogGrid);
         console.log('DOM.emptyState:', DOM.emptyState);
+        console.log('DOM.mainHeader:', DOM.mainHeader);
         
         if (!DOM.catalogGrid) {
             console.error('❌ ОШИБКА: Не найден #catalogGrid');
         }
         if (!DOM.emptyState) {
             console.error('❌ ОШИБКА: Не найден #emptyState');
+        }
+        if (!DOM.mainHeader) {
+            console.warn('⚠️ Не найден header');
         }
         
         DOM.productsCount = document.getElementById('productsCount');
@@ -324,29 +330,46 @@ function resetToSystemTheme() {
 // 5. ХЭДЕР И МОБИЛЬНОЕ МЕНЮ
 // ============================================
 
+/**
+ * Инициализирует скролл хэдера с фиксом для мобильных
+ */
 function initScrollHeader() {
-    if (!DOM.menuToggle) return;
+    if (!DOM.mainHeader) return;
     
     let lastScrollTop = 0;
+    let isMobile = window.innerWidth <= 768;
     let ticking = false;
     
     function updateHeader(scrollTop) {
-        const isScrolled = scrollTop > CONFIG.SCROLL_THRESHOLD;
+        const isScrolled = scrollTop > 100;
         
+        // Обновляем состояние хэдера
+        DOM.mainHeader.classList.toggle('scrolled', isScrolled);
+        
+        // Обновляем кнопку "Наверх"
         if (DOM.backToTop) {
-            DOM.backToTop.classList.toggle('scrolled', isScrolled);
             DOM.backToTop.hidden = !isScrolled;
+            DOM.backToTop.classList.toggle('scrolled', isScrolled);
         }
         
-        if (scrollTop > lastScrollTop && scrollTop > 200 && !STATE.isMenuOpen) {
-            DOM.menuToggle.style.transform = 'translateY(-100%)';
+        // На мобильных - прячем хэдер при скролле вниз
+        if (isMobile && scrollTop > 200) {
+            if (scrollTop > lastScrollTop && scrollTop > 200) {
+                // Скроллим вниз - прячем хэдер
+                DOM.mainHeader.style.transform = 'translateY(-100%)';
+            } else {
+                // Скроллим вверх - показываем хэдер
+                DOM.mainHeader.style.transform = 'translateY(0)';
+            }
         } else {
-            DOM.menuToggle.style.transform = 'translateY(0)';
+            // На десктопе или вверху страницы - всегда показываем
+            DOM.mainHeader.style.transform = 'translateY(0)';
         }
         
         lastScrollTop = scrollTop;
     }
     
+    // Обработчик скролла
     window.addEventListener('scroll', () => {
         if (!ticking) {
             requestAnimationFrame(() => {
@@ -357,8 +380,19 @@ function initScrollHeader() {
         }
     }, { passive: true });
     
+    // Обработчик ресайза для определения типа устройства
+    window.addEventListener('resize', () => {
+        isMobile = window.innerWidth <= 768;
+        
+        // Сбрасываем трансформацию при изменении размера
+        DOM.mainHeader.style.transform = 'translateY(0)';
+    });
+    
+    // Инициализируем начальное состояние
     setTimeout(() => {
-        if (window.pageYOffset > CONFIG.SCROLL_THRESHOLD) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        if (scrollTop > 100) {
+            DOM.mainHeader.classList.add('scrolled');
             if (DOM.backToTop) {
                 DOM.backToTop.hidden = false;
                 DOM.backToTop.classList.add('scrolled');
@@ -366,7 +400,23 @@ function initScrollHeader() {
         }
     }, 100);
     
-    console.log('✅ Скролл хэдера инициализирован');
+    console.log('✅ Скролл хэдера инициализирован для мобильных');
+}
+
+/**
+ * Фиксирует позицию мобильного меню относительно хэдера
+ */
+function fixMobileMenuPosition() {
+    if (!DOM.mobileNav || !DOM.mainHeader) return;
+    
+    // Получаем высоту хэдера
+    const headerHeight = DOM.mainHeader.offsetHeight;
+    
+    // Устанавливаем отступ сверху для мобильного меню
+    DOM.mobileNav.style.top = `${headerHeight}px`;
+    DOM.mobileNav.style.height = `calc(100vh - ${headerHeight}px)`;
+    
+    console.log(`📏 Высота хэдера: ${headerHeight}px`);
 }
 
 /**
@@ -383,20 +433,37 @@ function initMobileMenu() {
     function toggleMobileMenu() {
         isMobileMenuOpen = !isMobileMenuOpen;
         
+        // Фиксируем позицию меню перед открытием
+        if (isMobileMenuOpen) {
+            fixMobileMenuPosition();
+        }
+        
+        // Обновляем состояние кнопки
         DOM.menuToggle.classList.toggle('active', isMobileMenuOpen);
         DOM.menuToggle.setAttribute('aria-expanded', isMobileMenuOpen.toString());
         
+        // Показываем/скрываем меню
         DOM.mobileNav.hidden = !isMobileMenuOpen;
         DOM.mobileNavOverlay.hidden = !isMobileMenuOpen;
         
+        // Добавляем/убираем класс active
         if (isMobileMenuOpen) {
             DOM.mobileNav.classList.add('active');
             DOM.mobileNavOverlay.classList.add('active');
             document.body.style.overflow = 'hidden';
+            
+            // Блокируем скролл хэдера при открытом меню
+            DOM.mainHeader.style.position = 'fixed';
+            DOM.mainHeader.style.top = '0';
+            DOM.mainHeader.style.left = '0';
+            DOM.mainHeader.style.right = '0';
         } else {
             DOM.mobileNav.classList.remove('active');
             DOM.mobileNavOverlay.classList.remove('active');
             document.body.style.overflow = '';
+            
+            // Восстанавливаем хэдер
+            DOM.mainHeader.style.position = '';
         }
         
         console.log('📱 Мобильное меню:', isMobileMenuOpen ? 'открыто' : 'закрыто');
@@ -1273,6 +1340,9 @@ async function init() {
         setTimeout(() => {
             initScrollHeader();
             initProgressBar();
+            
+            // Фиксируем позицию мобильного меню
+            setTimeout(fixMobileMenuPosition, 100);
         }, 100);
         
         console.log('✅ Приложение инициализировано успешно!');
@@ -1311,3 +1381,7 @@ window.CatalogApp = {
 };
 
 console.log('📦 CatalogApp v4.1 загружен');
+
+// Вызывать при ресайзе и после загрузки для фиксации позиции мобильного меню
+window.addEventListener('resize', fixMobileMenuPosition);
+window.addEventListener('load', fixMobileMenuPosition);
