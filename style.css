@@ -1,6 +1,6 @@
 /* ============================================
    ФИРМЕННАЯ ДИЗАЙН-СИСТЕМА "ОРТОЦЕНТР"
-   Версия: 3.7 (С мобильным меню)
+   Версия: 3.8 (Обновленный адаптивный header)
 ============================================ */
 
 /* ===== 1. РАСШИРЕННАЯ ЦВЕТОВАЯ ПАЛИТРА ===== */
@@ -70,7 +70,9 @@
   
   --header-height: 120px;
   --header-height-scrolled: 70px;
-  --header-top: 3px;
+  --header-height-mobile: 70px;
+  --header-height-mobile-scrolled: 60px;
+  --header-top: 0;
   --bottom-safe: env(safe-area-inset-bottom, 0px);
   --top-safe: env(safe-area-inset-top, 0px);
   
@@ -169,7 +171,7 @@ body {
 
 body.pwa-installed { padding-top: var(--top-safe); }
 
-/* ===== 3. ОБНОВЛЕННЫЙ ХЭДЕР ===== */
+/* ===== 3. ОБНОВЛЕННЫЙ ХЭДЕР С АДАПТИВНЫМ СКРОЛЛОМ ===== */
 .header {
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
@@ -184,6 +186,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   padding-top: var(--top-safe);
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .header.scrolled {
@@ -203,22 +206,24 @@ body.pwa-installed { padding-top: var(--top-safe); }
 
 .header-top {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto auto;
   align-items: center;
-  padding: var(--space-sm) 0;
-  gap: var(--space-md);
+  padding: 8px 0;
+  gap: var(--space-sm);
   flex-shrink: 0;
+  min-height: 60px;
+  transition: all var(--transition-base);
 }
 
 .header.scrolled .header-top {
-  padding: 8px 0;
-  grid-template-columns: auto 1fr auto;
+  padding: 4px 0;
+  min-height: 52px;
 }
 
-/* Логотип */
+/* Логотип - адаптивный */
 .logo {
-  flex: 0 0 auto;
-  min-width: 160px;
+  flex: 1;
+  min-width: 0;
   transition: all var(--transition-base);
 }
 
@@ -230,12 +235,15 @@ body.pwa-installed { padding-top: var(--top-safe); }
 }
 
 .logo-text {
-  font-size: 1.8rem;
+  font-size: 1.3rem;
   font-weight: var(--font-weight-bold);
   color: var(--color-text);
   letter-spacing: -0.02em;
-  position: relative;
   transition: font-size var(--transition-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
   line-height: 1;
 }
 
@@ -244,45 +252,60 @@ body.pwa-installed { padding-top: var(--top-safe); }
   position: absolute;
   bottom: -4px;
   left: 0;
-  width: 40px;
-  height: 3px;
+  width: 30px;
+  height: 2px;
   background: var(--color-accent);
   border-radius: var(--radius-sm);
   transition: all var(--transition-base);
 }
 
+.header.scrolled .logo-text {
+  font-size: 1.1rem;
+}
+
+.header.scrolled .logo-text::after {
+  width: 25px;
+  bottom: -3px;
+  height: 2px;
+}
+
 .logo-subtitle {
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   color: var(--color-primary);
   font-weight: var(--font-weight-medium);
   margin-top: 4px;
   transition: all var(--transition-base);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.header.scrolled .logo-text { font-size: 1.4rem; }
-.header.scrolled .logo-text::after { width: 30px; bottom: -2px; }
-.header.scrolled .logo-subtitle { 
-  opacity: 0; 
-  visibility: hidden; 
-  height: 0; 
-  margin-top: 0; 
+.header.scrolled .logo-subtitle {
+  font-size: 0.7rem;
+  opacity: 0.9;
 }
 
-/* Кнопка бургер-меню (только для мобильных) */
+/* Бургер-меню - фиксированный размер */
 .menu-toggle {
-  display: none; /* По умолчанию скрыта */
   width: 44px;
   height: 44px;
   border: none;
   background: var(--color-primary-pale);
   border-radius: var(--radius-md);
   cursor: pointer;
+  display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 0;
-  margin-right: var(--space-sm);
   transition: all var(--transition-fast);
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.header.scrolled .menu-toggle {
+  width: 40px;
+  height: 40px;
 }
 
 .menu-toggle-icon {
@@ -319,17 +342,24 @@ body.pwa-installed { padding-top: var(--top-safe); }
   background: var(--color-primary-ultralight);
 }
 
-/* Управление */
+.header.scrolled .menu-line {
+  width: 18px;
+  height: 2px;
+  margin: 2px 0;
+}
+
+/* Элементы управления (тема) */
 .header-controls {
   display: flex;
   align-items: center;
-  gap: var(--space-sm);
-  justify-content: flex-end;
+  gap: var(--space-xs);
+  flex-shrink: 0;
 }
 
+/* Свитчер темы - компактный */
 .theme-switcher.compact {
   display: flex;
-  gap: var(--space-xs);
+  gap: 4px;
 }
 
 .theme-toggle,
@@ -345,20 +375,27 @@ body.pwa-installed { padding-top: var(--top-safe); }
   transition: all var(--transition-base);
   background: var(--color-primary-pale);
   color: var(--color-primary);
+  flex-shrink: 0;
+}
+
+.header.scrolled .theme-toggle,
+.header.scrolled .theme-reset {
+  width: 40px;
+  height: 40px;
 }
 
 .theme-toggle:hover,
 .theme-reset:hover {
   background: var(--color-primary-ultralight);
   border-color: var(--color-primary);
-  transform: rotate(15deg);
 }
 
+.theme-toggle:hover { transform: rotate(15deg); }
 .theme-reset:hover { transform: rotate(180deg); }
 
 /* ДЕСКТОПНАЯ НАВИГАЦИЯ */
 .desktop-nav {
-  display: block;
+  display: none;
   margin-top: auto;
   padding-bottom: var(--space-xs);
   transition: all var(--transition-base);
@@ -437,7 +474,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
 .mobile-nav {
   position: fixed;
   top: 0;
-  right: -320px; /* Скрыто за экраном */
+  right: -320px;
   width: 300px;
   height: 100vh;
   background: var(--color-background);
@@ -446,7 +483,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   transition: right var(--transition-base);
   display: flex;
   flex-direction: column;
-  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.1);
+  box-shadow: -5px 0 25px rgba(0, 0, 0, 0.15);
 }
 
 .mobile-nav.active {
@@ -457,8 +494,9 @@ body.pwa-installed { padding-top: var(--top-safe); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-lg);
+  padding: var(--space-md);
   border-bottom: 1px solid var(--color-border);
+  min-height: 60px;
 }
 
 .mobile-nav-title {
@@ -598,8 +636,13 @@ body.pwa-installed { padding-top: var(--top-safe); }
 
 /* ===== 5. ГЛАВНАЯ СЕКЦИЯ ===== */
 .main-content { 
-  padding-top: calc(var(--header-height) + var(--header-top)); 
-  min-height: 100vh; 
+  padding-top: var(--header-height);
+  min-height: 100vh;
+  transition: padding-top var(--transition-slow);
+}
+
+.header.scrolled ~ .main-content {
+  padding-top: var(--header-height-scrolled);
 }
 
 .container { 
@@ -1689,56 +1732,71 @@ body.pwa-installed { padding-top: var(--top-safe); }
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 100px;
+    --header-height: 70px;
     --header-height-scrolled: 60px;
   }
   
-  .header-top { 
-    grid-template-columns: auto 1fr auto;
-    gap: var(--space-sm);
-    padding: 8px 0;
+  .header .container {
+    padding: 0 var(--space-md);
   }
   
-  .logo { 
-    min-width: 140px; 
-    flex: 1; 
+  .header-top { 
+    padding: 6px 0;
+  }
+  
+  .header.scrolled .header-top {
+    padding: 2px 0;
   }
   
   .logo-text {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
+  }
+  
+  .header.scrolled .logo-text {
+    font-size: 1rem;
   }
   
   .logo-subtitle {
-    font-size: 0.8rem;
+    font-size: 0.75rem;
+    margin-top: 2px;
   }
   
-  /* Показываем бургер-меню на мобильных */
   .menu-toggle {
     display: flex;
-    order: 1; /* Первый элемент после логотипа */
+    width: 40px;
+    height: 40px;
   }
   
-  /* Переносим кнопку темы влево */
+  .header.scrolled .menu-toggle {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .menu-line {
+    width: 18px;
+    height: 2px;
+    margin: 2px 0;
+  }
+  
   .header-controls {
-    order: 3; /* Третий элемент (после бургера) */
-    justify-content: flex-end;
+    gap: 4px;
   }
   
-  /* Скрываем десктопную навигацию на мобильных */
-  .desktop-nav {
-    display: none !important;
-  }
-  
-  /* Настройка размеров кнопок на мобильных */
   .theme-toggle,
   .theme-reset {
     width: 40px;
     height: 40px;
   }
   
-  /* Увеличиваем отступы для touch */
-  .theme-switcher.compact {
-    gap: 4px;
+  .header.scrolled .theme-toggle,
+  .header.scrolled .theme-reset {
+    width: 36px;
+    height: 36px;
+  }
+  
+  /* Скрываем десктопную навигацию на мобильных */
+  .desktop-nav {
+    display: none !important;
   }
   
   .footer-content { 
@@ -1841,30 +1899,76 @@ body.pwa-installed { padding-top: var(--top-safe); }
   .reset-filters-btn .btn-text {
     display: inline;
   }
-}
-
-@media (max-width: 480px) {
+  
+  /* На десктопе показываем десктопную навигацию и скрываем бургер */
+  .menu-toggle {
+    display: none;
+  }
+  
+  .desktop-nav {
+    display: block;
+  }
+  
   .header-top {
-    grid-template-columns: 1fr auto auto;
+    grid-template-columns: auto 1fr auto;
+    padding: var(--space-sm) 0;
+    gap: var(--space-lg);
   }
   
   .logo {
-    min-width: auto;
-    flex: 1;
+    min-width: 200px;
   }
   
   .logo-text {
-    font-size: 1.2rem;
+    font-size: 1.8rem;
+  }
+  
+  .header.scrolled .logo-text {
+    font-size: 1.4rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .header.scrolled .logo-subtitle {
+    opacity: 0;
+    visibility: hidden;
+    height: 0;
+    margin-top: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --header-height: 65px;
+    --header-height-scrolled: 55px;
+  }
+  
+  .header .container {
+    padding: 0 12px;
+  }
+  
+  .logo-text {
+    font-size: 1.1rem;
+  }
+  
+  .header.scrolled .logo-text {
+    font-size: 0.95rem;
+  }
+  
+  .logo-subtitle {
+    font-size: 0.7rem;
   }
   
   .menu-toggle {
-    width: 40px;
-    height: 40px;
-    margin-right: 0;
+    width: 36px;
+    height: 36px;
   }
   
-  .header-controls {
-    gap: 4px;
+  .header.scrolled .menu-toggle {
+    width: 34px;
+    height: 34px;
   }
   
   .theme-toggle,
@@ -1873,8 +1977,10 @@ body.pwa-installed { padding-top: var(--top-safe); }
     height: 36px;
   }
   
-  .mobile-nav {
-    width: 280px;
+  .header.scrolled .theme-toggle,
+  .header.scrolled .theme-reset {
+    width: 34px;
+    height: 34px;
   }
   
   .nav-link { 
@@ -1920,18 +2026,23 @@ body.pwa-installed { padding-top: var(--top-safe); }
   }
 }
 
-/* Для очень маленьких экранов */
 @media (max-width: 360px) {
-  .header-top {
-    grid-template-columns: auto auto auto;
-  }
-  
-  .logo {
-    flex: 0 0 auto;
+  :root {
+    --header-height: 60px;
+    --header-height-scrolled: 50px;
   }
   
   .logo-text {
-    font-size: 1.1rem;
+    font-size: 1rem;
+  }
+  
+  .header.scrolled .logo-text {
+    font-size: 0.9rem;
+  }
+  
+  .menu-toggle {
+    width: 34px;
+    height: 34px;
   }
   
   .theme-toggle,
