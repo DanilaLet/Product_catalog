@@ -631,6 +631,21 @@ function sortProducts(products) {
 // ============================================
 
 /**
+ * Проверяет поддержку object-fit и добавляет fallback
+ */
+function checkObjectFitSupport() {
+    const testEl = document.createElement('div');
+    testEl.style.objectFit = 'cover';
+    
+    if (testEl.style.objectFit !== undefined) {
+        console.log('✅ Браузер поддерживает object-fit');
+    } else {
+        console.log('⚠️ Браузер НЕ поддерживает object-fit, добавляем fallback');
+        document.documentElement.classList.add('no-objectfit');
+    }
+}
+
+/**
  * Рендерит товары
  */
 function renderProducts() {
@@ -670,7 +685,7 @@ function renderProducts() {
 }
 
 /**
- * Создает карточку товара в зависимости от режима просмотра
+ * Создает карточку товара
  * @param {Product} product 
  * @returns {HTMLElement}
  */
@@ -686,10 +701,12 @@ function createProductCard(product) {
         card.innerHTML = createListCardHTML(product);
     } else {
         card.innerHTML = createGridCardHTML(product);
-    }
-    
-    if (!isListView) {
-        setupProductImage(card, product);
+        
+        // Оптимизированная загрузка изображения для grid view
+        const img = card.querySelector('.product-image');
+        if (img) {
+            setupProductImageOptimization(img, product);
+        }
     }
     
     return card;
@@ -711,7 +728,12 @@ function createGridCardHTML(product) {
         <div class="product-card-inner">
             ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
             <div class="product-image-container">
-                <img src="${product.image}" alt="${product.name}" class="product-image" loading="lazy">
+                <img src="${product.image}" 
+                     alt="${product.name}" 
+                     class="product-image" 
+                     loading="lazy"
+                     width="300"
+                     height="225">
             </div>
             <div class="product-info">
                 <div class="product-header">
@@ -754,31 +776,38 @@ function createListCardHTML(product) {
 }
 
 /**
- * Настраивает загрузку и отображение изображения
- * @param {HTMLElement} card 
+ * Настраивает оптимизированную загрузку изображения
+ * @param {HTMLImageElement} img 
  * @param {Product} product 
  */
-function setupProductImage(card, product) {
-    const imageContainer = card.querySelector('.product-image-container');
-    const img = card.querySelector('.product-image');
+function setupProductImageOptimization(img, product) {
+    const imageContainer = img.parentElement;
     
-    if (!imageContainer || !img) return;
+    if (!imageContainer) return;
     
-    imageContainer.classList.add('image-loading');
+    // Предзагрузка в низком качестве (LQIP)
+    img.style.backgroundColor = 'var(--color-surface)';
     
-    if (img.complete && img.naturalHeight > 0) {
-        imageContainer.classList.remove('image-loading');
-        imageContainer.classList.add('image-loaded');
-    } else {
-        img.addEventListener('load', () => {
-            imageContainer.classList.remove('image-loading');
+    img.addEventListener('load', function() {
+        this.classList.add('loaded');
+        if (imageContainer) {
             imageContainer.classList.add('image-loaded');
-        }, { once: true });
-        
-        img.addEventListener('error', () => {
-            imageContainer.classList.remove('image-loading');
-            imageContainer.classList.add('image-error');
-        }, { once: true });
+        }
+    });
+    
+    img.addEventListener('error', function() {
+        // Замена изображения на SVG fallback
+        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 300 225"><rect width="300" height="225" fill="%23f0f0f0"/><text x="150" y="120" font-size="40" text-anchor="middle" fill="%23b9c8c3">🦷</text></svg>';
+        this.classList.add('loaded');
+        if (imageContainer) {
+            imageContainer.classList.add('image-loaded');
+        }
+    });
+    
+    // Если изображение уже загружено
+    if (img.complete && img.naturalHeight > 0) {
+        img.classList.add('loaded');
+        imageContainer.classList.add('image-loaded');
     }
 }
 
@@ -1327,6 +1356,9 @@ async function init() {
     console.log('🚀 Инициализация каталога «Ортоцентр»...');
     
     try {
+        // Проверяем поддержку object-fit
+        checkObjectFitSupport();
+        
         initDOMReferences();
         
         if (!DOM.catalogGrid) {
