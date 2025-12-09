@@ -1,6 +1,6 @@
 /**
  * КАТАЛОГ «ОРТОЦЕНТР» - ОСНОВНОЙ СКРИПТ
- * Версия: 4.1 (Упрощенная, надежная)
+ * Версия: 4.2 (С оптимизированными изображениями)
  */
 
 // ============================================
@@ -651,27 +651,33 @@ function checkObjectFitSupport() {
 function renderProducts() {
     if (!DOM.catalogGrid || !DOM.emptyState) return;
     
+    // Всегда очищаем
     DOM.catalogGrid.innerHTML = '';
     
+    // Если нет товаров - показываем пустое состояние
     if (STATE.filteredProducts.length === 0) {
         DOM.catalogGrid.style.display = 'none';
         DOM.emptyState.style.display = 'flex';
         return;
     }
     
+    // Если есть товары - скрываем пустое состояние
     DOM.emptyState.style.display = 'none';
     DOM.catalogGrid.style.display = 'grid';
     
+    // Рендерим товары
     const fragment = document.createDocumentFragment();
     
     STATE.filteredProducts.forEach((product, index) => {
         const card = createProductCard(product);
         
+        // Анимация появления
         card.style.opacity = '0';
         card.style.transform = 'translateY(20px)';
         
         fragment.appendChild(card);
         
+        // Запускаем анимацию с задержкой
         setTimeout(() => {
             card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
             card.style.opacity = '1';
@@ -681,11 +687,12 @@ function renderProducts() {
     
     DOM.catalogGrid.appendChild(fragment);
     
+    // Применяем текущий режим просмотра
     applyViewMode();
 }
 
 /**
- * Создает карточку товара
+ * Создает карточку товара с Flex-центрированием изображения
  * @param {Product} product 
  * @returns {HTMLElement}
  */
@@ -697,43 +704,44 @@ function createProductCard(product) {
     
     const isListView = STATE.currentView === 'list';
     
+    // Для списка - простой HTML без изображения
     if (isListView) {
-        card.innerHTML = createListCardHTML(product);
-    } else {
-        card.innerHTML = createGridCardHTML(product);
+        const newBadge = product.isNew ? 
+            '<span class="product-badge badge-new">Новинка</span>' : '';
         
-        // Оптимизированная загрузка изображения для grid view
-        const img = card.querySelector('.product-image');
-        if (img) {
-            setupProductImageOptimization(img, product);
-        }
+        card.innerHTML = `
+            <div class="product-card-inner">
+                ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
+                <div class="product-info">
+                    <div class="product-header">
+                        <h3 class="product-title">${product.name}</h3>
+                        <span class="product-category">${getCategoryName(product.category)}</span>
+                    </div>
+                    <div class="product-footer">
+                        <div class="product-price">${formatPrice(product.price)}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        return card;
     }
     
-    return card;
-}
-
-/**
- * Создает HTML для карточки в виде сетки
- * @param {Product} product 
- * @returns {string}
- */
-function createGridCardHTML(product) {
+    // Для сетки - с изображением и Flex-центрированием
     const newBadge = product.isNew ? 
         '<span class="product-badge badge-new">Новинка</span>' : '';
     
     const features = product.features ? 
         product.features.slice(0, 2).map(f => `<li class="product-feature"><i class="fas fa-check"></i> ${f}</li>`).join('') : '';
     
-    return `
+    card.innerHTML = `
         <div class="product-card-inner">
             ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
             <div class="product-image-container">
                 <img src="${product.image}" 
                      alt="${product.name}" 
                      class="product-image" 
-                     loading="lazy"
-                     width="300"
-                     height="225">
+                     loading="lazy">
             </div>
             <div class="product-info">
                 <div class="product-header">
@@ -748,66 +756,99 @@ function createGridCardHTML(product) {
             </div>
         </div>
     `;
+    
+    // Настраиваем изображение
+    setupProductImage(card);
+    
+    return card;
 }
 
 /**
- * Создает HTML для карточки в виде списка
- * @param {Product} product 
- * @returns {string}
+ * Настраивает изображение в карточке
+ * @param {HTMLElement} card 
  */
-function createListCardHTML(product) {
-    const newBadge = product.isNew ? 
-        '<span class="product-badge badge-new">Новинка</span>' : '';
+function setupProductImage(card) {
+    const imageContainer = card.querySelector('.product-image-container');
+    const img = card.querySelector('.product-image');
     
-    return `
-        <div class="product-card-inner">
-            ${newBadge ? `<div class="product-badges">${newBadge}</div>` : ''}
-            <div class="product-info">
-                <div class="product-header">
-                    <h3 class="product-title">${product.name}</h3>
-                    <span class="product-category">${getCategoryName(product.category)}</span>
-                </div>
-                <div class="product-footer">
-                    <div class="product-price">${formatPrice(product.price)}</div>
-                </div>
-            </div>
-        </div>
-    `;
-}
-
-/**
- * Настраивает оптимизированную загрузку изображения
- * @param {HTMLImageElement} img 
- * @param {Product} product 
- */
-function setupProductImageOptimization(img, product) {
-    const imageContainer = img.parentElement;
+    if (!imageContainer || !img) return;
     
-    if (!imageContainer) return;
+    // Добавляем класс загрузки
+    imageContainer.classList.add('image-loading');
     
-    // Предзагрузка в низком качестве (LQIP)
-    img.style.backgroundColor = 'var(--color-surface)';
-    
-    img.addEventListener('load', function() {
-        this.classList.add('loaded');
-        if (imageContainer) {
-            imageContainer.classList.add('image-loaded');
-        }
-    });
-    
-    img.addEventListener('error', function() {
-        // Замена изображения на SVG fallback
-        this.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="225" viewBox="0 0 300 225"><rect width="300" height="225" fill="%23f0f0f0"/><text x="150" y="120" font-size="40" text-anchor="middle" fill="%23b9c8c3">🦷</text></svg>';
-        this.classList.add('loaded');
-        if (imageContainer) {
-            imageContainer.classList.add('image-loaded');
-        }
-    });
-    
-    // Если изображение уже загружено
+    // Проверяем, загружено ли изображение
     if (img.complete && img.naturalHeight > 0) {
-        img.classList.add('loaded');
-        imageContainer.classList.add('image-loaded');
+        handleImageLoad(img, imageContainer);
+    } else {
+        img.addEventListener('load', function() {
+            handleImageLoad(this, imageContainer);
+        }, { once: true });
+        
+        img.addEventListener('error', function() {
+            handleImageError(this, imageContainer);
+        }, { once: true });
+    }
+}
+
+/**
+ * Обрабатывает загрузку изображения
+ * @param {HTMLImageElement} img 
+ * @param {HTMLElement} container 
+ */
+function handleImageLoad(img, container) {
+    // Убираем класс загрузки
+    container.classList.remove('image-loading');
+    container.classList.add('image-loaded');
+    
+    // Определяем ориентацию и добавляем соответствующий класс
+    determineImageOrientation(img);
+    
+    // Плавное появление
+    img.style.opacity = '0';
+    img.style.transition = 'opacity 0.3s ease';
+    
+    setTimeout(() => {
+        img.style.opacity = '1';
+    }, 10);
+}
+
+/**
+ * Обрабатывает ошибку загрузки изображения
+ * @param {HTMLImageElement} img 
+ * @param {HTMLElement} container 
+ */
+function handleImageError(img, container) {
+    container.classList.remove('image-loading');
+    container.classList.add('image-error');
+    
+    // Устанавливаем placeholder
+    if (!img.src.includes('data:image/svg+xml')) {
+        img.src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 225"><rect width="300" height="225" fill="%23f0f0f0"/><text x="150" y="120" font-size="40" text-anchor="middle" fill="%23b9c8c3">🦷</text></svg>';
+        img.classList.add('placeholder');
+    }
+}
+
+/**
+ * Определяет ориентацию изображения и добавляет соответствующий класс
+ * @param {HTMLImageElement} img 
+ */
+function determineImageOrientation(img) {
+    // Определяем соотношение сторон
+    const ratio = img.naturalWidth / img.naturalHeight;
+    
+    // Удаляем старые классы
+    img.classList.remove('portrait', 'landscape', 'square');
+    
+    // Добавляем соответствующий класс
+    if (Math.abs(ratio - 1) < 0.1) {
+        // Квадратное (отношение 0.9-1.1)
+        img.classList.add('square');
+    } else if (ratio < 1) {
+        // Портретное (ширина < высоты)
+        img.classList.add('portrait');
+    } else {
+        // Ландшафтное (ширина > высоты)
+        img.classList.add('landscape');
     }
 }
 
@@ -817,12 +858,19 @@ function setupProductImageOptimization(img, product) {
 function applyViewMode() {
     if (!DOM.catalogGrid) return;
     
+    // Удаляем все классы видов
     DOM.catalogGrid.classList.remove('grid-view', 'list-view');
     
+    // Добавляем нужный класс
     if (STATE.currentView === 'list') {
         DOM.catalogGrid.classList.add('list-view');
     } else {
         DOM.catalogGrid.classList.add('grid-view');
+    }
+    
+    // Если переключаемся в режим списка, перерисовываем
+    if (STATE.currentView === 'list') {
+        renderProducts();
     }
 }
 
@@ -890,7 +938,7 @@ function scrollToCatalog() {
                 top: catalogTop - headerHeight - 20,
                 behavior: 'smooth'
             });
-        }
+    }
     });
 }
 
@@ -1096,7 +1144,8 @@ function initViewToggle() {
             
             localStorage.setItem(CONFIG.VIEW_KEY, viewType);
             
-            renderProducts();
+            // Применяем режим просмотра (внутри вызовется renderProducts если нужно)
+            applyViewMode();
             
             console.log(`👁️ Режим просмотра: ${viewType}`);
         });
@@ -1409,10 +1458,10 @@ window.CatalogApp = {
     resetFilters,
     filterProductsByCategory,
     setTheme,
-    getVersion: () => '4.1'
+    getVersion: () => '4.2'
 };
 
-console.log('📦 CatalogApp v4.1 загружен');
+console.log('📦 CatalogApp v4.2 загружен');
 
 // Вызывать при ресайзе и после загрузки для фиксации позиции мобильного меню
 window.addEventListener('resize', fixMobileMenuPosition);
