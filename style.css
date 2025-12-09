@@ -1071,51 +1071,6 @@ body.pwa-installed { padding-top: var(--top-safe); }
   height: 100%;
 }
 
-/* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КОНТЕЙНЕРА ИЗОБРАЖЕНИЙ */
-.product-image-container {
-  position: relative;
-  width: 100%;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  margin-bottom: var(--space-md);
-}
-
-/* Для соотношения сторон используем padding hack */
-.product-image-container::before {
-  content: "";
-  display: block;
-  padding-top: 75%; /* 4:3 Aspect Ratio */
-}
-
-.product-image {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  height: auto;
-  object-fit: cover;
-  object-position: center;
-  transition: transform 0.3s ease;
-  background-color: var(--color-surface); /* Фон на случай прозрачности */
-}
-
-.product-card:hover .product-image {
-  transform: scale(1.05);
-}
-
-.catalog-grid.grid-view .product-image-container {
-  width: var(--image-grid-width);
-  min-height: var(--image-min-height);
-  max-height: var(--image-max-height);
-}
-
-.catalog-grid.grid-view .product-card:hover .product-image {
-  transform: scale(1.05);
-}
-
 /* ===== ИЗОБРАЖЕНИЯ В РЕЖИМЕ СПИСКА (LIST) ===== */
 .catalog-grid.list-view .product-card {
   display: flex;
@@ -1124,6 +1079,7 @@ body.pwa-installed { padding-top: var(--top-safe); }
   min-height: auto;
 }
 
+/* Для режима списка - скрываем изображения */
 .catalog-grid.list-view .product-image-container {
   display: none;
 }
@@ -1267,50 +1223,136 @@ body.pwa-installed { padding-top: var(--top-safe); }
   color: var(--color-text);
 }
 
-/* PLACEHOLDER ДЛЯ ОШИБОК ЗАГРУЗКИ */
+/* ===== НОВЫЕ СТИЛИ С FLEX-ЦЕНТРИРОВАНИЕМ ===== */
+
+/* Контейнер для изображения с Flex-центрированием */
+.product-image-container {
+    width: 100%;
+    height: 220px; /* Фиксированная высота для всех карточек */
+    display: flex;
+    align-items: center; /* Вертикальное центрирование */
+    justify-content: center; /* Горизонтальное центрирование */
+    background: var(--color-surface);
+    border-radius: var(--radius-md);
+    padding: 15px; /* Отступы чтобы изображение не касалось краев */
+    margin-bottom: var(--space-md);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Само изображение */
+.product-image {
+    max-width: 100%; /* Не больше ширины контейнера */
+    max-height: 100%; /* Не больше высоты контейнера */
+    width: auto; /* Автоматическая ширина */
+    height: auto; /* Автоматическая высота */
+    object-fit: contain; /* Показываем всё изображение */
+    display: block;
+    transition: transform var(--transition-slow);
+}
+
+/* Эффект при наведении */
+.product-card:hover .product-image {
+    transform: scale(1.05);
+}
+
+/* Состояния загрузки изображения */
+.product-image-container.image-loading {
+    background: linear-gradient(90deg, 
+        var(--color-gray-ultralight) 25%, 
+        var(--color-gray-lighter) 50%, 
+        var(--color-gray-ultralight) 75%);
+    background-size: 200% 100%;
+    animation: image-loading 1.5s ease-in-out infinite;
+}
+
+@keyframes image-loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.product-image-container.image-loaded {
+    background: var(--color-surface);
+    animation: none;
+}
+
+.product-image-container.image-error {
+    background: var(--color-surface);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .product-image-container.image-error::before {
-  content: " ";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: var(--color-surface);
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f0f0f0"/><text x="50" y="60" font-size="40" text-anchor="middle" fill="%23b9c8c3">🦷</text></svg>');
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: 40% 40%;
-  z-index: 1;
+    content: "🦷";
+    font-size: 3rem;
+    color: var(--color-primary);
+    opacity: 0.5;
 }
 
-.product-image-container.image-loading::before {
-  content: " ";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, 
-    var(--color-gray-ultralight) 25%, 
-    var(--color-gray-lighter) 50%, 
-    var(--color-gray-ultralight) 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s ease-in-out infinite;
-  z-index: 1;
+/* Для вертикальных изображений (портретных) */
+.product-image.portrait {
+    height: 100%; /* Заполняем высоту */
+    width: auto; /* Автоматическая ширина */
 }
 
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+/* Для горизонтальных изображений (ландшафтных) */
+.product-image.landscape {
+    width: 100%; /* Заполняем ширину */
+    height: auto; /* Автоматическая высота */
 }
 
-.product-image-container.image-error .product-image,
-.product-image-container.image-loading .product-image { 
-  opacity: 0; 
+/* Для квадратных изображений */
+.product-image.square {
+    width: 80%; /* Чуть меньше контейнера */
+    height: 80%;
+    max-width: 80%;
+    max-height: 80%;
 }
 
-.product-image-container.image-loaded .product-image { 
-  background-color: transparent; 
+/* ===== АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ ===== */
+@media (max-width: 768px) {
+    .product-image-container {
+        height: 180px; /* Чуть меньше на планшетах */
+        padding: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .product-image-container {
+        height: 150px; /* Еще меньше на мобильных */
+        padding: 10px;
+    }
+}
+
+/* Улучшение для темной темы */
+[data-theme="dark"] .product-image-container {
+    background: var(--color-surface);
+}
+
+[data-theme="dark"] .product-image-container.image-loading {
+    background: linear-gradient(90deg, 
+        var(--color-gray-darker) 25%, 
+        var(--color-gray-dark) 50%, 
+        var(--color-gray-darker) 75%);
+}
+
+/* Поддержка для старых браузеров (fallback) */
+.no-flexbox .product-image-container {
+    display: table;
+    text-align: center;
+}
+
+.no-flexbox .product-image {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+.no-flexbox .product-image-container::before {
+    content: "";
+    display: inline-block;
+    height: 100%;
+    vertical-align: middle;
 }
 
 /* ===== 9. КАТЕГОРИИ ===== */
@@ -1899,21 +1941,6 @@ body.pwa-installed { padding-top: var(--top-safe); }
     grid-template-columns: 1fr; 
     gap: var(--space-lg); 
   }
-  
-  /* Адаптивные изображения на мобильных */
-  .product-image-container::before {
-    padding-top: 100%; /* Квадратные изображения на мобильных */
-  }
-  
-  @supports (aspect-ratio: 1 / 1) {
-    .product-image-container::before {
-      display: none;
-    }
-    
-    .product-image-container {
-      aspect-ratio: 1 / 1;
-    }
-  }
 }
 
 @media (min-width: 769px) {
@@ -2042,17 +2069,6 @@ body.pwa-installed { padding-top: var(--top-safe); }
     min-height: 44px;
     justify-content: flex-start;
     padding-left: var(--space-lg);
-  }
-  
-  /* Адаптивные изображения на очень маленьких экранах */
-  .product-image-container::before {
-    padding-top: 90%;
-  }
-  
-  @supports (aspect-ratio: 1 / 1) {
-    .product-image-container {
-      aspect-ratio: 0.9 / 1;
-    }
   }
 }
 
@@ -2254,122 +2270,11 @@ body.pwa-installed { padding-top: var(--top-safe); }
 
 /* ===== 19. БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ ИЗОБРАЖЕНИЙ ===== */
 img {
-  max-width: 100%;          /* Не превышает ширину родителя */
-  height: auto;             /* Сохраняет пропорции */
-  display: block;           /* Убирает лишние отступы */
-  -webkit-user-drag: none;  /* Отключает перетаскивание */
-  user-select: none;        /* Отключает выделение */
-}
-
-/* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ В КАРТОЧКАХ */
-.product-image {
   max-width: 100%;
   height: auto;
-  object-fit: cover;        /* Заполняет контейнер с сохранением пропорций */
-  object-position: center;  /* Центрирует изображение */
-  background-color: var(--color-surface); /* Фон на случай прозрачности */
-}
-
-/* Поддержка aspect-ratio для современных браузеров */
-@supports (aspect-ratio: 1 / 1) {
-  .product-image-container::before {
-    display: none; /* Отключаем padding hack */
-  }
-  
-  .product-image-container {
-    aspect-ratio: 4 / 3; /* Соотношение 4:3 по умолчанию для десктоп */
-  }
-}
-
-/* Адаптивные изображения для модальных окон */
-.modal-image {
-  max-width: 100%;
-  max-height: 90vh;         /* Не превышает высоту экрана */
-  width: auto;
-  height: auto;
-  object-fit: contain;      /* Показывает все изображение */
-  object-position: center;
-}
-
-@media (max-width: 768px) {
-  .modal-image {
-    max-width: 95vw;
-  }
-}
-
-/* Для изображений в герое и других секциях */
-.hero-image,
-.category-icon img,
-.footer-logo img {
-  max-width: 100%;
-  height: auto;
-}
-
-/* Особые случаи - квадратные изображения */
-.image-square {
-  width: 100%;
-  max-width: 300px;         /* Ограничение максимального размера */
-  aspect-ratio: 1 / 1;      /* Соотношение 1:1 */
-  object-fit: cover;
-}
-
-/* Для фоновых изображений */
-.bg-image {
-  width: 100%;
-  height: auto;
-  max-height: 500px;        /* Ограничение высоты */
-  object-fit: cover;
-}
-
-/* Предотвращение растягивания */
-img:not([src]) {
-  opacity: 0; /* Скрываем пока не загрузилось */
-}
-
-/* Fallback для старых браузеров */
-.no-objectfit .product-image {
-  width: 100%;
-  height: auto;
-  position: relative;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-/* Предотвращение смывания текста при загрузке */
-.product-image-container:not(.image-loaded) {
-  background: linear-gradient(
-    90deg,
-    var(--color-gray-ultralight) 25%,
-    var(--color-gray-lighter) 50%,
-    var(--color-gray-ultralight) 75%
-  );
-  background-size: 200% 100%;
-  animation: loading-shimmer 1.5s infinite;
-}
-
-@keyframes loading-shimmer {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.product-image-container.image-loaded {
-  background: none;
-  animation: none;
-}
-
-/* Ограничение для очень больших изображений */
-img[width][height] {
-  max-width: min(100%, var(--max-image-width, 1200px));
-}
-
-/* Поддержка lazy-loading */
-img[loading="lazy"] {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-img[loading="lazy"].loaded {
-  opacity: 1;
+  display: block;
+  -webkit-user-drag: none;
+  user-select: none;
 }
 
 /* ===== 20. ОБНОВЛЕННЫЕ СТИЛИ КАТАЛОГА ===== */
