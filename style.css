@@ -1,5 +1,5 @@
 /* ============================================
-   ФИРМЕННАЯ ДИЗАЙН-СИСТЕМА "ОРТОЦЕНТР"
+   ФИРМАННАЯ ДИЗАЙН-СИСТЕМА "ОРТОЦЕНТР"
    Версия: 3.8 (Обновленный адаптивный header)
 ============================================ */
 
@@ -1071,29 +1071,45 @@ body.pwa-installed { padding-top: var(--top-safe); }
   height: 100%;
 }
 
-.catalog-grid.grid-view .product-image-container {
+/* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ КОНТЕЙНЕРА ИЗОБРАЖЕНИЙ */
+.product-image-container {
   position: relative;
-  width: var(--image-grid-width);
-  height: 0;
-  padding-bottom: 75%;
-  min-height: var(--image-min-height);
-  max-height: var(--image-max-height);
+  width: 100%;
   overflow: hidden;
   border-radius: var(--radius-md);
   background: var(--color-surface);
   margin-bottom: var(--space-md);
 }
 
-.catalog-grid.grid-view .product-image {
+/* Для соотношения сторон используем padding hack */
+.product-image-container::before {
+  content: "";
+  display: block;
+  padding-top: 75%; /* 4:3 Aspect Ratio */
+}
+
+.product-image {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+  max-width: 100%;
+  height: auto;
   object-fit: cover;
   object-position: center;
-  transition: transform var(--transition-slow);
-  z-index: 2;
+  transition: transform 0.3s ease;
+  background-color: var(--color-surface); /* Фон на случай прозрачности */
+}
+
+.product-card:hover .product-image {
+  transform: scale(1.05);
+}
+
+.catalog-grid.grid-view .product-image-container {
+  width: var(--image-grid-width);
+  min-height: var(--image-min-height);
+  max-height: var(--image-max-height);
 }
 
 .catalog-grid.grid-view .product-card:hover .product-image {
@@ -1884,10 +1900,19 @@ body.pwa-installed { padding-top: var(--top-safe); }
     gap: var(--space-lg); 
   }
   
-  /* В сетке на мобильных - более квадратные изображения */
-  .catalog-grid.grid-view .product-image-container {
-    padding-bottom: 100%;
-    min-height: 120px;
+  /* Адаптивные изображения на мобильных */
+  .product-image-container::before {
+    padding-top: 100%; /* Квадратные изображения на мобильных */
+  }
+  
+  @supports (aspect-ratio: 1 / 1) {
+    .product-image-container::before {
+      display: none;
+    }
+    
+    .product-image-container {
+      aspect-ratio: 1 / 1;
+    }
   }
 }
 
@@ -2019,10 +2044,15 @@ body.pwa-installed { padding-top: var(--top-safe); }
     padding-left: var(--space-lg);
   }
   
-  /* На очень маленьких экранах делаем еще меньше */
-  .catalog-grid.grid-view .product-image-container {
-    padding-bottom: 90%;
-    min-height: 100px;
+  /* Адаптивные изображения на очень маленьких экранах */
+  .product-image-container::before {
+    padding-top: 90%;
+  }
+  
+  @supports (aspect-ratio: 1 / 1) {
+    .product-image-container {
+      aspect-ratio: 0.9 / 1;
+    }
   }
 }
 
@@ -2222,11 +2252,124 @@ body.pwa-installed { padding-top: var(--top-safe); }
   border: 0;
 }
 
-/* ===== 19. БАЗОВЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ ===== */
+/* ===== 19. БАЗОВЫЕ СТИЛИ ДЛЯ ВСЕХ ИЗОБРАЖЕНИЙ ===== */
 img {
+  max-width: 100%;          /* Не превышает ширину родителя */
+  height: auto;             /* Сохраняет пропорции */
+  display: block;           /* Убирает лишние отступы */
+  -webkit-user-drag: none;  /* Отключает перетаскивание */
+  user-select: none;        /* Отключает выделение */
+}
+
+/* ОБНОВЛЕННЫЕ СТИЛИ ДЛЯ ИЗОБРАЖЕНИЙ В КАРТОЧКАХ */
+.product-image {
   max-width: 100%;
   height: auto;
-  display: block;
+  object-fit: cover;        /* Заполняет контейнер с сохранением пропорций */
+  object-position: center;  /* Центрирует изображение */
+  background-color: var(--color-surface); /* Фон на случай прозрачности */
+}
+
+/* Поддержка aspect-ratio для современных браузеров */
+@supports (aspect-ratio: 1 / 1) {
+  .product-image-container::before {
+    display: none; /* Отключаем padding hack */
+  }
+  
+  .product-image-container {
+    aspect-ratio: 4 / 3; /* Соотношение 4:3 по умолчанию для десктоп */
+  }
+}
+
+/* Адаптивные изображения для модальных окон */
+.modal-image {
+  max-width: 100%;
+  max-height: 90vh;         /* Не превышает высоту экрана */
+  width: auto;
+  height: auto;
+  object-fit: contain;      /* Показывает все изображение */
+  object-position: center;
+}
+
+@media (max-width: 768px) {
+  .modal-image {
+    max-width: 95vw;
+  }
+}
+
+/* Для изображений в герое и других секциях */
+.hero-image,
+.category-icon img,
+.footer-logo img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Особые случаи - квадратные изображения */
+.image-square {
+  width: 100%;
+  max-width: 300px;         /* Ограничение максимального размера */
+  aspect-ratio: 1 / 1;      /* Соотношение 1:1 */
+  object-fit: cover;
+}
+
+/* Для фоновых изображений */
+.bg-image {
+  width: 100%;
+  height: auto;
+  max-height: 500px;        /* Ограничение высоты */
+  object-fit: cover;
+}
+
+/* Предотвращение растягивания */
+img:not([src]) {
+  opacity: 0; /* Скрываем пока не загрузилось */
+}
+
+/* Fallback для старых браузеров */
+.no-objectfit .product-image {
+  width: 100%;
+  height: auto;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Предотвращение смывания текста при загрузке */
+.product-image-container:not(.image-loaded) {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-ultralight) 25%,
+    var(--color-gray-lighter) 50%,
+    var(--color-gray-ultralight) 75%
+  );
+  background-size: 200% 100%;
+  animation: loading-shimmer 1.5s infinite;
+}
+
+@keyframes loading-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.product-image-container.image-loaded {
+  background: none;
+  animation: none;
+}
+
+/* Ограничение для очень больших изображений */
+img[width][height] {
+  max-width: min(100%, var(--max-image-width, 1200px));
+}
+
+/* Поддержка lazy-loading */
+img[loading="lazy"] {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+img[loading="lazy"].loaded {
+  opacity: 1;
 }
 
 /* ===== 20. ОБНОВЛЕННЫЕ СТИЛИ КАТАЛОГА ===== */
